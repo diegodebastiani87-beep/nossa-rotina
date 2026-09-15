@@ -2371,16 +2371,19 @@ function monitorarConexao() {
   setInterval(testarConexaoReal, 30000);
 }
 function monitorarConexao() {
-  function atualizar() {
-    if (navigator.onLine) {
-      atualizarStatus('online', 'Sincronizado');
+  window.__atualizarStatusFirestore = function(fromCache) {
+    const el = document.getElementById('statusConexao');
+    const txt = document.getElementById('statusTexto');
+    el.classList.remove('online', 'offline');
+    if (fromCache) {
+      el.classList.add('offline');
+      txt.textContent = 'Offline (vai sincronizar)';
     } else {
-      atualizarStatus('offline', 'Offline (vai sincronizar)');
+      el.classList.add('online');
+      txt.textContent = 'Sincronizado';
     }
-  }
-  window.addEventListener('online', atualizar);
-  window.addEventListener('offline', atualizar);
-  atualizar();
+  };
+  atualizarStatus('conectando', 'Conectando...');
 }
   function refDocCasa() { return db.collection('casas').doc(CASA_ID); }
   function colecaoGastos() { return refDocCasa().collection('gastos'); }
@@ -2487,12 +2490,16 @@ function monitorarConexao() {
     return arr.length ? arr : padrao;
   }
 
-  function ouvirGastos() {
+ function ouvirGastos() {
   colecaoGastos()
     .orderBy('data', 'desc')
     .onSnapshot(
+      { includeMetadataChanges: true },
       snapshot => {
         gastos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        if (window.__atualizarStatusFirestore) {
+          window.__atualizarStatusFirestore(snapshot.metadata.fromCache);
+        }
         reconstruirEstabelecimentos();
         renderizar();
         renderizarFaturas();
