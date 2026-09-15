@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<link rel="manifest" href="manifest.json">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Nossa Rotina</title>
@@ -365,6 +364,111 @@
   .mes-selector input { flex: 1; min-width: 140px; }
   .mes-selector button { width: auto; padding: 12px 16px; }
 
+  /* ============ SWIPE ============ */
+  .gasto-swipe-container {
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid #f0f0f0;
+    border-radius: 10px;
+    margin-bottom: 4px;
+    background: #f5f5f5;
+  }
+  .gasto-swipe-actions {
+    position: absolute;
+    top: 0; bottom: 0;
+    display: flex;
+    align-items: stretch;
+  }
+  .gasto-swipe-actions.acao-excluir {
+    left: 0;
+    justify-content: flex-start;
+  }
+  .gasto-swipe-actions.acao-editar {
+    right: 0;
+    justify-content: flex-end;
+  }
+  .gasto-swipe-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 90px;
+    color: white;
+    font-size: 0.75em;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    text-align: center;
+  }
+  .gasto-swipe-btn.excluir { background: #e53935; }
+  .gasto-swipe-btn.editar { background: #ff9800; }
+  .gasto-swipe-btn .icone-swipe {
+    font-size: 1.6em;
+    line-height: 1;
+  }
+
+  .gasto-swipe-item {
+    position: relative;
+    background: white;
+    padding: 12px 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    cursor: pointer;
+    will-change: transform;
+    user-select: none;
+    transition: transform 0.25s ease-out;
+    border-radius: 10px;
+    border: 1px solid #f0f0f0;
+  }
+  .gasto-swipe-item.swiping {
+    transition: none;
+  }
+
+  .gasto-swipe-item .info-principal {
+    flex: 1;
+    min-width: 0;
+  }
+  .gasto-swipe-item .desc-linha {
+    font-weight: 600;
+    font-size: 0.95em;
+    word-break: break-word;
+    color: #333;
+    margin-bottom: 4px;
+  }
+  .gasto-swipe-item .meta-linha {
+    font-size: 0.78em;
+    color: #888;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .gasto-swipe-item .meta-linha .sep { color: #ccc; }
+  .gasto-swipe-item .valor-linha {
+    text-align: right;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+  .gasto-swipe-item .valor-num {
+    font-weight: 700;
+    color: #e53935;
+    font-size: 1em;
+    white-space: nowrap;
+  }
+  .gasto-swipe-item .tags-linha {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+  }
+
+  /* ============ CARTÕES ============ */
   .cartao-view {
     border: 1px solid #e0e0e0;
     border-radius: 12px;
@@ -448,6 +552,7 @@
   }
   .cartao-view .btn-excluir-cartao:hover { background: #ffebee; }
 
+  /* ============ EMOJI PICKER ============ */
   .emoji-picker-btn {
     background: #f5f5f5;
     color: #333;
@@ -500,10 +605,7 @@
     border-bottom: 1px solid #f0f0f0;
     flex-shrink: 0;
   }
-  .emoji-modal-header h3 {
-    font-size: 1.05em;
-    color: #1565c0;
-  }
+  .emoji-modal-header h3 { font-size: 1.05em; color: #1565c0; }
   .emoji-fechar {
     background: #f5f5f5;
     color: #666;
@@ -544,10 +646,7 @@
     width: auto;
     transition: all 0.15s;
   }
-  .emoji-tab.ativa {
-    background: #1e88e5;
-    color: white;
-  }
+  .emoji-tab.ativa { background: #1e88e5; color: white; }
   .emoji-tab:hover:not(.ativa) { background: #ebebeb; }
 
   .emoji-grid {
@@ -649,6 +748,7 @@
   .nova-cat-form .linha-cor { display: flex; gap: 10px; align-items: end; }
   .nova-cat-form input[type="color"] { width: 60px; height: 48px; padding: 4px; cursor: pointer; }
 
+  /* ============ PESSOAS ============ */
   .pessoa-view {
     border: 1px solid #e0e0e0;
     border-radius: 12px;
@@ -810,6 +910,7 @@
   }
   .est-info .sep { color: #ccc; }
 
+  /* ============ AGENDA ============ */
   .agenda-visao-chips {
     display: flex; gap: 6px; background: #f5f5f5;
     padding: 5px; border-radius: 12px; margin-bottom: 10px;
@@ -1530,6 +1631,9 @@
         📝 Lançamentos
         <span class="filtro-ativo" id="badgeLancamentos" style="display:none;">Filtrado</span>
       </h2>
+      <div class="dica" style="margin-top:-8px; margin-bottom:10px;">
+        💡 Arraste para <strong style="color:#ff9800;">← esquerda</strong> para editar · <strong style="color:#e53935;">direita →</strong> para excluir · toque para ver detalhes
+      </div>
       <div id="listaGastosWrap"></div>
     </div>
 
@@ -1643,7 +1747,6 @@
       <button class="sub-aba" data-sub="pessoas" onclick="trocarSubAba('pessoas')">👥 Pessoas</button>
     </div>
 
-    <!-- ============ CARTÕES ============ -->
     <div class="sub-painel ativo" id="sub-cartoes">
       <div class="card">
         <h2>💳 Meus Cartões</h2>
@@ -1672,7 +1775,6 @@
       </div>
     </div>
 
-    <!-- ============ CATEGORIAS ============ -->
     <div class="sub-painel" id="sub-categorias">
       <div class="card">
         <h2>➕ Nova Categoria</h2>
@@ -1696,7 +1798,6 @@
       </div>
     </div>
 
-    <!-- ============ ESTABELECIMENTOS ============ -->
     <div class="sub-painel" id="sub-estabelecimentos">
       <div class="card">
         <h2>🏪 Locais Frequentes</h2>
@@ -1707,7 +1808,6 @@
       </div>
     </div>
 
-    <!-- ============ PESSOAS ============ -->
     <div class="sub-painel" id="sub-pessoas">
       <div class="card">
         <h2>👥 Pessoas cadastradas</h2>
@@ -1738,6 +1838,80 @@
 
   </div>
 
+</div>
+
+<!-- MODAL: Editar despesa -->
+<div class="modal-agenda" id="modalEditarGasto">
+  <div class="modal-conteudo">
+    <div class="modal-header">
+      <h2>✏️ Editar gasto</h2>
+      <button class="modal-fechar" onclick="fecharEditarGasto()">✕</button>
+    </div>
+    <div class="modal-corpo">
+      <input type="hidden" id="editGastoId">
+
+      <div class="campo">
+        <label>Valor *</label>
+        <input type="number" id="editGastoValor" step="0.01" min="0" inputmode="decimal">
+      </div>
+
+      <div class="campo">
+        <label>Descrição *</label>
+        <input type="text" id="editGastoDescricao">
+      </div>
+
+      <div class="campo">
+        <label>Categoria</label>
+        <select id="editGastoCategoria" onchange="atualizarSubcategoriasEdicao()"></select>
+      </div>
+
+      <div class="campo">
+        <label>Subcategoria</label>
+        <select id="editGastoSubcategoria"></select>
+      </div>
+
+      <div class="campo">
+        <label>Quem</label>
+        <select id="editGastoUsuario">
+          <option value="Diego">👨 Diego</option>
+          <option value="Eliane">👩 Eliane</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label>Forma de pagamento</label>
+        <select id="editGastoPagamento">
+          <option value="Dinheiro/PIX">💵 Dinheiro/PIX</option>
+          <option value="Cartão Crédito">💳 Cartão Crédito</option>
+          <option value="Cartão Débito">🏦 Cartão Débito</option>
+          <option value="Vale Alimentação">🍽️ Vale Alimentação</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label>Data</label>
+        <input type="date" id="editGastoData">
+      </div>
+
+      <div class="campo">
+        <label>Detalhes (opcional)</label>
+        <textarea id="editGastoObservacao"></textarea>
+      </div>
+
+      <button class="btn-grande" onclick="salvarEdicaoGasto()">✓ Salvar alterações</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Detalhes da despesa -->
+<div class="modal-agenda" id="modalDetalhesGasto">
+  <div class="modal-conteudo">
+    <div class="modal-header">
+      <h2 id="detalhesGastoTitulo">Detalhes</h2>
+      <button class="modal-fechar" onclick="fecharDetalhesGasto()">✕</button>
+    </div>
+    <div class="modal-corpo" id="detalhesGastoCorpo"></div>
+  </div>
 </div>
 
 <!-- MODAL: Editar cartão -->
@@ -2048,7 +2222,7 @@
     "Animais": [
       "🐶","🐱","🐭","🐹","🐰","🦊","🐻","🐼","🐨","🐯","🦁","🐮","🐷","🐸","🐵","🐔","🐧","🐦","🐤","🦆","🦅","🦉",
       "🦇","🐺","🐗","🐴","🦄","🐝","🐛","🦋","🐌","🐞","🐜","🕷","🦂","🐢","🐍","🦎","🦖","🦕","🐙","🦑","🦐","🦀",
-      "🐡","🐠","🐟","🐬","🐳","🐋","🦈","🐊","🐅","🐆","ZEBRA","🦍","🦧","🐘","🦛","🦏","🐪","🐫","🦒","🦘","🐃","🐂",
+      "🐡","🐠","🐟","🐬","🐳","🐋","🦈","🐊","🐅","🐆","🦓","🦍","🦧","🐘","🦛","🦏","🐪","🐫","🦒","🦘","🐃","🐂",
       "🐄","🐎","🐖","🐏","🐑","🦙","🐐","🦌","🐕","🐩","🦮","🐕‍🦺","🐈","🐓","🦃","🦚","🦜","🦢","🦩","🕊","🐇","🦝",
       "🦨","🦡","🦦","🦥","🐁","🐀","🐿","🦔"
     ],
@@ -2063,14 +2237,14 @@
       "⚽","🏀","🏈","⚾","🥎","🎾","🏐","🏉","🥏","🎱","🪀","🏓","🏸","🏒","🏑","🥍","🏏","🪃","🥅","⛳","🪁",
       "🏹","🎣","🤿","🥊","🥋","🎽","🛹","🛼","🛷","⛸","🥌","🎿","⛷","🏂","🪂","🏋️","🤼","🤸","⛹️","🤺","🤾",
       "🏌️","🏇","🧘","🏄","🏊","🤽","🚣","🧗","🚵","🚴","🏆","🥇","🥈","🥉","🏅","🎖","🏵","🎗","🎫","🎟","🎪",
-      "🤹","🎭","🩰","🎨","🎬","🎤","🎧","🎼","🎹","🥁","🎷","🎺","🎸","🪕","🎻","🎲","♟","🎯"," bowling","🎮","🎰","🧩"
+      "🤹","🎭","🩰","🎨","🎬","🎤","🎧","🎼","🎹","🥁","🎷","🎺","🎸","🪕","🎻","🎲","♟","🎯","🎳","🎮","🎰","🧩"
     ],
     "Objetos": [
       "⌚","📱","📲","💻","⌨️","🖥","🖨","🖱","🖲","🕹","🗜","💽","💾","💿","📀","📼","📷","📸","📹","🎥","📽",
       "🎞","📞","☎️","📟","📠","📺","📻","🎙","🎚","🎛","🧭","⏱","⏲","⏰","🕰","⌛","⏳","📡","🔋","🔌","💡",
       "🔦","🕯","🪔","🧯","🛢","💸","💵","💴","💶","💷","💰","💳","💎","⚖️","🧰","🔧","🔨","⚒","🛠","⛏","🪓",
-      "🔩","⚙️","🧱","⛓","🧲","🔫","💣","🧨","🔪","🗡","⚔️","🛡","🚬","⚰️","🪦","⚱️","🏺","🔮","📿","🧿",
-      "💈","⚗️","🔭","🔬","🕳","🩹","🩺","💊","💉","🩸","🧬","🦠","🧫","🧪","🌡","🧹","🧺","🧻","🚽","🚰"," shower",
+      "🔩","⚙️","🧱","⛓","🧲","🔫","💣","🧨","🪓","🔪","🗡","⚔️","🛡","🚬","⚰️","🪦","⚱️","🏺","🔮","📿","🧿",
+      "💈","⚗️","🔭","🔬","🕳","🩹","🩺","💊","💉","🩸","🧬","🦠","🧫","🧪","🌡","🧹","🧺","🧻","🚽","🚰","🚿",
       "🛁","🛀","🧼","🪒","🧽","🧴","🛎","🔑","🗝","🚪","🪑","🛋","🛏","🛌","🧸","🖼","🛍","🛒","🎁","🎈","🎏",
       "🎀","🎊","🎉","🎎","🏮","🎐","🧧","✉️","📩","📨","📧","💌","📥","📤","📦","🏷","📪","📫","📬","📭","📮",
       "📯","📜","📃","📄","📑","📊","📈","📉","🗒","🗓","📆","📅","🗑","📇","🗃","🗳","🗄","📋","📁","📂","🗂",
@@ -2087,6 +2261,15 @@
       "🛄","🛅","🚹","🚺","🚼","🚻","🚮","🎦","📶","🈁","🔣","ℹ️","🔤","🔡","🔠","🆖","🆗","🆙","🆒","🆕","🆓",
       "0️⃣","1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣","9️⃣","🔟","🔢","#️⃣","*️⃣","⏏️","▶️","⏸","⏯","⏹",
       "⏺","⏭","⏮","⏩","⏪","⏫","⏬","◀️","🔼","🔽","➡️","⬅️","⬆️","⬇️","↗️","↘️","↙️","↖️","↕️","↔️"
+    ],
+    "Objetos 2": [
+      "🚗","🚕","🚙","🚌","🚎","🏎","🚓","🚑","🚒","🚐","🚚","🚛","🚜","🦯","🦽","🦼","🛴","🚲","🛵","🏍","🛺",
+      "🚨","🚔","🚍","🚘","🚖","🚡","🚠","🚟","🚃","🚋","🚞","🚝","🚄","🚅","🚈","🚂","🚆","🚇","🚊","🚉",
+      "✈️","🛫","🛬","🛩","💺","🛰","🚀","🛸","🚁","🛶","⛵","🚤","🛥","🛳","⛴","🚢","⚓","⛽","🚧","🚦",
+      "🚥","🚏","🗺","🗿","🗽","🗼","🏰","🏯","🏟","🎡","🎢","🎠","⛲","⛱","🏖","🏝","🏜","🌋","⛰","🏔","🗻",
+      "🏕","⛺","🏠","🏡","🏘","🏚","🏗","🏭","🏢","🏬","🏣","🏤","🏥","🏦","🏨","🏪","🏫","🏩","💒","🏛","⛪",
+      "🕌","🕍","🛕","🕋","⛩","🛤","🛣","🗾","🎑","🏞","🌅","🌄","🌠","🎇","🎆","🌇","🌆","🏙","🌃","🌌",
+      "🌉","🌁"
     ]
   };
 
@@ -2295,62 +2478,40 @@
     preview.innerHTML = html;
   }
 
-  let estadoRedeReal = null;
-
-  async function iniciarFirebase() {
-  try {
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.firestore();
-    db.settings({ ignoreUndefinedProperties: true });
-    firebaseOK = true;
-
-    atualizarStatus('conectando', 'Conectando...');
-
+  function iniciarFirebase() {
     try {
-      await db.enablePersistence();
-      console.log('Persistência offline ativa.');
-    } catch (err) {
-      console.warn('Persistência indisponível:', err.code || err.message);
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+      db.settings({ ignoreUndefinedProperties: true });
+      firebaseOK = true;
+      ouvirDadosCasa();
+      ouvirGastos();
+      ouvirEventos();
+    } catch (e) {
+      console.error(e);
+      atualizarStatus('offline', 'Erro');
     }
-
-    ouvirDadosCasa();
-    ouvirGastos();
-    ouvirEventos();
-  } catch (e) {
-    console.error(e);
-    atualizarStatus('offline', 'Erro');
   }
-}
 
   function refDocCasa() { return db.collection('casas').doc(CASA_ID); }
   function colecaoGastos() { return refDocCasa().collection('gastos'); }
   function colecaoEventos() { return refDocCasa().collection('eventos'); }
 
   async function garantirDadosIniciais() {
-    try {
-      const doc = await refDocCasa().get();
-      const dados = doc.exists ? doc.data() : {};
-      const update = {};
-      if (!dados.categorias) update.categorias = CATEGORIAS_PADRAO;
-      if (!dados.cartoes) update.cartoes = CARTOES_PADRAO;
-      if (!dados.pessoas) update.pessoas = PESSOAS_PADRAO;
-      if (Object.keys(update).length > 0) {
-        await refDocCasa().set(update, { merge: true });
-      }
-    } catch (e) {
-      console.warn("Sem conexão para dados iniciais, usando padrões locais.");
-      categorias = CATEGORIAS_PADRAO;
-      cartoes = CARTOES_PADRAO;
-      pessoas = PESSOAS_PADRAO;
-      popularCategorias();
-      popularFiltroCartoes();
-      popularSelectCartoes();
+    const doc = await refDocCasa().get();
+    const dados = doc.exists ? doc.data() : {};
+    const update = {};
+    if (!dados.categorias) update.categorias = CATEGORIAS_PADRAO;
+    if (!dados.cartoes) update.cartoes = CARTOES_PADRAO;
+    if (!dados.pessoas) update.pessoas = PESSOAS_PADRAO;
+    if (Object.keys(update).length > 0) {
+      await refDocCasa().set(update, { merge: true });
     }
   }
 
   function ouvirDadosCasa() {
-    refDocCasa().onSnapshot({ includeMetadataChanges: true }, async doc => {
-      if (!doc.exists || !doc.data() || !doc.data().categorias || !doc.data().cartoes) {
+    refDocCasa().onSnapshot(async doc => {
+      if (!doc.exists || !doc.data().categorias || !doc.data().cartoes) {
         await garantirDadosIniciais();
         return;
       }
@@ -2380,7 +2541,7 @@
         vistas.add(p.nome);
       }
     });
-    Object.keys(obj || {}).forEach(nome => {
+    Object.keys(obj).forEach(nome => {
       if (!vistas.has(nome)) {
         arr.push({ nome, cor: obj[nome].cor, subs: obj[nome].subs || [] });
       }
@@ -2398,7 +2559,7 @@
         vistas.add(p.nome);
       }
     });
-    Object.keys(obj || {}).forEach(nome => {
+    Object.keys(obj).forEach(nome => {
       if (!vistas.has(nome)) {
         arr.push({ nome, fechamento: obj[nome].fechamento, vencimento: obj[nome].vencimento });
       }
@@ -2423,7 +2584,7 @@
         vistas.add(p.nome);
       }
     });
-    Object.keys(obj || {}).forEach(nome => {
+    Object.keys(obj).forEach(nome => {
       if (!vistas.has(nome)) {
         if (nome === 'Filho') {
           arr.push({ nome: 'João Guilherme', emoji: '👦' });
@@ -2438,26 +2599,20 @@
   }
 
   function ouvirGastos() {
+    atualizarStatus('conectando', 'Conectando...');
     colecaoGastos()
       .orderBy('data', 'desc')
       .onSnapshot(
-        { includeMetadataChanges: true },
         snapshot => {
           gastos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-          if (snapshot.metadata.fromCache || estadoRedeReal === false) {
-            atualizarStatus('offline', 'Offline (vai sincronizar)');
-          } else {
-            atualizarStatus('online', 'Sincronizado');
-          }
-
+          atualizarStatus('online', 'Sincronizado');
           reconstruirEstabelecimentos();
           renderizar();
           renderizarFaturas();
         },
         erro => {
-          console.error('Erro no listener de gastos:', erro);
-          atualizarStatus('offline', 'Offline (vai sincronizar)');
+          console.error(erro);
+          atualizarStatus('offline', 'Erro');
         }
       );
   }
@@ -2466,7 +2621,6 @@
     colecaoEventos()
       .orderBy('data', 'asc')
       .onSnapshot(
-        { includeMetadataChanges: true },
         snapshot => {
           eventos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
           renderizarAgenda();
@@ -2483,6 +2637,9 @@
     document.getElementById('statusTexto').textContent = texto;
   }
 
+  // ================================================================
+  // CARTÕES
+  // ================================================================
   function renderizarCartoes() {
     const wrap = document.getElementById('cartoesLista');
     if (cartoes.length === 0) {
@@ -2596,6 +2753,9 @@
     } catch (e) { alert('Erro: ' + e.message); }
   }
 
+  // ================================================================
+  // PESSOAS
+  // ================================================================
   function renderizarPessoas() {
     const wrap = document.getElementById('pessoasLista');
     if (!wrap) return;
@@ -2699,6 +2859,9 @@
     } catch (e) { alert('Erro ao salvar pessoas: ' + e.message); }
   }
 
+  // ================================================================
+  // AGENDA
+  // ================================================================
   function dataHojeISO() {
     const h = new Date();
     return `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, '0')}-${String(h.getDate()).padStart(2, '0')}`;
@@ -2907,7 +3070,7 @@
     wrap.innerHTML = diasOrdenados.map(dia => {
       const evts = porDia[dia].sort((a, b) => (a.hora || '').localeCompare(b.hora || ''));
       const destaque = dia === hoje;
-      const itensHTML = evts.map(e => renderizarItemEvento(e)).join('');
+      const itensHTML = evts.map(e => renderizarItemEvento(e, false)).join('');
       return `
         <div class="agenda-dia">
           <div class="agenda-dia-titulo ${destaque ? 'destaque' : ''}">
@@ -3128,7 +3291,7 @@
     if (!data) { alert('Escolha uma data.'); return; }
     if (!pessoa) { alert('Escolha para quem é o compromisso.'); return; }
 
-    const dados = { titulo, data, hora, pessoa, tipo, local, acompanhante, obs, atualizadoEm: new Date() };
+    const dados = { titulo, data, hora, pessoa, tipo, local, acompanhante, obs, atualizadoEm: firebase.firestore.FieldValue.serverTimestamp() };
 
     try {
       if (id) {
@@ -3144,14 +3307,10 @@
           const remarcacoes = e.remarcacoes ? [...e.remarcacoes, remarcacao] : [remarcacao];
           dados.remarcacoes = remarcacoes;
         }
-        colecaoEventos().doc(id).update(dados).catch(e => {
-          console.error('Salvo localmente, pendente de sincronização:', e);
-        });
+        await colecaoEventos().doc(id).update(dados);
       } else {
-        dados.criadoEm = new Date();
-        colecaoEventos().add(dados).catch(e => {
-          console.error('Salvo localmente, pendente de sincronização:', e);
-        });
+        dados.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
+        await colecaoEventos().add(dados);
       }
       fecharFormEvento();
     } catch (e) {
@@ -3269,6 +3428,9 @@
     } catch (e) { alert('Erro: ' + e.message); }
   }
 
+  // ================================================================
+  // ESTABELECIMENTOS
+  // ================================================================
   function normalizarChave(desc) {
     return String(desc || '').trim().toLowerCase();
   }
@@ -3290,7 +3452,7 @@
       const e = mapa[chave];
       e.count++;
       e.catCount[g.categoria] = (e.catCount[g.categoria] || 0) + 1;
-      if (g.subcategoria) e.subCount[g.subcategoria] = (e.subcategoria || 0) + 1;
+      if (g.subcategoria) e.subCount[g.subcategoria] = (e.subCount[g.subcategoria] || 0) + 1;
       if (g.formaPagamento) e.pagCount[g.formaPagamento] = (e.pagCount[g.formaPagamento] || 0) + 1;
       if (g.cartao) e.cartaoCount[g.cartao] = (e.cartaoCount[g.cartao] || 0) + 1;
       e.valores.push(g.valor);
@@ -3793,6 +3955,13 @@
     }).join('');
   }
 
+  /**
+   * Lista de lançamentos LIMPA:
+   * - Sem tag de forma de pagamento nem vencimento do cartão
+   * - Só: descrição, data/quem, categoria/sub e valor
+   * - Swipe: ← esquerda = editar | direita → = excluir
+   * - Toque = abre modal de detalhes com tudo
+   */
   function renderizarLista(lista) {
     lista = [...lista].sort((a, b) => (b.data || '').localeCompare(a.data || ''));
     const wrap = document.getElementById('listaGastosWrap');
@@ -3802,72 +3971,330 @@
     }
     wrap.innerHTML = lista.map(g => {
       const cor = corDa(g.categoria);
-      const sub = g.subcategoria ? `<span class="tag-sub">${g.subcategoria}</span>` : '';
-      const cartaoTxt = g.cartao ? ` ${g.cartao}` : '';
-      const pag = g.formaPagamento
-        ? `<span class="tag-pag">${emojiPag(g.formaPagamento)} ${g.formaPagamento}${cartaoTxt}</span>` : '';
-      const parcela = g.parcelaTotal
-        ? `<span class="tag-parcela">${g.parcelaAtual}/${g.parcelaTotal}${g.valorTotalCompra ? ' · ' + formatarMoeda(g.valorTotalCompra) : ''}</span>` : '';
-      let faturaTag = '';
-      if (g.formaPagamento === 'Cartão Crédito' && g.mesFatura) {
-        faturaTag = `<span class="tag-fatura">📅 Vence ${nomeMes(g.mesFatura)}</span>`;
-      }
-      const obs = g.observacao ? `<span class="obs-texto">📝 ${escaparHTML(g.observacao)}</span>` : '';
+      const sub = g.subcategoria || '';
+      const subTag = sub ? `<span class="tag-sub">${escaparHTML(sub)}</span>` : '';
+      const cartaoInfo = g.cartao ? ` · ${escaparHTML(g.cartao)}` : '';
+      const parcelaTag = g.parcelaTotal ? ` · ${g.parcelaAtual}/${g.parcelaTotal}` : '';
+
       return `
-        <div style="display:flex; gap:10px; padding:12px 0; border-bottom:1px solid #f0f0f0; align-items:flex-start;">
-          <div style="flex:1; min-width:0;">
-            <div style="font-weight:600; font-size:0.95em; word-break:break-word;">
-              ${escaparHTML(g.descricao)}${obs}
-            </div>
-            <div style="font-size:0.8em; color:#777; margin-top:4px;">
-              ${formatarData(g.data)} · ${g.usuario}
-            </div>
-            <div style="margin-top:6px;">
-              <span class="tag" style="background:${cor};">${g.categoria}</span>
-              ${sub}${pag}${parcela}${faturaTag}
-            </div>
+        <div class="gasto-swipe-container">
+          <div class="gasto-swipe-actions acao-excluir">
+            <button class="gasto-swipe-btn excluir" onclick="event.stopPropagation(); removerGasto('${g.id}')">
+              <span class="icone-swipe">🗑️</span>
+              Excluir
+            </button>
           </div>
-          <div style="text-align:right; flex-shrink:0;">
-            <div style="font-weight:700; color:#e53935; font-size:1em;">${formatarMoeda(g.valor)}</div>
-            <button class="perigo" style="margin-top:6px; padding:4px 8px; font-size:0.72em;" onclick="removerGasto('${g.id}')">✕</button>
+          <div class="gasto-swipe-actions acao-editar">
+            <button class="gasto-swipe-btn editar" onclick="event.stopPropagation(); abrirEditarGasto('${g.id}')">
+              <span class="icone-swipe">✏️</span>
+              Editar
+            </button>
+          </div>
+          <div class="gasto-swipe-item" 
+               data-id="${g.id}"
+               onclick="abrirDetalhesGasto('${g.id}')">
+            <div class="info-principal">
+              <div class="desc-linha">${escaparHTML(g.descricao)}</div>
+              <div class="meta-linha">
+                <span>${formatarData(g.data)}</span>
+                <span class="sep">·</span>
+                <span>${escaparHTML(g.usuario)}</span>
+              </div>
+              <div class="tags-linha">
+                <span class="tag" style="background:${cor};">${g.categoria}</span>
+                ${subTag}
+              </div>
+            </div>
+            <div class="valor-linha">
+              <div class="valor-num">${formatarMoeda(g.valor)}</div>
+            </div>
           </div>
         </div>
       `;
     }).join('');
+    ativarSwipeGastos();
   }
 
-  function renderizarUltimos() {
-    const wrap = document.getElementById('ultimosLancamentos');
-    const ultimos = [...gastos].sort((a, b) => (b.data || '').localeCompare(a.data || '')).slice(0, 5);
-    if (ultimos.length === 0) {
-      wrap.innerHTML = '<div class="vazio">Nenhum gasto lançado ainda</div>';
-      return;
+  // ================================================================
+  // SWIPE nos lançamentos
+  // ================================================================
+  let swipeState = null;
+  const SWIPE_THRESHOLD = 80;
+  const SWIPE_MAX = 110;
+  const SWIPE_MOVIMENTO_MIN = 10; // px para considerar swipe (evita ativar em scroll)
+
+  function ativarSwipeGastos() {
+    document.querySelectorAll('.gasto-swipe-item').forEach(item => {
+      item.addEventListener('touchstart', onSwipeStart, { passive: true });
+      item.addEventListener('touchmove', onSwipeMove, { passive: false });
+      item.addEventListener('touchend', onSwipeEnd);
+      item.addEventListener('touchcancel', onSwipeEnd);
+      // Mouse (desktop)
+      item.addEventListener('mousedown', onSwipeStartMouse);
+    });
+  }
+
+  function onSwipeStart(e) {
+    const touch = e.touches[0];
+    swipeState = {
+      item: e.currentTarget,
+      startX: touch.clientX,
+      startY: touch.clientY,
+      diffX: 0,
+      diffY: 0,
+      lockedDirection: null
+    };
+  }
+
+  function onSwipeMove(e) {
+    if (!swipeState) return;
+    const touch = e.touches[0];
+    const diffX = touch.clientX - swipeState.startX;
+    const diffY = touch.clientY - swipeState.startY;
+
+    // Detecta direção predominante na primeira movimentação relevante
+    if (!swipeState.lockedDirection) {
+      if (Math.abs(diffX) > SWIPE_MOVIMENTO_MIN && Math.abs(diffX) > Math.abs(diffY)) {
+        swipeState.lockedDirection = 'horizontal';
+      } else if (Math.abs(diffY) > SWIPE_MOVIMENTO_MIN) {
+        swipeState.lockedDirection = 'vertical';
+      }
     }
-    wrap.innerHTML = ultimos.map(g => {
-      const cor = corDa(g.categoria);
-      const parcelaTag = g.parcelaTotal ? `<span class="tag-parcela">${g.parcelaAtual}/${g.parcelaTotal}</span>` : '';
-      const cartaoInfo = g.cartao ? ` · ${g.cartao}` : '';
-      const faturaInfo = (g.formaPagamento === 'Cartão Crédito' && g.mesFatura) ? ` · Fatura ${nomeMes(g.mesFatura)}` : '';
-      return `
-        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #f0f0f0;">
-          <div style="flex:1; min-width:0;">
-            <div style="font-weight:600; font-size:0.92em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-              ${escaparHTML(g.descricao)} ${parcelaTag}
-            </div>
-            <div style="font-size:0.78em; color:#777; margin-top:2px;">
-              ${formatarData(g.data)} · ${g.usuario}${cartaoInfo}${faturaInfo} · <span style="color:${cor}; font-weight:600;">${g.categoria}</span>
-            </div>
-          </div>
-          <div style="font-weight:700; color:#e53935; font-size:0.95em; margin-left:10px; white-space:nowrap;">
-            ${formatarMoeda(g.valor)}
-          </div>
-        </div>
-      `;
-    }).join('');
+
+    if (swipeState.lockedDirection === 'vertical') return;
+    if (swipeState.lockedDirection !== 'horizontal') return;
+
+    e.preventDefault();
+    swipeState.diffX = diffX;
+    swipeState.item.classList.add('swiping');
+
+    // Limita o deslocamento
+    let finalX = diffX;
+    if (finalX > SWIPE_MAX) finalX = SWIPE_MAX + (finalX - SWIPE_MAX) * 0.3;
+    if (finalX < -SWIPE_MAX) finalX = -SWIPE_MAX + (finalX + SWIPE_MAX) * 0.3;
+
+    swipeState.item.style.transform = `translateX(${finalX}px)`;
+  }
+
+  function onSwipeEnd(e) {
+    if (!swipeState) return;
+    const item = swipeState.item;
+    const diffX = swipeState.diffX;
+    item.classList.remove('swiping');
+
+    // Se passou do threshold, mantém aberto (ou executa direto se passar mais)
+    if (diffX > SWIPE_THRESHOLD) {
+      // Arrastou para DIREITA → mantém aberto mostrando Excluir
+      item.style.transform = `translateX(${SWIPE_MAX}px)`;
+    } else if (diffX < -SWIPE_THRESHOLD) {
+      // Arrastou para ESQUERDA → mantém aberto mostrando Editar
+      item.style.transform = `translateX(-${SWIPE_MAX}px)`;
+    } else {
+      // Volta ao normal
+      item.style.transform = 'translateX(0)';
+    }
+    swipeState = null;
+  }
+
+  // Fecha o swipe aberto ao clicar em outro lugar
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.gasto-swipe-item')) return;
+    document.querySelectorAll('.gasto-swipe-item').forEach(item => {
+      if (item.style.transform && item.style.transform !== 'translateX(0)' && item.style.transform !== '') {
+        item.style.transform = 'translateX(0)';
+      }
+    });
+  });
+
+  // Suporte básico de mouse (opcional, para teste no desktop)
+  function onSwipeStartMouse(e) {
+    if (e.button !== 0) return;
+    // Desativa drag padrão
+    const item = e.currentTarget;
+    const startX = e.clientX;
+    const startY = e.clientY;
+    let moved = false;
+    let diffX = 0;
+    let diffY = 0;
+
+    function onMove(ev) {
+      diffX = ev.clientX - startX;
+      diffY = ev.clientY - startY;
+      if (Math.abs(diffX) > SWIPE_MOVIMENTO_MIN && Math.abs(diffX) > Math.abs(diffY)) {
+        moved = true;
+        item.classList.add('swiping');
+        ev.preventDefault();
+        let finalX = diffX;
+        if (finalX > SWIPE_MAX) finalX = SWIPE_MAX + (finalX - SWIPE_MAX) * 0.3;
+        if (finalX < -SWIPE_MAX) finalX = -SWIPE_MAX + (finalX + SWIPE_MAX) * 0.3;
+        item.style.transform = `translateX(${finalX}px)`;
+      }
+    }
+
+    function onUp() {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      item.classList.remove('swiping');
+      if (moved) {
+        if (diffX > SWIPE_THRESHOLD) {
+          item.style.transform = `translateX(${SWIPE_MAX}px)`;
+        } else if (diffX < -SWIPE_THRESHOLD) {
+          item.style.transform = `translateX(-${SWIPE_MAX}px)`;
+        } else {
+          item.style.transform = 'translateX(0)';
+        }
+        // Bloqueia click fantasma
+        const blockClick = (ev) => {
+          ev.stopPropagation();
+          ev.preventDefault();
+          item.removeEventListener('click', blockClick, true);
+        };
+        item.addEventListener('click', blockClick, true);
+      }
+    }
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  }
+
+  // ================================================================
+  // DETALHES DO GASTO (modal)
+  // ================================================================
+  function abrirDetalhesGasto(id) {
+    const g = gastos.find(x => x.id === id);
+    if (!g) return;
+    const cor = corDa(g.categoria);
+    const pag = FORMAS_PAGAMENTO.find(f => f.valor === g.formaPagamento);
+    const c = g.cartao ? acharCartao(g.cartao) : null;
+
+    const linhas = [];
+    linhas.push(`<div style="font-size:0.85em; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Descrição</div>
+      <div style="font-size:1.15em; font-weight:700; margin-bottom:16px;">${escaparHTML(g.descricao)}</div>`);
+
+    linhas.push(`<div style="font-size:0.85em; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Valor</div>
+      <div style="font-size:1.6em; font-weight:800; color:#e53935; margin-bottom:16px;">${formatarMoeda(g.valor)}</div>`);
+
+    linhas.push(`<div style="font-size:0.85em; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Quando</div>
+      <div style="font-size:1em; margin-bottom:16px;">📅 ${formatarData(g.data)}/${g.data.substring(0,4)} · ${escaparHTML(g.usuario)}</div>`);
+
+    linhas.push(`<div style="font-size:0.85em; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Categoria</div>
+      <div style="margin-bottom:16px;">
+        <span class="tag" style="background:${cor};">${g.categoria}</span>
+        ${g.subcategoria ? `<span class="tag-sub">${escaparHTML(g.subcategoria)}</span>` : ''}
+      </div>`);
+
+    linhas.push(`<div style="font-size:0.85em; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Forma de pagamento</div>
+      <div style="font-size:1em; margin-bottom:16px;">
+        ${pag ? `${pag.emoji} ${pag.valor}` : '💵 Dinheiro/PIX'}
+        ${g.cartao ? ` · <strong>${escaparHTML(g.cartao)}</strong>` : ''}
+      </div>`);
+
+    if (g.parcelaTotal) {
+      linhas.push(`<div style="font-size:0.85em; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Parcela</div>
+        <div style="font-size:1em; margin-bottom:16px;">${g.parcelaAtual}/${g.parcelaTotal}${g.valorTotalCompra ? ' · Total: ' + formatarMoeda(g.valorTotalCompra) : ''}</div>`);
+    }
+
+    if (g.formaPagamento === 'Cartão Crédito' && g.mesFatura) {
+      linhas.push(`<div style="font-size:0.85em; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Vencimento da fatura</div>
+        <div style="font-size:1em; margin-bottom:16px;">📅 ${nomeMesLongo(g.mesFatura)}</div>`);
+    }
+
+    if (g.observacao) {
+      linhas.push(`<div style="font-size:0.85em; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Observações</div>
+        <div style="font-size:0.95em; margin-bottom:16px; white-space:pre-wrap; color:#555;">${escaparHTML(g.observacao)}</div>`);
+    }
+
+    document.getElementById('detalhesGastoTitulo').textContent = '📌 Detalhes do lançamento';
+    document.getElementById('detalhesGastoCorpo').innerHTML = linhas.join('') + `
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
+        <button onclick="fecharDetalhesGasto(); abrirEditarGasto('${g.id}')" style="padding:14px; background:#ff9800;">✏️ Editar</button>
+        <button onclick="fecharDetalhesGasto(); removerGasto('${g.id}')" style="padding:14px; background:#e53935;">🗑️ Excluir</button>
+      </div>
+    `;
+    document.getElementById('modalDetalhesGasto').classList.add('visivel');
+  }
+
+  function fecharDetalhesGasto() {
+    document.getElementById('modalDetalhesGasto').classList.remove('visivel');
+  }
+
+  // ================================================================
+  // EDITAR GASTO (modal)
+  // ================================================================
+  function abrirEditarGasto(id) {
+    const g = gastos.find(x => x.id === id);
+    if (!g) return;
+    document.getElementById('editGastoId').value = g.id;
+    document.getElementById('editGastoValor').value = g.valor;
+    document.getElementById('editGastoDescricao').value = g.descricao;
+    document.getElementById('editGastoUsuario').value = g.usuario;
+    document.getElementById('editGastoPagamento').value = g.formaPagamento || 'Dinheiro/PIX';
+    document.getElementById('editGastoData').value = g.data;
+    document.getElementById('editGastoObservacao').value = g.observacao || '';
+
+    // Popula categorias
+    const selCat = document.getElementById('editGastoCategoria');
+    selCat.innerHTML = categorias.map(c =>
+      `<option value="${c.nome}" ${c.nome === g.categoria ? 'selected' : ''}>${c.nome}</option>`
+    ).join('');
+    atualizarSubcategoriasEdicao();
+    // Seleciona a subcategoria correta
+    const selSub = document.getElementById('editGastoSubcategoria');
+    selSub.value = g.subcategoria || '';
+
+    document.getElementById('modalEditarGasto').classList.add('visivel');
+    setTimeout(() => document.getElementById('editGastoValor').focus(), 250);
+  }
+
+  function atualizarSubcategoriasEdicao() {
+    const cat = document.getElementById('editGastoCategoria').value;
+    const sel = document.getElementById('editGastoSubcategoria');
+    const c = acharCategoria(cat);
+    const subs = (c && c.subs) || ['Outros'];
+    sel.innerHTML = subs.map(s => `<option value="${s}">${s}</option>`).join('');
+  }
+
+  function fecharEditarGasto() {
+    document.getElementById('modalEditarGasto').classList.remove('visivel');
+  }
+
+  async function salvarEdicaoGasto() {
+    const id = document.getElementById('editGastoId').value;
+    const valor = parseFloat(document.getElementById('editGastoValor').value);
+    const descricao = document.getElementById('editGastoDescricao').value.trim();
+    const categoria = document.getElementById('editGastoCategoria').value;
+    const subcategoria = document.getElementById('editGastoSubcategoria').value;
+    const usuario = document.getElementById('editGastoUsuario').value;
+    const formaPagamento = document.getElementById('editGastoPagamento').value;
+    const data = document.getElementById('editGastoData').value;
+    const observacao = document.getElementById('editGastoObservacao').value.trim();
+
+    if (!valor || valor <= 0) { alert('Informe um valor válido.'); return; }
+    if (!descricao) { alert('Informe uma descrição.'); return; }
+    if (!data) { alert('Informe uma data.'); return; }
+
+    try {
+      const update = {
+        valor, descricao, categoria, subcategoria, usuario, formaPagamento, data, observacao,
+        mesFatura: data.substring(0, 7), // mantém simples — se for crédito, recalcular abaixo
+        atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      // Se for crédito com cartão, recalcula mês da fatura
+      const g = gastos.find(x => x.id === id);
+      if (g && formaPagamento === 'Cartão Crédito' && g.cartao && acharCartao(g.cartao)) {
+        update.mesFatura = calcularMesFatura(data, g.cartao);
+      }
+
+      await colecaoGastos().doc(id).update(update);
+      fecharEditarGasto();
+    } catch (e) {
+      alert('Erro ao salvar: ' + e.message);
+    }
   }
 
   function escaparHTML(s) {
-    return String(s || '').replace(/[&<>"']/g, c => ({
+    return String(s).replace(/[&<>"']/g, c => ({
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
     }[c]));
   }
@@ -3883,7 +4310,7 @@
   }
 
   async function adicionarGasto() {
-    if (!firebaseOK) { alert('Erro ao iniciar banco local.'); return; }
+    if (!firebaseOK) { alert('Firebase não está configurado.'); return; }
     const btn = document.getElementById('btnAdicionar');
     const usuario = document.getElementById('usuario').value;
     const descricao = document.getElementById('descricao').value.trim();
@@ -3910,7 +4337,7 @@
     }
 
     btn.disabled = true;
-    btn.textContent = 'Gravando...';
+    btn.textContent = 'Enviando...';
 
     try {
       const grupoId = 'g' + Date.now() + Math.random().toString(36).slice(2, 7);
@@ -3934,7 +4361,7 @@
             parcelaAtual: numParcelas > 1 ? i + 1 : null,
             parcelaTotal: numParcelas > 1 ? numParcelas : null,
             valorTotalCompra: numParcelas > 1 ? valor : null,
-            grupoId, criadoEm: new Date()
+            grupoId, criadoEm: firebase.firestore.FieldValue.serverTimestamp()
           });
         }
       } else {
@@ -3943,7 +4370,7 @@
           descricao, categoria, subcategoria, observacao,
           formaPagamento, cartao: null, valor,
           parcelaAtual: null, parcelaTotal: null, valorTotalCompra: null,
-          grupoId, criadoEm: new Date()
+          grupoId, criadoEm: firebase.firestore.FieldValue.serverTimestamp()
         });
       }
 
@@ -3952,11 +4379,7 @@
         const ref = colecaoGastos().doc();
         batch.set(ref, l);
       });
-
-      // Dispara o salvamento e não espera resposta da rede (funciona offline)
-      batch.commit().catch(e => {
-        console.error('Lançamento salvo localmente, aguardando conexão:', e);
-      });
+      await batch.commit();
 
       document.getElementById('valor').value = '';
       document.getElementById('descricao').value = '';
@@ -3966,13 +4389,13 @@
       atualizarPreviewParcelas();
       document.getElementById('valor').focus();
 
-      btn.disabled = false;
       btn.textContent = numParcelas > 1 ? `✓ ${numParcelas} parcelas criadas!` : '✓ Adicionado!';
       setTimeout(() => { btn.textContent = '✓ Adicionar Gasto'; }, 1400);
     } catch (e) {
       console.error(e);
       alert('Erro ao salvar: ' + e.message);
       btn.textContent = '✓ Adicionar Gasto';
+    } finally {
       btn.disabled = false;
     }
   }
@@ -4313,12 +4736,6 @@
     document.getElementById('mesReferencia').value = mesAtual;
     document.getElementById('mesFatura').value = mesAtual;
     iniciarFirebase();
-
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(regs => {
-        regs.forEach(r => r.update());
-      });
-    }
   };
 </script>
 </body>
