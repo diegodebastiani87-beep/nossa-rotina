@@ -2314,11 +2314,11 @@
     firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
 
-    // Ativa a persistência offline (permite lançar sem internet)
+    // Ativa a persistência offline
     db.enablePersistence({ synchronizeTabs: true })
       .catch((err) => {
         if (err.code === 'failed-precondition') {
-          console.warn('Persistência offline: múltiplas abas abertas. Use apenas uma aba para ter offline.');
+          console.warn('Persistência offline: múltiplas abas abertas.');
         } else if (err.code === 'unimplemented') {
           console.warn('Persistência offline: navegador não suporta.');
         }
@@ -2329,12 +2329,25 @@
     ouvirDadosCasa();
     ouvirGastos();
     ouvirEventos();
+    monitorarConexao();
   } catch (e) {
     console.error(e);
     atualizarStatus('offline', 'Erro');
   }
 }
 
+function monitorarConexao() {
+  function atualizar() {
+    if (navigator.onLine) {
+      atualizarStatus('online', 'Sincronizado');
+    } else {
+      atualizarStatus('offline', 'Offline (vai sincronizar)');
+    }
+  }
+  window.addEventListener('online', atualizar);
+  window.addEventListener('offline', atualizar);
+  atualizar();
+}
   function refDocCasa() { return db.collection('casas').doc(CASA_ID); }
   function colecaoGastos() { return refDocCasa().collection('gastos'); }
   function colecaoEventos() { return refDocCasa().collection('eventos'); }
@@ -2441,23 +2454,20 @@
   }
 
   function ouvirGastos() {
-    atualizarStatus('conectando', 'Conectando...');
-    colecaoGastos()
-      .orderBy('data', 'desc')
-      .onSnapshot(
-        snapshot => {
-          gastos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          atualizarStatus('online', 'Sincronizado');
-          reconstruirEstabelecimentos();
-          renderizar();
-          renderizarFaturas();
-        },
-        erro => {
-          console.error(erro);
-          atualizarStatus('offline', 'Erro');
-        }
-      );
-  }
+  colecaoGastos()
+    .orderBy('data', 'desc')
+    .onSnapshot(
+      snapshot => {
+        gastos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        reconstruirEstabelecimentos();
+        renderizar();
+        renderizarFaturas();
+      },
+      erro => {
+        console.error('Erro no listener de gastos:', erro);
+      }
+    );
+}
 
   function ouvirEventos() {
     colecaoEventos()
@@ -2472,12 +2482,12 @@
   }
 
   function atualizarStatus(tipo, texto) {
-    const el = document.getElementById('statusConexao');
-    el.classList.remove('online', 'offline');
-    if (tipo === 'online') el.classList.add('online');
-    if (tipo === 'offline') el.classList.add('offline');
-    document.getElementById('statusTexto').textContent = texto;
-  }
+  const el = document.getElementById('statusConexao');
+  el.classList.remove('online', 'offline');
+  if (tipo === 'online') el.classList.add('online');
+  if (tipo === 'offline') el.classList.add('offline');
+  document.getElementById('statusTexto').textContent = texto;
+}
 
   // ================================================================
   // CARTÕES (nova visualização com modal de edição)
