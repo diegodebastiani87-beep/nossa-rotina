@@ -404,10 +404,7 @@
   }
   .gasto-swipe-btn.excluir { background: #e53935; }
   .gasto-swipe-btn.editar { background: #ff9800; }
-  .gasto-swipe-btn .icone-swipe {
-    font-size: 1.6em;
-    line-height: 1;
-  }
+  .gasto-swipe-btn .icone-swipe { font-size: 1.6em; line-height: 1; }
 
   .gasto-swipe-item {
     position: relative;
@@ -423,61 +420,35 @@
     border-radius: 10px;
     border: 1px solid #f0f0f0;
   }
-  .gasto-swipe-item.swiping {
-    transition: none;
-  }
-
-  .gasto-swipe-item .info-principal {
-    flex: 1;
-    min-width: 0;
-  }
+  .gasto-swipe-item.swiping { transition: none; }
+  .gasto-swipe-item .info-principal { flex: 1; min-width: 0; }
   .gasto-swipe-item .desc-linha {
-    font-weight: 600;
-    font-size: 0.95em;
-    word-break: break-word;
-    color: #333;
-    margin-bottom: 4px;
+    font-weight: 600; font-size: 0.95em;
+    word-break: break-word; color: #333; margin-bottom: 4px;
   }
   .gasto-swipe-item .meta-linha {
-    font-size: 0.78em;
-    color: #888;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    align-items: center;
+    font-size: 0.78em; color: #888;
+    display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
   }
   .gasto-swipe-item .meta-linha .sep { color: #ccc; }
   .gasto-swipe-item .valor-linha {
-    text-align: right;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 4px;
+    text-align: right; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    align-items: flex-end; gap: 4px;
   }
   .gasto-swipe-item .valor-num {
-    font-weight: 700;
-    color: #e53935;
-    font-size: 1em;
-    white-space: nowrap;
+    font-weight: 700; color: #e53935;
+    font-size: 1em; white-space: nowrap;
   }
   .gasto-swipe-item .tags-linha {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    margin-top: 4px;
+    display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;
   }
 
   /* ============ CARTÕES ============ */
   .cartao-view {
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 14px 16px;
-    background: white;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
+    border: 1px solid #e0e0e0; border-radius: 12px;
+    padding: 14px 16px; background: white; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 14px;
     transition: border-color 0.15s, box-shadow 0.15s;
   }
   .cartao-view:hover {
@@ -485,111 +456,61 @@
     box-shadow: 0 2px 8px rgba(30,136,229,0.08);
   }
   .cartao-view .icone-cartao {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
+    width: 44px; height: 44px; border-radius: 10px;
     background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.4em;
-    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4em; flex-shrink: 0;
   }
-  .cartao-view .info-cartao {
-    flex: 1;
-    min-width: 0;
-  }
+  .cartao-view .info-cartao { flex: 1; min-width: 0; }
   .cartao-view .nome-cartao-view {
-    font-weight: 700;
-    font-size: 1em;
-    color: #1565c0;
-    margin-bottom: 4px;
-    word-break: break-word;
+    font-weight: 700; font-size: 1em;
+    color: #1565c0; margin-bottom: 4px; word-break: break-word;
   }
   .cartao-view .datas-cartao {
-    font-size: 0.8em;
-    color: #888;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    font-size: 0.8em; color: #888;
+    display: flex; flex-wrap: wrap; gap: 10px;
   }
   .cartao-view .datas-cartao .sep { color: #ccc; }
-  .cartao-view .acoes-cartao {
-    display: flex;
-    gap: 6px;
-    flex-shrink: 0;
-  }
+  .cartao-view .acoes-cartao { display: flex; gap: 6px; flex-shrink: 0; }
   .cartao-view .btn-edit-cartao {
-    background: #f5f5f5;
-    color: #1565c0;
-    border: none;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    font-size: 1em;
-    padding: 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: #f5f5f5; color: #1565c0; border: none;
+    width: 36px; height: 36px; border-radius: 10px;
+    font-size: 1em; padding: 0; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
     transition: background 0.15s;
   }
   .cartao-view .btn-edit-cartao:hover { background: #e3f2fd; }
   .cartao-view .btn-excluir-cartao {
-    background: #f5f5f5;
-    color: #e53935;
-    border: none;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    font-size: 1em;
-    padding: 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: #f5f5f5; color: #e53935; border: none;
+    width: 36px; height: 36px; border-radius: 10px;
+    font-size: 1em; padding: 0; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
     transition: background 0.15s;
   }
   .cartao-view .btn-excluir-cartao:hover { background: #ffebee; }
 
   /* ============ EMOJI PICKER ============ */
   .emoji-picker-btn {
-    background: #f5f5f5;
-    color: #333;
-    border: 1.5px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 10px;
-    font-size: 1.6em;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 48px;
-    transition: all 0.15s;
-    width: 100%;
+    background: #f5f5f5; color: #333;
+    border: 1.5px solid #e0e0e0; border-radius: 12px;
+    padding: 10px; font-size: 1.6em; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 48px; transition: all 0.15s; width: 100%;
   }
   .emoji-picker-btn:hover { background: #e3f2fd; border-color: #90caf9; }
   .emoji-picker-btn.vazio { color: #bbb; font-size: 1em; font-weight: 600; }
 
   .emoji-modal {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0,0,0,0.6);
-    z-index: 1100;
-    display: none;
-    align-items: flex-end;
-    justify-content: center;
+    z-index: 1100; display: none;
+    align-items: flex-end; justify-content: center;
   }
   .emoji-modal.visivel { display: flex; }
   .emoji-modal-conteudo {
-    background: white;
-    border-radius: 20px 20px 0 0;
-    width: 100%;
-    max-width: 700px;
-    max-height: 75vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    background: white; border-radius: 20px 20px 0 0;
+    width: 100%; max-width: 700px; max-height: 75vh;
+    overflow: hidden; display: flex; flex-direction: column;
     animation: slideUp 0.25s ease-out;
     padding-bottom: env(safe-area-inset-bottom);
   }
@@ -598,78 +519,45 @@
     to { transform: translateY(0); }
   }
   .emoji-modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 20px;
-    border-bottom: 1px solid #f0f0f0;
-    flex-shrink: 0;
+    display: flex; justify-content: space-between;
+    align-items: center; padding: 16px 20px;
+    border-bottom: 1px solid #f0f0f0; flex-shrink: 0;
   }
   .emoji-modal-header h3 { font-size: 1.05em; color: #1565c0; }
   .emoji-fechar {
-    background: #f5f5f5;
-    color: #666;
-    border: none;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    font-size: 1em;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: #f5f5f5; color: #666; border: none;
+    width: 34px; height: 34px; border-radius: 50%;
+    font-size: 1em; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
   }
   .emoji-fechar:hover { background: #ebebeb; color: #333; }
-
   .emoji-tabs {
-    display: flex;
-    gap: 4px;
-    padding: 10px 16px;
-    background: #fafafa;
-    overflow-x: auto;
+    display: flex; gap: 4px; padding: 10px 16px;
+    background: #fafafa; overflow-x: auto;
     border-bottom: 1px solid #f0f0f0;
-    flex-shrink: 0;
-    scrollbar-width: none;
+    flex-shrink: 0; scrollbar-width: none;
   }
   .emoji-tabs::-webkit-scrollbar { display: none; }
   .emoji-tab {
-    background: transparent;
-    border: none;
-    color: #666;
-    padding: 8px 14px;
-    border-radius: 10px;
-    font-size: 0.85em;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
-    width: auto;
-    transition: all 0.15s;
+    background: transparent; border: none; color: #666;
+    padding: 8px 14px; border-radius: 10px;
+    font-size: 0.85em; font-weight: 600; cursor: pointer;
+    white-space: nowrap; width: auto; transition: all 0.15s;
   }
   .emoji-tab.ativa { background: #1e88e5; color: white; }
   .emoji-tab:hover:not(.ativa) { background: #ebebeb; }
-
   .emoji-grid {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 4px;
-    padding: 12px 16px 24px;
-    overflow-y: auto;
-    flex: 1;
+    display: grid; grid-template-columns: repeat(8, 1fr);
+    gap: 4px; padding: 12px 16px 24px;
+    overflow-y: auto; flex: 1;
   }
   .emoji-item {
-    background: transparent;
-    border: none;
-    padding: 6px;
-    border-radius: 8px;
-    font-size: 1.6em;
-    cursor: pointer;
+    background: transparent; border: none;
+    padding: 6px; border-radius: 8px;
+    font-size: 1.6em; cursor: pointer;
     transition: background 0.1s, transform 0.1s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    aspect-ratio: 1;
-    line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    aspect-ratio: 1; line-height: 1;
   }
   .emoji-item:hover { background: #f0f4f8; }
   .emoji-item:active { transform: scale(0.9); }
@@ -750,14 +638,9 @@
 
   /* ============ PESSOAS ============ */
   .pessoa-view {
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 12px 14px;
-    background: white;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    border: 1px solid #e0e0e0; border-radius: 12px;
+    padding: 12px 14px; background: white; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 12px;
     transition: border-color 0.15s, box-shadow 0.15s;
   }
   .pessoa-view:hover {
@@ -765,58 +648,29 @@
     box-shadow: 0 2px 8px rgba(30,136,229,0.08);
   }
   .pessoa-view .emoji-pessoa {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background: #f3e5f5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5em;
-    flex-shrink: 0;
+    width: 44px; height: 44px; border-radius: 12px;
+    background: #f3e5f5; display: flex;
+    align-items: center; justify-content: center;
+    font-size: 1.5em; flex-shrink: 0;
   }
   .pessoa-view .nome-pessoa {
-    flex: 1;
-    font-weight: 600;
-    font-size: 1em;
-    color: #333;
-    min-width: 0;
-    word-break: break-word;
+    flex: 1; font-weight: 600; font-size: 1em;
+    color: #333; min-width: 0; word-break: break-word;
   }
-  .pessoa-view .acoes-pessoa {
-    display: flex;
-    gap: 6px;
-    flex-shrink: 0;
-  }
+  .pessoa-view .acoes-pessoa { display: flex; gap: 6px; flex-shrink: 0; }
   .pessoa-view .btn-edit-pessoa {
-    background: #f5f5f5;
-    color: #1565c0;
-    border: none;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    font-size: 1em;
-    padding: 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: #f5f5f5; color: #1565c0; border: none;
+    width: 36px; height: 36px; border-radius: 10px;
+    font-size: 1em; padding: 0; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
     transition: background 0.15s;
   }
   .pessoa-view .btn-edit-pessoa:hover { background: #e3f2fd; }
   .pessoa-view .btn-excluir-pessoa {
-    background: #f5f5f5;
-    color: #e53935;
-    border: none;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    font-size: 1em;
-    padding: 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: #f5f5f5; color: #e53935; border: none;
+    width: 36px; height: 36px; border-radius: 10px;
+    font-size: 1em; padding: 0; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
     transition: background 0.15s;
   }
   .pessoa-view .btn-excluir-pessoa:hover { background: #ffebee; }
@@ -926,45 +780,29 @@
   }
 
   .agenda-filtro-pessoa {
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    padding: 4px 2px 10px;
-    margin-bottom: 8px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    display: flex; gap: 6px; overflow-x: auto;
+    padding: 4px 2px 10px; margin-bottom: 8px;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
   }
   .agenda-filtro-pessoa::-webkit-scrollbar { display: none; }
   .chip-pessoa {
-    background: white;
-    border: 1.5px solid #e0e0e0;
-    border-radius: 20px;
-    padding: 7px 14px;
-    font-size: 0.82em;
-    font-weight: 600;
-    color: #555;
-    cursor: pointer;
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    transition: all 0.15s;
-    flex-shrink: 0;
+    background: white; border: 1.5px solid #e0e0e0;
+    border-radius: 20px; padding: 7px 14px;
+    font-size: 0.82em; font-weight: 600; color: #555;
+    cursor: pointer; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 5px;
+    transition: all 0.15s; flex-shrink: 0;
   }
   .chip-pessoa:hover { border-color: #90caf9; background: #f5faff; }
   .chip-pessoa.ativa {
-    background: #1e88e5;
-    color: white;
-    border-color: #1e88e5;
+    background: #1e88e5; color: white; border-color: #1e88e5;
     box-shadow: 0 2px 6px rgba(30,136,229,0.3);
   }
   .chip-pessoa .emoji-chip { font-size: 1.1em; }
 
   .agenda-card-hoje {
     background: linear-gradient(135deg, #ff9800, #f57c00);
-    color: white;
-    border-radius: 14px;
-    padding: 16px 18px;
+    color: white; border-radius: 14px; padding: 16px 18px;
     margin-bottom: 14px;
     box-shadow: 0 4px 10px rgba(245,124,0,0.3);
   }
@@ -981,55 +819,34 @@
     font-size: 0.85em; opacity: 0.95; margin-top: 4px;
   }
   .agenda-card-hoje .proximo-evento {
-    margin-top: 12px;
-    padding-top: 12px;
+    margin-top: 12px; padding-top: 12px;
     border-top: 1px solid rgba(255,255,255,0.3);
     font-size: 0.9em;
   }
   .agenda-card-hoje .proximo-evento .rotulo-prox {
-    font-size: 0.8em;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    opacity: 0.85;
-    margin-bottom: 6px;
+    font-size: 0.8em; text-transform: uppercase;
+    letter-spacing: 0.5px; opacity: 0.85; margin-bottom: 6px;
   }
   .agenda-card-hoje .proximo-evento .linha-prox {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    display: flex; align-items: center; gap: 10px;
   }
   .agenda-card-hoje .proximo-evento .quando-prox {
     background: rgba(255,255,255,0.25);
-    padding: 4px 10px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 0.85em;
-    white-space: nowrap;
-    text-align: center;
-    min-width: 60px;
+    padding: 4px 10px; border-radius: 8px;
+    font-weight: 700; font-size: 0.85em;
+    white-space: nowrap; text-align: center; min-width: 60px;
   }
   .agenda-card-hoje .proximo-evento .quando-prox .dia-curto {
-    font-size: 0.75em;
-    opacity: 0.9;
-    display: block;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
+    font-size: 0.75em; opacity: 0.9; display: block;
+    text-transform: uppercase; letter-spacing: 0.3px;
   }
-  .agenda-card-hoje .proximo-evento .info-prox {
-    flex: 1;
-    min-width: 0;
-  }
+  .agenda-card-hoje .proximo-evento .info-prox { flex: 1; min-width: 0; }
   .agenda-card-hoje .proximo-evento .titulo-prox {
-    font-weight: 700;
-    font-size: 1em;
-    margin-bottom: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-weight: 700; font-size: 1em; margin-bottom: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .agenda-card-hoje .proximo-evento .meta-prox {
-    font-size: 0.82em;
-    opacity: 0.9;
+    font-size: 0.82em; opacity: 0.9;
   }
 
   .agenda-dia { margin-bottom: 16px; }
@@ -1059,17 +876,13 @@
   .agenda-item:hover { background: #fafafa; }
 
   .agenda-item.passado {
-    background: #f8f8f8;
-    border-color: #e8e8e8;
-    filter: grayscale(0.85);
-    opacity: 0.72;
+    background: #f8f8f8; border-color: #e8e8e8;
+    filter: grayscale(0.85); opacity: 0.72;
   }
   .agenda-item.passado .hora-col .hora { color: #999; }
   .agenda-item.passado .hora-col .dia-semana {
-    background: #e0e0e0;
-    color: #777;
-    border-radius: 4px;
-    padding: 1px 4px;
+    background: #e0e0e0; color: #777;
+    border-radius: 4px; padding: 1px 4px;
   }
   .agenda-item.passado .titulo-evt { color: #888; }
   .agenda-item.passado .meta-evt { color: #999; }
@@ -1079,21 +892,11 @@
     border-color: #ddd !important;
   }
   .agenda-item .btn-remover-evt {
-    background: #e53935;
-    color: white;
-    border: none;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    font-size: 0.8em;
-    cursor: pointer;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 2px;
-    padding: 0;
-    transition: background 0.15s;
+    background: #e53935; color: white; border: none;
+    width: 30px; height: 30px; border-radius: 50%;
+    font-size: 0.8em; cursor: pointer; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 2px; padding: 0; transition: background 0.15s;
     line-height: 1;
   }
   .agenda-item .btn-remover-evt:hover { background: #c62828; }
@@ -1115,19 +918,16 @@
   .agenda-item .conteudo { flex: 1; min-width: 0; }
   .agenda-item .titulo-evt {
     font-weight: 700; font-size: 0.98em;
-    color: #333; margin-bottom: 4px;
-    word-break: break-word;
+    color: #333; margin-bottom: 4px; word-break: break-word;
   }
   .agenda-item .meta-evt {
     font-size: 0.8em; color: #666;
     display: flex; flex-wrap: wrap;
-    gap: 8px; align-items: center;
-    margin-bottom: 4px;
+    gap: 8px; align-items: center; margin-bottom: 4px;
   }
   .agenda-item .meta-evt .sep { color: #ccc; }
   .agenda-item .tags-evt {
-    display: flex; flex-wrap: wrap;
-    gap: 4px; margin-top: 4px;
+    display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;
   }
 
   .tag-agenda {
@@ -1144,8 +944,7 @@
   .tag-tipo-familia { background: #fff8e1; color: #795548; }
   .tag-tipo-outros { background: #f5f5f5; color: #666; }
   .tag-remarcado {
-    background: #fff3e0;
-    color: #e65100;
+    background: #fff3e0; color: #e65100;
     border: 1px solid #ffb74d;
   }
 
@@ -1205,10 +1004,7 @@
     top: 0; right: 2px;
     font-size: 0.7em;
   }
-  .semana-evt.passado {
-    filter: grayscale(0.85);
-    opacity: 0.65;
-  }
+  .semana-evt.passado { filter: grayscale(0.85); opacity: 0.65; }
   .semana-evt.tipo-consulta { border-color: #42a5f5; background: #e3f2fd; }
   .semana-evt.tipo-exame { border-color: #66bb6a; background: #e8f5e9; color: #1b5e20; }
   .semana-evt.tipo-remedio { border-color: #ffa726; background: #fff3e0; color: #e65100; }
@@ -1261,15 +1057,11 @@
   .agenda-pessoa-header .count-p {
     font-size: 0.8em;
     background: rgba(106,27,154,0.15);
-    padding: 3px 10px;
-    border-radius: 10px;
-    font-weight: 700;
+    padding: 3px 10px; border-radius: 10px; font-weight: 700;
   }
   .agenda-pessoa-header .seta-p {
-    color: #6a1b9a;
-    font-size: 0.85em;
-    transition: transform 0.25s;
-    margin-left: 2px;
+    color: #6a1b9a; font-size: 0.85em;
+    transition: transform 0.25s; margin-left: 2px;
   }
   .agenda-pessoa-bloco.aberto .agenda-pessoa-header .seta-p {
     transform: rotate(90deg);
@@ -1278,35 +1070,25 @@
   .agenda-pessoa-bloco.aberto .agenda-pessoa-corpo { display: block; }
   .agenda-pessoa-corpo .agenda-item {
     border-left: none; border-right: none;
-    border-top: 1px solid #f0e8f5;
-    border-radius: 0;
+    border-top: 1px solid #f0e8f5; border-radius: 0;
   }
   .agenda-pessoa-corpo .agenda-item:last-child { border-radius: 0; }
 
   .box-remarcacoes {
-    background: #fff8e1;
-    border: 1px solid #ffe082;
-    border-radius: 12px;
-    padding: 12px;
-    margin-top: 6px;
-    margin-bottom: 16px;
+    background: #fff8e1; border: 1px solid #ffe082;
+    border-radius: 12px; padding: 12px;
+    margin-top: 6px; margin-bottom: 16px;
   }
   .box-remarcacoes .titulo-hist {
-    font-size: 0.82em;
-    font-weight: 700;
-    color: #e65100;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    margin-bottom: 10px;
+    font-size: 0.82em; font-weight: 700;
+    color: #e65100; text-transform: uppercase;
+    letter-spacing: 0.3px; margin-bottom: 10px;
     display: flex; align-items: center; gap: 6px;
   }
   .remarcacao-item {
-    background: white;
-    border-radius: 8px;
-    padding: 10px 12px;
-    margin-bottom: 8px;
-    font-size: 0.82em;
-    border-left: 3px solid #ffb74d;
+    background: white; border-radius: 8px;
+    padding: 10px 12px; margin-bottom: 8px;
+    font-size: 0.82em; border-left: 3px solid #ffb74d;
   }
   .remarcacao-item:last-child { margin-bottom: 0; }
   .remarcacao-item .de-para {
@@ -1317,11 +1099,8 @@
     display: flex; align-items: center; gap: 6px; color: #555;
   }
   .remarcacao-item .de-para .rotulo {
-    font-size: 0.75em;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    font-weight: 700;
-    min-width: 36px;
+    font-size: 0.75em; text-transform: uppercase;
+    letter-spacing: 0.3px; font-weight: 700; min-width: 36px;
   }
   .remarcacao-item .de-para .rotulo-de { color: #999; }
   .remarcacao-item .de-para .rotulo-para { color: #2e7d32; }
@@ -1339,28 +1118,18 @@
   }
 
   .aviso-remarcando {
-    background: #fff3e0;
-    border-left: 4px solid #ff9800;
-    padding: 10px 12px;
-    border-radius: 8px;
-    margin-bottom: 12px;
-    font-size: 0.85em;
-    color: #e65100;
-    line-height: 1.5;
+    background: #fff3e0; border-left: 4px solid #ff9800;
+    padding: 10px 12px; border-radius: 8px;
+    margin-bottom: 12px; font-size: 0.85em;
+    color: #e65100; line-height: 1.5;
   }
   .aviso-remarcando strong { color: #bf360c; }
 
   .btn-excluir-modal {
-    background: #e53935;
-    color: white;
-    border: none;
-    margin-top: 10px;
-    padding: 14px;
-    width: 100%;
-    font-size: 1em;
-    font-weight: 700;
-    border-radius: 12px;
-    cursor: pointer;
+    background: #e53935; color: white; border: none;
+    margin-top: 10px; padding: 14px; width: 100%;
+    font-size: 1em; font-weight: 700;
+    border-radius: 12px; cursor: pointer;
     transition: background 0.2s;
   }
   .btn-excluir-modal:hover { background: #c62828; }
@@ -2357,6 +2126,7 @@
       renderizarFaturas();
     }
     if (nome === 'agenda') renderizarAgenda();
+    if (nome === 'lancar') renderizarUltimos();
     document.getElementById('tituloApp').textContent = nome === 'agenda'
       ? '📅 Nossa Rotina'
       : '💰 Nossa Rotina';
@@ -2609,6 +2379,7 @@
           reconstruirEstabelecimentos();
           renderizar();
           renderizarFaturas();
+          renderizarUltimos(); // ← CORRIGIDO: garante atualização da lista de últimos
         },
         erro => {
           console.error(erro);
@@ -3955,13 +3726,6 @@
     }).join('');
   }
 
-  /**
-   * Lista de lançamentos LIMPA:
-   * - Sem tag de forma de pagamento nem vencimento do cartão
-   * - Só: descrição, data/quem, categoria/sub e valor
-   * - Swipe: ← esquerda = editar | direita → = excluir
-   * - Toque = abre modal de detalhes com tudo
-   */
   function renderizarLista(lista) {
     lista = [...lista].sort((a, b) => (b.data || '').localeCompare(a.data || ''));
     const wrap = document.getElementById('listaGastosWrap');
@@ -3973,8 +3737,6 @@
       const cor = corDa(g.categoria);
       const sub = g.subcategoria || '';
       const subTag = sub ? `<span class="tag-sub">${escaparHTML(sub)}</span>` : '';
-      const cartaoInfo = g.cartao ? ` · ${escaparHTML(g.cartao)}` : '';
-      const parcelaTag = g.parcelaTotal ? ` · ${g.parcelaAtual}/${g.parcelaTotal}` : '';
 
       return `
         <div class="gasto-swipe-container">
@@ -4016,12 +3778,12 @@
   }
 
   // ================================================================
-  // SWIPE nos lançamentos
+  // SWIPE
   // ================================================================
   let swipeState = null;
   const SWIPE_THRESHOLD = 80;
   const SWIPE_MAX = 110;
-  const SWIPE_MOVIMENTO_MIN = 10; // px para considerar swipe (evita ativar em scroll)
+  const SWIPE_MOVIMENTO_MIN = 10;
 
   function ativarSwipeGastos() {
     document.querySelectorAll('.gasto-swipe-item').forEach(item => {
@@ -4029,7 +3791,6 @@
       item.addEventListener('touchmove', onSwipeMove, { passive: false });
       item.addEventListener('touchend', onSwipeEnd);
       item.addEventListener('touchcancel', onSwipeEnd);
-      // Mouse (desktop)
       item.addEventListener('mousedown', onSwipeStartMouse);
     });
   }
@@ -4052,7 +3813,6 @@
     const diffX = touch.clientX - swipeState.startX;
     const diffY = touch.clientY - swipeState.startY;
 
-    // Detecta direção predominante na primeira movimentação relevante
     if (!swipeState.lockedDirection) {
       if (Math.abs(diffX) > SWIPE_MOVIMENTO_MIN && Math.abs(diffX) > Math.abs(diffY)) {
         swipeState.lockedDirection = 'horizontal';
@@ -4068,7 +3828,6 @@
     swipeState.diffX = diffX;
     swipeState.item.classList.add('swiping');
 
-    // Limita o deslocamento
     let finalX = diffX;
     if (finalX > SWIPE_MAX) finalX = SWIPE_MAX + (finalX - SWIPE_MAX) * 0.3;
     if (finalX < -SWIPE_MAX) finalX = -SWIPE_MAX + (finalX + SWIPE_MAX) * 0.3;
@@ -4082,21 +3841,16 @@
     const diffX = swipeState.diffX;
     item.classList.remove('swiping');
 
-    // Se passou do threshold, mantém aberto (ou executa direto se passar mais)
     if (diffX > SWIPE_THRESHOLD) {
-      // Arrastou para DIREITA → mantém aberto mostrando Excluir
       item.style.transform = `translateX(${SWIPE_MAX}px)`;
     } else if (diffX < -SWIPE_THRESHOLD) {
-      // Arrastou para ESQUERDA → mantém aberto mostrando Editar
       item.style.transform = `translateX(-${SWIPE_MAX}px)`;
     } else {
-      // Volta ao normal
       item.style.transform = 'translateX(0)';
     }
     swipeState = null;
   }
 
-  // Fecha o swipe aberto ao clicar em outro lugar
   document.addEventListener('click', (e) => {
     if (e.target.closest('.gasto-swipe-item')) return;
     document.querySelectorAll('.gasto-swipe-item').forEach(item => {
@@ -4106,10 +3860,8 @@
     });
   });
 
-  // Suporte básico de mouse (opcional, para teste no desktop)
   function onSwipeStartMouse(e) {
     if (e.button !== 0) return;
-    // Desativa drag padrão
     const item = e.currentTarget;
     const startX = e.clientX;
     const startY = e.clientY;
@@ -4143,7 +3895,6 @@
         } else {
           item.style.transform = 'translateX(0)';
         }
-        // Bloqueia click fantasma
         const blockClick = (ev) => {
           ev.stopPropagation();
           ev.preventDefault();
@@ -4158,14 +3909,13 @@
   }
 
   // ================================================================
-  // DETALHES DO GASTO (modal)
+  // DETALHES DO GASTO
   // ================================================================
   function abrirDetalhesGasto(id) {
     const g = gastos.find(x => x.id === id);
     if (!g) return;
     const cor = corDa(g.categoria);
     const pag = FORMAS_PAGAMENTO.find(f => f.valor === g.formaPagamento);
-    const c = g.cartao ? acharCartao(g.cartao) : null;
 
     const linhas = [];
     linhas.push(`<div style="font-size:0.85em; color:#666; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Descrição</div>
@@ -4219,7 +3969,7 @@
   }
 
   // ================================================================
-  // EDITAR GASTO (modal)
+  // EDITAR GASTO
   // ================================================================
   function abrirEditarGasto(id) {
     const g = gastos.find(x => x.id === id);
@@ -4232,13 +3982,11 @@
     document.getElementById('editGastoData').value = g.data;
     document.getElementById('editGastoObservacao').value = g.observacao || '';
 
-    // Popula categorias
     const selCat = document.getElementById('editGastoCategoria');
     selCat.innerHTML = categorias.map(c =>
       `<option value="${c.nome}" ${c.nome === g.categoria ? 'selected' : ''}>${c.nome}</option>`
     ).join('');
     atualizarSubcategoriasEdicao();
-    // Seleciona a subcategoria correta
     const selSub = document.getElementById('editGastoSubcategoria');
     selSub.value = g.subcategoria || '';
 
@@ -4276,11 +4024,10 @@
     try {
       const update = {
         valor, descricao, categoria, subcategoria, usuario, formaPagamento, data, observacao,
-        mesFatura: data.substring(0, 7), // mantém simples — se for crédito, recalcular abaixo
+        mesFatura: data.substring(0, 7),
         atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
       };
 
-      // Se for crédito com cartão, recalcula mês da fatura
       const g = gastos.find(x => x.id === id);
       if (g && formaPagamento === 'Cartão Crédito' && g.cartao && acharCartao(g.cartao)) {
         update.mesFatura = calcularMesFatura(data, g.cartao);
@@ -4309,6 +4056,9 @@
       : btn.textContent.replace('▾', '▸');
   }
 
+  // ================================================================
+  // ADICIONAR GASTO — agora LIMPA E RESETA TUDO após salvar
+  // ================================================================
   async function adicionarGasto() {
     if (!firebaseOK) { alert('Firebase não está configurado.'); return; }
     const btn = document.getElementById('btnAdicionar');
@@ -4381,12 +4131,34 @@
       });
       await batch.commit();
 
+      // ===== LIMPEZA COMPLETA DO FORMULÁRIO =====
       document.getElementById('valor').value = '';
       document.getElementById('descricao').value = '';
       document.getElementById('observacao').value = '';
       document.getElementById('observacaoCredito').value = '';
       document.getElementById('parcelas').value = '1';
+
+      // Reseta a forma de pagamento para Dinheiro/PIX
+      selecionarPagamento('Dinheiro/PIX');
+
+      // Reseta a categoria para a primeira e atualiza subcategorias
+      if (categorias.length > 0) {
+        document.getElementById('categoria').value = categorias[0].nome;
+        atualizarSubcategorias();
+      }
+
+      // Reseta data para hoje
+      const hoje = new Date();
+      document.getElementById('data').value = hoje.toISOString().split('T')[0];
+      document.getElementById('dataCompraCredito').value = hoje.toISOString().split('T')[0];
+
+      // Limpa o preview de parcelas
       atualizarPreviewParcelas();
+
+      // Fecha qualquer sugestão aberta
+      fecharSugestoes();
+
+      // Foca de novo no valor
       document.getElementById('valor').focus();
 
       btn.textContent = numParcelas > 1 ? `✓ ${numParcelas} parcelas criadas!` : '✓ Adicionado!';
