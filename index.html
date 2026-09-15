@@ -2376,20 +2376,6 @@ function monitorarConexao() {
   testar();
   setInterval(testar, 20000);
 }
-function monitorarConexao() {
- {
-    const el = document.getElementById('statusConexao');
-    const txt = document.getElementById('statusTexto');
-    el.classList.remove('online', 'offline');
-    if (fromCache) {
-      el.classList.add('offline');
-      txt.textContent = 'Offline (vai sincronizar)';
-    } else {
-      el.classList.add('online');
-      txt.textContent = 'Sincronizado';
-    }
-  };
-}
   function refDocCasa() { return db.collection('casas').doc(CASA_ID); }
   function colecaoGastos() { return refDocCasa().collection('gastos'); }
   function colecaoEventos() { return refDocCasa().collection('eventos'); }
