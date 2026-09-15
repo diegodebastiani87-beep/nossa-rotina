@@ -365,7 +365,6 @@
   .mes-selector input { flex: 1; min-width: 140px; }
   .mes-selector button { width: auto; padding: 12px 16px; }
 
-  /* ==================== CARTÕES (nova visualização) ==================== */
   .cartao-view {
     border: 1px solid #e0e0e0;
     border-radius: 12px;
@@ -449,7 +448,6 @@
   }
   .cartao-view .btn-excluir-cartao:hover { background: #ffebee; }
 
-  /* ==================== SELETOR DE EMOJIS ==================== */
   .emoji-picker-btn {
     background: #f5f5f5;
     color: #333;
@@ -651,7 +649,6 @@
   .nova-cat-form .linha-cor { display: flex; gap: 10px; align-items: end; }
   .nova-cat-form input[type="color"] { width: 60px; height: 48px; padding: 4px; cursor: pointer; }
 
-  /* ==================== PESSOAS ==================== */
   .pessoa-view {
     border: 1px solid #e0e0e0;
     border-radius: 12px;
@@ -813,7 +810,6 @@
   }
   .est-info .sep { color: #ccc; }
 
-  /* ============ AGENDA ============ */
   .agenda-visao-chips {
     display: flex; gap: 6px; background: #f5f5f5;
     padding: 5px; border-radius: 12px; margin-bottom: 10px;
@@ -2039,7 +2035,6 @@
     { valor: "Outros",   emoji: "📌", classe: "tag-tipo-outros" }
   ];
 
-  // ============ EMOJIS ORGANIZADOS POR CATEGORIA ============
   const EMOJIS_CATEGORIAS = {
     "Pessoas": [
       "👨","👩","👦","👧","👴","👵","👶","🧑","👱","👱‍♀️","👨‍🦰","👩‍🦰","👨‍🦱","👩‍🦱","👨‍🦳","👩‍🦳","👨‍🦲","👩‍🦲",
@@ -2053,7 +2048,7 @@
     "Animais": [
       "🐶","🐱","🐭","🐹","🐰","🦊","🐻","🐼","🐨","🐯","🦁","🐮","🐷","🐸","🐵","🐔","🐧","🐦","🐤","🦆","🦅","🦉",
       "🦇","🐺","🐗","🐴","🦄","🐝","🐛","🦋","🐌","🐞","🐜","🕷","🦂","🐢","🐍","🦎","🦖","🦕","🐙","🦑","🦐","🦀",
-      "🐡","🐠","🐟","🐬","🐳","🐋","🦈","🐊","🐅","🐆","🦓","🦍","🦧","🐘","🦛","🦏","🐪","🐫","🦒","🦘","🐃","🐂",
+      "🐡","🐠","🐟","🐬","🐳","🐋","🦈","🐊","🐅","🐆","ZEBRA","🦍","🦧","🐘","🦛","🦏","🐪","🐫","🦒","🦘","🐃","🐂",
       "🐄","🐎","🐖","🐏","🐑","🦙","🐐","🦌","🐕","🐩","🦮","🐕‍🦺","🐈","🐓","🦃","🦚","🦜","🦢","🦩","🕊","🐇","🦝",
       "🦨","🦡","🦦","🦥","🐁","🐀","🐿","🦔"
     ],
@@ -2068,14 +2063,14 @@
       "⚽","🏀","🏈","⚾","🥎","🎾","🏐","🏉","🥏","🎱","🪀","🏓","🏸","🏒","🏑","🥍","🏏","🪃","🥅","⛳","🪁",
       "🏹","🎣","🤿","🥊","🥋","🎽","🛹","🛼","🛷","⛸","🥌","🎿","⛷","🏂","🪂","🏋️","🤼","🤸","⛹️","🤺","🤾",
       "🏌️","🏇","🧘","🏄","🏊","🤽","🚣","🧗","🚵","🚴","🏆","🥇","🥈","🥉","🏅","🎖","🏵","🎗","🎫","🎟","🎪",
-      "🤹","🎭","🩰","🎨","🎬","🎤","🎧","🎼","🎹","🥁","🎷","🎺","🎸","🪕","🎻","🎲","♟","🎯","🎳","🎮","🎰","🧩"
+      "🤹","🎭","🩰","🎨","🎬","🎤","🎧","🎼","🎹","🥁","🎷","🎺","🎸","🪕","🎻","🎲","♟","🎯"," bowling","🎮","🎰","🧩"
     ],
     "Objetos": [
       "⌚","📱","📲","💻","⌨️","🖥","🖨","🖱","🖲","🕹","🗜","💽","💾","💿","📀","📼","📷","📸","📹","🎥","📽",
       "🎞","📞","☎️","📟","📠","📺","📻","🎙","🎚","🎛","🧭","⏱","⏲","⏰","🕰","⌛","⏳","📡","🔋","🔌","💡",
       "🔦","🕯","🪔","🧯","🛢","💸","💵","💴","💶","💷","💰","💳","💎","⚖️","🧰","🔧","🔨","⚒","🛠","⛏","🪓",
-      "🔩","⚙️","🧱","⛓","🧲","🔫","💣","🧨","🪓","🔪","🗡","⚔️","🛡","🚬","⚰️","🪦","⚱️","🏺","🔮","📿","🧿",
-      "💈","⚗️","🔭","🔬","🕳","🩹","🩺","💊","💉","🩸","🧬","🦠","🧫","🧪","🌡","🧹","🧺","🧻","🚽","🚰","🚿",
+      "🔩","⚙️","🧱","⛓","🧲","🔫","💣","🧨","🔪","🗡","⚔️","🛡","🚬","⚰️","🪦","⚱️","🏺","🔮","📿","🧿",
+      "💈","⚗️","🔭","🔬","🕳","🩹","🩺","💊","💉","🩸","🧬","🦠","🧫","🧪","🌡","🧹","🧺","🧻","🚽","🚰"," shower",
       "🛁","🛀","🧼","🪒","🧽","🧴","🛎","🔑","🗝","🚪","🪑","🛋","🛏","🛌","🧸","🖼","🛍","🛒","🎁","🎈","🎏",
       "🎀","🎊","🎉","🎎","🏮","🎐","🧧","✉️","📩","📨","📧","💌","📥","📤","📦","🏷","📪","📫","📬","📭","📮",
       "📯","📜","📃","📄","📑","📊","📈","📉","🗒","🗓","📆","📅","🗑","📇","🗃","🗳","🗄","📋","📁","📂","🗂",
@@ -2092,20 +2087,11 @@
       "🛄","🛅","🚹","🚺","🚼","🚻","🚮","🎦","📶","🈁","🔣","ℹ️","🔤","🔡","🔠","🆖","🆗","🆙","🆒","🆕","🆓",
       "0️⃣","1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣","9️⃣","🔟","🔢","#️⃣","*️⃣","⏏️","▶️","⏸","⏯","⏹",
       "⏺","⏭","⏮","⏩","⏪","⏫","⏬","◀️","🔼","🔽","➡️","⬅️","⬆️","⬇️","↗️","↘️","↙️","↖️","↕️","↔️"
-    ],
-    "Objetos 2": [
-      "🚗","🚕","🚙","🚌","🚎","🏎","🚓","🚑","🚒","🚐","🚚","🚛","🚜","🦯","🦽","🦼","🛴","🚲","🛵","🏍","🛺",
-      "🚨","🚔","🚍","🚘","🚖","🚡","🚠","🚟","🚃","🚋","🚞","🚝","🚄","🚅","🚈","🚂","🚆","🚇","🚊","🚉",
-      "✈️","🛫","🛬","🛩","💺","🛰","🚀","🛸","🚁","🛶","⛵","🚤","🛥","🛳","⛴","🚢","⚓","⛽","🚧","🚦",
-      "🚥","🚏","🗺","🗿","🗽","🗼","🏰","🏯","🏟","🎡","🎢","🎠","⛲","⛱","🏖","🏝","🏜","🌋","⛰","🏔","🗻",
-      "🏕","⛺","🏠","🏡","🏘","🏚","🏗","🏭","🏢","🏬","🏣","🏤","🏥","🏦","🏨","🏪","🏫","🏩","💒","🏛","⛪",
-      "🕌","🕍","🛕","🕋","⛩","🛤","🛣","🗾","🎑","🏞","🌅","🌄","🌠","🎇","🎆","🌇","🌆","🏙","🌃","🌌",
-      "🌉","🌁"
     ]
   };
 
   let emojiCategoriaAtual = "Pessoas";
-  let emojiDestino = null; // 'novaPessoa' ou 'editPessoa'
+  let emojiDestino = null;
 
   function abrirEmojiPicker(destino) {
     emojiDestino = destino;
@@ -2308,104 +2294,112 @@
     </div>`;
     preview.innerHTML = html;
   }
- 
-let estadoRedeReal = null;
-let alternandoRede = false; // trava para nunca sobrepor chamadas de enable/disableNetwork
 
-async function iniciarFirebase() {
-  try {
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.firestore();
-    db.settings({ ignoreUndefinedProperties: true });
-    firebaseOK = true;
+  let estadoRedeReal = null;
 
-    atualizarStatus('conectando', 'Conectando...');
-
+  async function iniciarFirebase() {
     try {
-      // synchronizeTabs removido: cada dispositivo usa uma única aba, e essa opção
-      // combinada com enableNetwork/disableNetwork causa instabilidade interna no SDK.
-      await db.enablePersistence();
-      console.log('Persistência offline ativa.');
-    } catch (err) {
-      console.warn('Persistência indisponível:', err.code || err.message);
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+      db.settings({ ignoreUndefinedProperties: true });
+
+      // Habilita persistência com tratamento para falhas iniciais sem internet
+      try {
+        await db.enablePersistence({ synchronizeTabs: true });
+        console.log('Persistência offline ativa.');
+      } catch (err) {
+        console.warn('Persistência indisponível:', err.code || err.message);
+      }
+
+      firebaseOK = true;
+
+      // Se a rede já estiver indisponível ao abrir, define imediatamente o status como offline
+      if (!navigator.onLine) {
+        atualizarStatus('offline', 'Offline (vai sincronizar)');
+        estadoRedeReal = false;
+      } else {
+        atualizarStatus('conectando', 'Conectando...');
+      }
+
+      ouvirDadosCasa();
+      ouvirGastos();
+      ouvirEventos();
+      monitorarConexaoReal();
+    } catch (e) {
+      console.error(e);
+      atualizarStatus('offline', 'Erro ao iniciar');
     }
-
-    ouvirDadosCasa();
-    ouvirGastos();
-    ouvirEventos();
-    monitorarConexaoReal();
-  } catch (e) {
-    console.error(e);
-    atualizarStatus('offline', 'Erro');
   }
-}
 
-async function testarConectividadeReal() {
-  try {
-    await Promise.race([
-      fetch('https://www.gstatic.com/generate_204?t=' + Date.now(), {
-        method: 'GET',
-        mode: 'no-cors',
-        cache: 'no-store'
-      }),
-      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 4000))
-    ]);
-    return true;
-  } catch (e) {
-    return false;
+  async function testarConectividadeReal() {
+    if (!navigator.onLine) return false;
+    try {
+      await Promise.race([
+        fetch('https://www.gstatic.com/generate_204?t=' + Date.now(), {
+          method: 'GET',
+          mode: 'no-cors',
+          cache: 'no-store'
+        }),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))
+      ]);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
-}
 
-async function atualizarConectividade() {
-  if (!firebaseOK || alternandoRede) return; // nunca sobrepor uma chamada à outra
-  const online = await testarConectividadeReal();
+  async function atualizarConectividade() {
+    if (!firebaseOK) return;
+    const online = await testarConectividadeReal();
 
-  if (online === estadoRedeReal) return;
-  estadoRedeReal = online;
-  alternandoRede = true;
+    if (online === estadoRedeReal) return;
+    estadoRedeReal = online;
 
-  try {
     if (online) {
       atualizarStatus('conectando', 'Conectando...');
-      await db.enableNetwork();
+      db.enableNetwork().catch(() => {});
     } else {
       atualizarStatus('offline', 'Offline (vai sincronizar)');
-      await db.disableNetwork();
+      db.disableNetwork().catch(() => {});
     }
-  } catch (e) {
-    console.warn('Erro ao alternar rede do Firestore:', e.message);
-  } finally {
-    alternandoRede = false;
   }
-}
 
-function monitorarConexaoReal() {
-  atualizarConectividade();
-  window.addEventListener('online', atualizarConectividade);
-  window.addEventListener('offline', atualizarConectividade);
-  // Intervalo bem mais espaçado: só como rede de segurança, não como mecanismo principal.
-  setInterval(atualizarConectividade, 30000);
-}
+  function monitorarConexaoReal() {
+    atualizarConectividade();
+    window.addEventListener('online', atualizarConectividade);
+    window.addEventListener('offline', atualizarConectividade);
+    setInterval(atualizarConectividade, 10000);
+  }
 
   function refDocCasa() { return db.collection('casas').doc(CASA_ID); }
   function colecaoGastos() { return refDocCasa().collection('gastos'); }
   function colecaoEventos() { return refDocCasa().collection('eventos'); }
 
   async function garantirDadosIniciais() {
-    const doc = await refDocCasa().get();
-    const dados = doc.exists ? doc.data() : {};
-    const update = {};
-    if (!dados.categorias) update.categorias = CATEGORIAS_PADRAO;
-    if (!dados.cartoes) update.cartoes = CARTOES_PADRAO;
-    if (!dados.pessoas) update.pessoas = PESSOAS_PADRAO;
-    if (Object.keys(update).length > 0) {
-      await refDocCasa().set(update, { merge: true });
+    try {
+      const doc = await refDocCasa().get();
+      const dados = doc.exists ? doc.data() : {};
+      const update = {};
+      if (!dados.categorias) update.categorias = CATEGORIAS_PADRAO;
+      if (!dados.cartoes) update.cartoes = CARTOES_PADRAO;
+      if (!dados.pessoas) update.pessoas = PESSOAS_PADRAO;
+      if (Object.keys(update).length > 0) {
+        await refDocCasa().set(update, { merge: true });
+      }
+    } catch (e) {
+      console.warn("Sem conexão para dados iniciais, usando padrões locais.");
+      categorias = CATEGORIAS_PADRAO;
+      cartoes = CARTOES_PADRAO;
+      pessoas = PESSOAS_PADRAO;
+      popularCategorias();
+      popularFiltroCartoes();
+      popularSelectCartoes();
     }
   }
 
   function ouvirDadosCasa() {
-    refDocCasa().onSnapshot(async doc => {
-      if (!doc.exists || !doc.data().categorias || !doc.data().cartoes) {
+    refDocCasa().onSnapshot({ includeMetadataChanges: true }, async doc => {
+      if (!doc.exists || !doc.data() || !doc.data().categorias || !doc.data().cartoes) {
         await garantirDadosIniciais();
         return;
       }
@@ -2435,7 +2429,7 @@ function monitorarConexaoReal() {
         vistas.add(p.nome);
       }
     });
-    Object.keys(obj).forEach(nome => {
+    Object.keys(obj || {}).forEach(nome => {
       if (!vistas.has(nome)) {
         arr.push({ nome, cor: obj[nome].cor, subs: obj[nome].subs || [] });
       }
@@ -2453,7 +2447,7 @@ function monitorarConexaoReal() {
         vistas.add(p.nome);
       }
     });
-    Object.keys(obj).forEach(nome => {
+    Object.keys(obj || {}).forEach(nome => {
       if (!vistas.has(nome)) {
         arr.push({ nome, fechamento: obj[nome].fechamento, vencimento: obj[nome].vencimento });
       }
@@ -2478,7 +2472,7 @@ function monitorarConexaoReal() {
         vistas.add(p.nome);
       }
     });
-    Object.keys(obj).forEach(nome => {
+    Object.keys(obj || {}).forEach(nome => {
       if (!vistas.has(nome)) {
         if (nome === 'Filho') {
           arr.push({ nome: 'João Guilherme', emoji: '👦' });
@@ -2492,34 +2486,36 @@ function monitorarConexaoReal() {
     return arr.length ? arr : padrao;
   }
 
-function ouvirGastos() {
-  colecaoGastos()
-    .orderBy('data', 'desc')
-    .onSnapshot(
-      { includeMetadataChanges: true },
-      snapshot => {
-        gastos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  function ouvirGastos() {
+    colecaoGastos()
+      .orderBy('data', 'desc')
+      .onSnapshot(
+        { includeMetadataChanges: true },
+        snapshot => {
+          gastos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        if (snapshot.metadata.fromCache) {
+          if (snapshot.metadata.fromCache || estadoRedeReal === false) {
+            atualizarStatus('offline', 'Offline (vai sincronizar)');
+          } else {
+            atualizarStatus('online', 'Sincronizado');
+          }
+
+          reconstruirEstabelecimentos();
+          renderizar();
+          renderizarFaturas();
+        },
+        erro => {
+          console.error('Erro no listener de gastos:', erro);
           atualizarStatus('offline', 'Offline (vai sincronizar)');
-        } else {
-          atualizarStatus('online', 'Sincronizado');
         }
-
-        reconstruirEstabelecimentos();
-        renderizar();
-        renderizarFaturas();
-      },
-      erro => {
-        console.error('Erro no listener de gastos:', erro);
-      }
-    );
-}
+      );
+  }
 
   function ouvirEventos() {
     colecaoEventos()
       .orderBy('data', 'asc')
       .onSnapshot(
+        { includeMetadataChanges: true },
         snapshot => {
           eventos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
           renderizarAgenda();
@@ -2529,16 +2525,13 @@ function ouvirGastos() {
   }
 
   function atualizarStatus(tipo, texto) {
-  const el = document.getElementById('statusConexao');
-  el.classList.remove('online', 'offline');
-  if (tipo === 'online') el.classList.add('online');
-  if (tipo === 'offline') el.classList.add('offline');
-  document.getElementById('statusTexto').textContent = texto;
-}
+    const el = document.getElementById('statusConexao');
+    el.classList.remove('online', 'offline');
+    if (tipo === 'online') el.classList.add('online');
+    if (tipo === 'offline') el.classList.add('offline');
+    document.getElementById('statusTexto').textContent = texto;
+  }
 
-  // ================================================================
-  // CARTÕES (nova visualização com modal de edição)
-  // ================================================================
   function renderizarCartoes() {
     const wrap = document.getElementById('cartoesLista');
     if (cartoes.length === 0) {
@@ -2652,9 +2645,6 @@ function ouvirGastos() {
     } catch (e) { alert('Erro: ' + e.message); }
   }
 
-  // ================================================================
-  // PESSOAS (com emoji picker)
-  // ================================================================
   function renderizarPessoas() {
     const wrap = document.getElementById('pessoasLista');
     if (!wrap) return;
@@ -2758,9 +2748,6 @@ function ouvirGastos() {
     } catch (e) { alert('Erro ao salvar pessoas: ' + e.message); }
   }
 
-  // ================================================================
-  // AGENDA
-  // ================================================================
   function dataHojeISO() {
     const h = new Date();
     return `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, '0')}-${String(h.getDate()).padStart(2, '0')}`;
@@ -2969,7 +2956,7 @@ function ouvirGastos() {
     wrap.innerHTML = diasOrdenados.map(dia => {
       const evts = porDia[dia].sort((a, b) => (a.hora || '').localeCompare(b.hora || ''));
       const destaque = dia === hoje;
-      const itensHTML = evts.map(e => renderizarItemEvento(e, false)).join('');
+      const itensHTML = evts.map(e => renderizarItemEvento(e)).join('');
       return `
         <div class="agenda-dia">
           <div class="agenda-dia-titulo ${destaque ? 'destaque' : ''}">
@@ -3190,9 +3177,9 @@ function ouvirGastos() {
     if (!data) { alert('Escolha uma data.'); return; }
     if (!pessoa) { alert('Escolha para quem é o compromisso.'); return; }
 
-    const dados = { titulo, data, hora, pessoa, tipo, local, acompanhante, obs, atualizadoEm: firebase.firestore.FieldValue.serverTimestamp() };
+    const dados = { titulo, data, hora, pessoa, tipo, local, acompanhante, obs, atualizadoEm: new Date() };
 
-        try {
+    try {
       if (id) {
         const e = eventos.find(x => x.id === id);
         if (e && (e.data !== data || (e.hora || '') !== hora)) {
@@ -3207,12 +3194,12 @@ function ouvirGastos() {
           dados.remarcacoes = remarcacoes;
         }
         colecaoEventos().doc(id).update(dados).catch(e => {
-          console.error('Erro ao sincronizar evento:', e);
+          console.error('Salvo localmente, pendente de sincronização:', e);
         });
       } else {
-        dados.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
+        dados.criadoEm = new Date();
         colecaoEventos().add(dados).catch(e => {
-          console.error('Erro ao sincronizar evento:', e);
+          console.error('Salvo localmente, pendente de sincronização:', e);
         });
       }
       fecharFormEvento();
@@ -3331,9 +3318,6 @@ function ouvirGastos() {
     } catch (e) { alert('Erro: ' + e.message); }
   }
 
-  // ================================================================
-  // ESTABELECIMENTOS
-  // ================================================================
   function normalizarChave(desc) {
     return String(desc || '').trim().toLowerCase();
   }
@@ -3355,7 +3339,7 @@ function ouvirGastos() {
       const e = mapa[chave];
       e.count++;
       e.catCount[g.categoria] = (e.catCount[g.categoria] || 0) + 1;
-      if (g.subcategoria) e.subCount[g.subcategoria] = (e.subCount[g.subcategoria] || 0) + 1;
+      if (g.subcategoria) e.subCount[g.subcategoria] = (e.subcategoria || 0) + 1;
       if (g.formaPagamento) e.pagCount[g.formaPagamento] = (e.pagCount[g.formaPagamento] || 0) + 1;
       if (g.cartao) e.cartaoCount[g.cartao] = (e.cartaoCount[g.cartao] || 0) + 1;
       e.valores.push(g.valor);
@@ -3932,7 +3916,7 @@ function ouvirGastos() {
   }
 
   function escaparHTML(s) {
-    return String(s).replace(/[&<>"']/g, c => ({
+    return String(s || '').replace(/[&<>"']/g, c => ({
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
     }[c]));
   }
@@ -3948,7 +3932,7 @@ function ouvirGastos() {
   }
 
   async function adicionarGasto() {
-    if (!firebaseOK) { alert('Firebase não está configurado.'); return; }
+    if (!firebaseOK) { alert('Erro ao iniciar banco local.'); return; }
     const btn = document.getElementById('btnAdicionar');
     const usuario = document.getElementById('usuario').value;
     const descricao = document.getElementById('descricao').value.trim();
@@ -3975,7 +3959,7 @@ function ouvirGastos() {
     }
 
     btn.disabled = true;
-    btn.textContent = 'Enviando...';
+    btn.textContent = 'Gravando...';
 
     try {
       const grupoId = 'g' + Date.now() + Math.random().toString(36).slice(2, 7);
@@ -3999,7 +3983,7 @@ function ouvirGastos() {
             parcelaAtual: numParcelas > 1 ? i + 1 : null,
             parcelaTotal: numParcelas > 1 ? numParcelas : null,
             valorTotalCompra: numParcelas > 1 ? valor : null,
-            grupoId, criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+            grupoId, criadoEm: new Date()
           });
         }
       } else {
@@ -4008,22 +3992,21 @@ function ouvirGastos() {
           descricao, categoria, subcategoria, observacao,
           formaPagamento, cartao: null, valor,
           parcelaAtual: null, parcelaTotal: null, valorTotalCompra: null,
-          grupoId, criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+          grupoId, criadoEm: new Date()
         });
       }
 
-            const batch = db.batch();
+      const batch = db.batch();
       lancamentos.forEach(l => {
         const ref = colecaoGastos().doc();
         batch.set(ref, l);
       });
 
-      // Não espera a confirmação do servidor — apenas dispara
+      // Dispara o salvamento e não espera resposta da rede (funciona offline)
       batch.commit().catch(e => {
-        console.error('Erro ao sincronizar gasto:', e);
+        console.error('Lançamento salvo localmente, aguardando conexão:', e);
       });
 
-      // Libera a UI imediatamente
       document.getElementById('valor').value = '';
       document.getElementById('descricao').value = '';
       document.getElementById('observacao').value = '';
@@ -4371,22 +4354,21 @@ function ouvirGastos() {
     link.click();
   }
 
- window.onload = () => {
-  const hoje = new Date();
-  document.getElementById('data').value = hoje.toISOString().split('T')[0];
-  document.getElementById('dataCompraCredito').value = hoje.toISOString().split('T')[0];
-  const mesAtual = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
-  document.getElementById('mesReferencia').value = mesAtual;
-  document.getElementById('mesFatura').value = mesAtual;
-  iniciarFirebase();
+  window.onload = () => {
+    const hoje = new Date();
+    document.getElementById('data').value = hoje.toISOString().split('T')[0];
+    document.getElementById('dataCompraCredito').value = hoje.toISOString().split('T')[0];
+    const mesAtual = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
+    document.getElementById('mesReferencia').value = mesAtual;
+    document.getElementById('mesFatura').value = mesAtual;
+    iniciarFirebase();
 
-  // Força o Service Worker a buscar a versão mais nova do HTML
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(regs => {
-      regs.forEach(r => r.update());
-    });
-  }
-};
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        regs.forEach(r => r.update());
+      });
+    }
+  };
 </script>
 </body>
 </html>
