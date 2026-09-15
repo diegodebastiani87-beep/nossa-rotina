@@ -2377,7 +2377,7 @@ function monitorarConexao() {
   setInterval(testar, 20000);
 }
 function monitorarConexao() {
-  window.__atualizarStatusFirestore = function(fromCache) {
+ {
     const el = document.getElementById('statusConexao');
     const txt = document.getElementById('statusTexto');
     el.classList.remove('online', 'offline');
