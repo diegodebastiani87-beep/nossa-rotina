@@ -2314,16 +2314,28 @@ function iniciarFirebase() {
     firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
 
-    // IMPORTANTE: settings() deve vir ANTES de qualquer outra operação
+    // settings() SEMPRE antes de qualquer outra operação
     db.settings({ ignoreUndefinedProperties: true });
 
-    // Depois ativa a persistência offline
+    // Marca o status inicial com base no estado REAL da rede do dispositivo
+    if (!navigator.onLine) {
+      atualizarStatus('offline', 'Offline (vai sincronizar)');
+    } else {
+      atualizarStatus('conectando', 'Conectando...');
+    }
+
+    // Ativa persistência só se ainda não foi ativada nesta sessão
     db.enablePersistence({ synchronizeTabs: true })
+      .then(() => {
+        console.log('Persistência offline ativa.');
+      })
       .catch((err) => {
         if (err.code === 'failed-precondition') {
           console.warn('Persistência offline: múltiplas abas abertas.');
         } else if (err.code === 'unimplemented') {
           console.warn('Persistência offline: navegador não suporta.');
+        } else {
+          console.warn('Persistência offline indisponível:', err.message);
         }
       });
 
@@ -2341,42 +2353,71 @@ function iniciarFirebase() {
 let _timeoutOffline = null;
 
 function monitorarConexao() {
-  // Será chamado pelo listener de gastos com o estado real do Firestore
-  window.__atualizarStatusFirestore = function(fromCache) {
+  // Atualiza o status visual
+  function aplicarStatus(online) {
     const el = document.getElementById('statusConexao');
     const txt = document.getElementById('statusTexto');
-
-    if (fromCache) {
-      // Dados vieram do cache = offline. Só confirma se persistir por 2s
-      if (_timeoutOffline) return;
-      _timeoutOffline = setTimeout(() => {
-        el.classList.remove('online');
-        el.classList.add('offline');
-        txt.textContent = 'Offline (vai sincronizar)';
-        _timeoutOffline = null;
-      }, 2000);
-    } else {
-      // Dados vieram do servidor = online
-      if (_timeoutOffline) {
-        clearTimeout(_timeoutOffline);
-        _timeoutOffline = null;
-      }
-      el.classList.remove('offline');
+    if (_timeoutOffline) {
+      clearTimeout(_timeoutOffline);
+      _timeoutOffline = null;
+    }
+    el.classList.remove('online', 'offline');
+    if (online) {
       el.classList.add('online');
       txt.textContent = 'Sincronizado';
+    } else {
+      el.classList.add('offline');
+      txt.textContent = 'Offline (vai sincronizar)';
+    }
+  }
+
+  // Chamado pelo listener do Firestore (via onSnapshot com metadata)
+  window.__atualizarStatusFirestore = function(fromCache) {
+    // Se veio do cache, agenda mudança para offline (com 1.5s de espera)
+    if (fromCache) {
+      if (_timeoutOffline) return;
+      _timeoutOffline = setTimeout(() => {
+        aplicarStatus(false);
+        _timeoutOffline = null;
+      }, 1500);
+    } else {
+      aplicarStatus(true);
     }
   };
 
-  // Rede de segurança: se nada chegar em 5s, assume o estado real da rede
-  setTimeout(() => {
-    if (!window.__statusRecebido) {
-      const el = document.getElementById('statusConexao');
-      const txt = document.getElementById('statusTexto');
-      el.classList.remove('online', 'offline');
-      txt.textContent = navigator.onLine ? 'Conectando...' : 'Offline';
-      if (!navigator.onLine) el.classList.add('offline');
+  // Escuta também os eventos do navegador (redundância útil)
+  window.addEventListener('online', () => {
+    // Aguarda 1s antes de marcar como online (evita falsos positivos)
+    setTimeout(() => {
+      if (navigator.onLine) aplicarStatus(true);
+    }, 1000);
+  });
+  window.addEventListener('offline', () => aplicarStatus(false));
+
+  // Checa no início (logo após o onload) — importante para o caso de reload offline
+  if (!navigator.onLine) {
+    aplicarStatus(false);
+  } else {
+    // Faz um teste real com timeout curto para evitar falsos "online"
+    Promise.race([
+      refDocCasa().get({ source: 'server' }),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))
+    ]).then(() => aplicarStatus(true))
+      .catch(() => aplicarStatus(false));
+  }
+
+  // Revalida o status a cada 15 segundos (caso fique offline silenciosamente)
+  setInterval(() => {
+    if (!navigator.onLine) {
+      aplicarStatus(false);
+      return;
     }
-  }, 5000);
+    Promise.race([
+      refDocCasa().get({ source: 'server' }),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))
+    ]).then(() => aplicarStatus(true))
+      .catch(() => aplicarStatus(false));
+  }, 15000);
 }
   function refDocCasa() { return db.collection('casas').doc(CASA_ID); }
   function colecaoGastos() { return refDocCasa().collection('gastos'); }
