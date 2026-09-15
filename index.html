@@ -2387,31 +2387,34 @@ function monitorarConexao() {
     }
   }
 
-  // Chamado por ouvirGastos sempre que o Firestore responde
-  window.__atualizarStatusFirestore = function(fromCache) {
-    if (fromCache) {
-      if (_timeoutOffline) return;
-      _timeoutOffline = setTimeout(() => {
-        aplicarStatus(false);
-        _timeoutOffline = null;
-      }, 1500);
-    } else {
+  // Teste real de conexão: tenta bater em um servidor rápido.
+  // Se responder, está online; se falhar, está offline.
+  async function testarConexao() {
+    try {
+      await Promise.race([
+        fetch('https://www.gstatic.com/generate_204?t=' + Date.now(), {
+          method: 'HEAD',
+          cache: 'no-store'
+        }),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))
+      ]);
       aplicarStatus(true);
+      return true;
+    } catch (e) {
+      aplicarStatus(false);
+      return false;
     }
-  };
-
-  window.addEventListener('online', () => {
-    // Aguarda um instante antes de marcar online (evita falso positivo)
-    setTimeout(() => {
-      if (navigator.onLine) aplicarStatus(true);
-    }, 2000);
-  });
-  window.addEventListener('offline', () => aplicarStatus(false));
-
-  // Status inicial: se onLine for false, marca offline direto
-  if (!navigator.onLine) {
-    aplicarStatus(false);
   }
+
+  // Dispara imediatamente ao carregar
+  testarConexao();
+
+  // Repete o teste a cada 10 segundos
+  setInterval(testarConexao, 10000);
+
+  // Reforça também nas transições de rede
+  window.addEventListener('online', () => setTimeout(testarConexao, 1000));
+  window.addEventListener('offline', () => aplicarStatus(false));
 }
   function refDocCasa() { return db.collection('casas').doc(CASA_ID); }
   function colecaoGastos() { return refDocCasa().collection('gastos'); }
