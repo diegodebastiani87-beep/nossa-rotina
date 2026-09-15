@@ -15,18 +15,11 @@
     min-height: 100vh;
   }
   .container { max-width: 700px; margin: 0 auto; }
-
   header {
     background: linear-gradient(135deg, #1e88e5, #1565c0);
-    color: white;
-    padding: 16px 18px;
-    border-radius: 14px;
-    margin-bottom: 14px;
-    box-shadow: 0 4px 10px rgba(30,136,229,0.25);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
+    color: white; padding: 16px 18px; border-radius: 14px;
+    margin-bottom: 14px; box-shadow: 0 4px 10px rgba(30,136,229,0.25);
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
   }
   header h1 { font-size: 1.15em; margin-bottom: 2px; }
   header p { opacity: 0.9; font-size: 0.8em; }
@@ -39,10 +32,8 @@
   .status.online .dot { background: #4caf50; animation: none; }
   .status.offline .dot { background: #f44336; animation: none; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
   .painel { display: none; }
   .painel.ativo { display: block; }
-
   .bottom-nav {
     position: fixed; bottom: 0; left: 0; right: 0;
     background: white; display: flex;
@@ -58,22 +49,18 @@
   .bottom-nav button .icone { font-size: 1.35em; line-height: 1; }
   .bottom-nav button.ativa { color: #1e88e5; }
   .bottom-nav button:hover { background: #f8f9fa; }
-
   .sub-abas {
     display: flex; gap: 6px; background: #f5f5f5;
-    padding: 5px; border-radius: 12px; margin-bottom: 14px;
-    overflow-x: auto;
+    padding: 5px; border-radius: 12px; margin-bottom: 14px; overflow-x: auto;
   }
   .sub-aba {
     flex: 1; padding: 10px 12px; background: transparent;
     color: #666; border: none; border-radius: 8px;
-    font-weight: 600; font-size: 0.82em; cursor: pointer;
-    white-space: nowrap;
+    font-weight: 600; font-size: 0.82em; cursor: pointer; white-space: nowrap;
   }
   .sub-aba.ativa { background: white; color: #1565c0; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
   .sub-painel { display: none; }
   .sub-painel.ativo { display: block; }
-
   .card {
     background: white; border-radius: 14px; padding: 16px;
     margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
@@ -92,7 +79,6 @@
     font-size: 0.7em; font-weight: 700;
     text-transform: none; letter-spacing: 0;
   }
-
   .secao { margin-bottom: 18px; }
   .secao:last-child { margin-bottom: 0; }
   .secao-titulo {
@@ -107,7 +93,6 @@
     width: 20px; height: 20px; background: #1e88e5; color: white;
     border-radius: 50%; font-size: 0.72em; font-weight: 700;
   }
-
   .campo { margin-bottom: 14px; position: relative; }
   .campo:last-child { margin-bottom: 0; }
   label {
@@ -131,11 +116,9 @@
     background-repeat: no-repeat; background-position: right 14px center;
     padding-right: 40px;
   }
-
   button {
     background: #1e88e5; color: white; border: none; cursor: pointer;
-    font-weight: 700; transition: background 0.2s, transform 0.1s;
-    font-size: 1em;
+    font-weight: 700; transition: background 0.2s, transform 0.1s; font-size: 1em;
   }
   button:active { transform: scale(0.98); }
   button:hover { background: #1565c0; }
@@ -144,18 +127,15 @@
   button.secundario:hover { background: #616161; }
   button.perigo { background: #e53935; padding: 6px 12px; width: auto; font-size: 0.82em; border-radius: 8px; }
   button.perigo:hover { background: #c62828; }
-
   .btn-grande {
     padding: 16px !important; font-size: 1.05em !important;
     border-radius: 12px !important; width: 100% !important;
   }
-
   .valor-destaque input {
     font-size: 1.6em !important; font-weight: 700; text-align: center;
     padding: 18px 14px; border-color: #1e88e5;
     background: #f5faff; color: #1565c0;
   }
-
   .toggle-grupo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .toggle-grupo button {
     padding: 16px 10px; background: #f5f5f5; color: #666;
@@ -170,7 +150,6 @@
     box-shadow: 0 3px 10px rgba(30,136,229,0.35);
   }
   .toggle-grupo button:hover:not(.ativo) { background: #ebebeb; }
-
   .pagamento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .pagamento-grid button {
     padding: 16px 10px; background: #f5f5f5; color: #555;
@@ -186,14 +165,12 @@
     box-shadow: 0 3px 10px rgba(30,136,229,0.35);
   }
   .pagamento-grid button:hover:not(.ativo) { background: #ebebeb; }
-
   .sugestoes-box {
     position: absolute; top: 100%; left: 0; right: 0;
     background: white; border: 1.5px solid #1e88e5;
     border-top: none; border-radius: 0 0 12px 12px;
     box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-    max-height: 260px; overflow-y: auto; z-index: 50;
-    display: none;
+    max-height: 260px; overflow-y: auto; z-index: 50; display: none;
   }
   .sugestoes-box.visivel { display: block; }
   .sugestao-item {
@@ -215,11 +192,7 @@
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .sugestao-item .s-count { color: #aaa; font-size: 0.72em; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
-
-  .atalhos-chips {
-    display: flex; flex-wrap: wrap; gap: 6px;
-    margin-top: -8px; margin-bottom: 14px;
-  }
+  .atalhos-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: -8px; margin-bottom: 14px; }
   .chip-atalho {
     background: #f5f5f5; border: none; border-radius: 18px;
     padding: 7px 14px; font-size: 0.82em; cursor: pointer;
@@ -229,11 +202,9 @@
   }
   .chip-atalho:hover { background: #e3f2fd; color: #1565c0; }
   .chip-atalho:active { transform: scale(0.97); }
-
   .parcelas-box {
     background: #e8f5e9; border: 2px solid #66bb6a;
-    border-radius: 12px; padding: 14px; margin-bottom: 14px;
-    display: none;
+    border-radius: 12px; padding: 14px; margin-bottom: 14px; display: none;
   }
   .parcelas-box.visivel { display: block; }
   .parcelas-box label { color: #2e7d32; }
@@ -253,7 +224,6 @@
     margin-top: 8px; font-style: normal;
   }
   .dica-fatura strong { color: #5d4037; }
-
   .resumo { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .resumo-item {
     background: #f8f9fa; border-left: 4px solid #1e88e5;
@@ -266,7 +236,6 @@
   .resumo-item .valor { font-size: 1.15em; font-weight: bold; color: #1565c0; }
   .resumo-item.total { border-left-color: #e53935; grid-column: span 2; }
   .resumo-item.total .valor { color: #e53935; font-size: 1.4em; }
-
   .tag {
     display: inline-block; padding: 3px 9px; border-radius: 20px;
     font-size: 0.78em; font-weight: 600; color: white; white-space: nowrap;
@@ -292,11 +261,7 @@
     color: #0d47a1; margin-left: 3px;
   }
   .obs-texto { display: block; margin-top: 4px; color: #777; font-size: 0.82em; font-style: italic; }
-
-  .filtros-globais {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 8px; margin-bottom: 12px;
-  }
+  .filtros-globais { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
   .filtros-globais .campo-filtro { display: flex; flex-direction: column; }
   .filtros-globais label { font-size: 0.68em; margin-bottom: 4px; color: #888; }
   .filtros-globais select {
@@ -312,9 +277,7 @@
     grid-column: span 2; transition: all 0.15s;
   }
   .btn-limpar-filtros:hover { background: #ebebeb; color: #333; }
-  .btn-limpar-filtros.ativo {
-    background: #e3f2fd; color: #0d47a1; border-color: #90caf9;
-  }
+  .btn-limpar-filtros.ativo { background: #e3f2fd; color: #0d47a1; border-color: #90caf9; }
   .resumo-filtros {
     font-size: 0.78em; color: #666;
     padding: 8px 12px; background: #f5faff;
@@ -322,9 +285,7 @@
     border-radius: 6px; margin-bottom: 12px;
   }
   .resumo-filtros strong { color: #0d47a1; }
-
   .vazio { text-align: center; padding: 30px 15px; color: #999; font-style: italic; font-size: 0.9em; }
-
   .grupo-categoria { margin-bottom: 14px; border-bottom: 1px dashed #eee; padding-bottom: 12px; }
   .grupo-categoria:last-child { border-bottom: none; padding-bottom: 0; }
   .linha-cat { display: flex; align-items: center; gap: 8px; }
@@ -349,7 +310,6 @@
   .linha-sub .barra-bg-sub { flex: 1; background: #f5f5f5; border-radius: 8px; height: 12px; overflow: hidden; }
   .linha-sub .barra-fill-sub { height: 100%; border-radius: 8px; transition: width 0.5s; }
   .linha-sub .valor-sub { width: 80px; text-align: right; color: #555; font-size: 0.9em; flex-shrink: 0; }
-
   .por-pagamento { display: flex; flex-direction: column; gap: 8px; }
   .linha-pag {
     display: flex; align-items: center; gap: 8px;
@@ -359,66 +319,38 @@
   .linha-pag .emoji-pag { font-size: 1.3em; }
   .linha-pag .nome-pag { flex: 1; font-size: 0.9em; font-weight: 600; }
   .linha-pag .valor-pag { font-weight: 700; color: #1565c0; font-size: 0.92em; }
-
   .mes-selector { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .mes-selector input { flex: 1; min-width: 140px; }
   .mes-selector button { width: auto; padding: 12px 16px; }
 
-  /* ============ SWIPE ============ */
+  /* SWIPE */
   .gasto-swipe-container {
-    position: relative;
-    overflow: hidden;
+    position: relative; overflow: hidden;
     border-bottom: 1px solid #f0f0f0;
-    border-radius: 10px;
-    margin-bottom: 4px;
-    background: #f5f5f5;
+    border-radius: 10px; margin-bottom: 4px; background: #f5f5f5;
   }
   .gasto-swipe-actions {
-    position: absolute;
-    top: 0; bottom: 0;
-    display: flex;
-    align-items: stretch;
+    position: absolute; top: 0; bottom: 0;
+    display: flex; align-items: stretch;
   }
-  .gasto-swipe-actions.acao-excluir {
-    left: 0;
-    justify-content: flex-start;
-  }
-  .gasto-swipe-actions.acao-editar {
-    right: 0;
-    justify-content: flex-end;
-  }
+  .gasto-swipe-actions.acao-excluir { left: 0; justify-content: flex-start; }
+  .gasto-swipe-actions.acao-editar { right: 0; justify-content: flex-end; }
   .gasto-swipe-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    width: 90px;
-    color: white;
-    font-size: 0.75em;
-    font-weight: 700;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    text-align: center;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 4px; width: 90px;
+    color: white; font-size: 0.75em; font-weight: 700;
+    border: none; cursor: pointer; padding: 0; text-align: center;
   }
   .gasto-swipe-btn.excluir { background: #e53935; }
   .gasto-swipe-btn.editar { background: #ff9800; }
   .gasto-swipe-btn .icone-swipe { font-size: 1.6em; line-height: 1; }
-
   .gasto-swipe-item {
-    position: relative;
-    background: white;
-    padding: 12px 14px;
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-    cursor: pointer;
-    will-change: transform;
-    user-select: none;
+    position: relative; background: white;
+    padding: 12px 14px; display: flex; gap: 10px;
+    align-items: flex-start; cursor: pointer;
+    will-change: transform; user-select: none;
     transition: transform 0.25s ease-out;
-    border-radius: 10px;
-    border: 1px solid #f0f0f0;
+    border-radius: 10px; border: 1px solid #f0f0f0;
   }
   .gasto-swipe-item.swiping { transition: none; }
   .gasto-swipe-item .info-principal { flex: 1; min-width: 0; }
@@ -440,21 +372,15 @@
     font-weight: 700; color: #e53935;
     font-size: 1em; white-space: nowrap;
   }
-  .gasto-swipe-item .tags-linha {
-    display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;
-  }
+  .gasto-swipe-item .tags-linha { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
 
-  /* ============ CARTÕES ============ */
   .cartao-view {
     border: 1px solid #e0e0e0; border-radius: 12px;
     padding: 14px 16px; background: white; margin-bottom: 10px;
     display: flex; align-items: center; gap: 14px;
     transition: border-color 0.15s, box-shadow 0.15s;
   }
-  .cartao-view:hover {
-    border-color: #bbdefb;
-    box-shadow: 0 2px 8px rgba(30,136,229,0.08);
-  }
+  .cartao-view:hover { border-color: #bbdefb; box-shadow: 0 2px 8px rgba(30,136,229,0.08); }
   .cartao-view .icone-cartao {
     width: 44px; height: 44px; border-radius: 10px;
     background: linear-gradient(135deg, #e3f2fd, #bbdefb);
@@ -489,7 +415,6 @@
   }
   .cartao-view .btn-excluir-cartao:hover { background: #ffebee; }
 
-  /* ============ EMOJI PICKER ============ */
   .emoji-picker-btn {
     background: #f5f5f5; color: #333;
     border: 1.5px solid #e0e0e0; border-radius: 12px;
@@ -499,7 +424,6 @@
   }
   .emoji-picker-btn:hover { background: #e3f2fd; border-color: #90caf9; }
   .emoji-picker-btn.vazio { color: #bbb; font-size: 1em; font-weight: 600; }
-
   .emoji-modal {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0,0,0,0.6);
@@ -567,10 +491,7 @@
     margin-bottom: 8px; background: white;
     overflow: hidden; transition: box-shadow 0.2s;
   }
-  .cat-accordion.aberto {
-    box-shadow: 0 3px 10px rgba(30,136,229,0.12);
-    border-color: #bbdefb;
-  }
+  .cat-accordion.aberto { box-shadow: 0 3px 10px rgba(30,136,229,0.12); border-color: #bbdefb; }
   .cat-header {
     display: flex; align-items: center; gap: 10px;
     padding: 12px 14px; cursor: pointer; background: white;
@@ -579,28 +500,18 @@
     transition: background 0.15s;
   }
   .cat-header:hover { background: #f8f9fa; }
-  .cat-header .cor-bolinha {
-    width: 14px; height: 14px; border-radius: 50%;
-    display: inline-block; flex-shrink: 0;
-  }
+  .cat-header .cor-bolinha { width: 14px; height: 14px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
   .cat-header .nome-cat-txt { flex: 1; word-break: break-word; }
   .cat-header .contador-sub { font-size: 0.75em; color: #999; font-weight: 500; }
   .cat-header .seta { color: #999; font-size: 0.8em; transition: transform 0.2s; }
   .cat-accordion.aberto .cat-header .seta { transform: rotate(90deg); }
   .cat-corpo { display: none; padding: 0 14px 14px; border-top: 1px solid #f0f0f0; }
   .cat-accordion.aberto .cat-corpo { display: block; }
-  .cat-corpo .linha-edicao {
-    display: flex; gap: 8px; align-items: flex-end;
-    margin-bottom: 12px; flex-wrap: wrap;
-  }
+  .cat-corpo .linha-edicao { display: flex; gap: 8px; align-items: flex-end; margin-bottom: 12px; flex-wrap: wrap; }
   .cat-corpo .linha-edicao .campo-nome { flex: 1; min-width: 150px; }
   .cat-corpo .linha-edicao .campo-cor { width: 60px; flex-shrink: 0; }
-  .cat-corpo .linha-edicao input[type="text"] {
-    padding: 10px; font-size: 15px; font-weight: 600;
-  }
-  .cat-corpo .linha-edicao input[type="color"] {
-    width: 100%; height: 42px; padding: 3px; cursor: pointer;
-  }
+  .cat-corpo .linha-edicao input[type="text"] { padding: 10px; font-size: 15px; font-weight: 600; }
+  .cat-corpo .linha-edicao input[type="color"] { width: 100%; height: 42px; padding: 3px; cursor: pointer; }
   .subs-lista { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; min-height: 30px; }
   .sub-chip {
     display: inline-flex; align-items: center; gap: 4px;
@@ -622,31 +533,20 @@
     font-size: 0.88em; border-radius: 10px; background: #43a047;
   }
   .add-sub-form button:hover { background: #2e7d32; }
-  .acoes-cat {
-    display: flex; gap: 8px; margin-top: 12px;
-    padding-top: 12px; border-top: 1px dashed #eee;
-  }
-  .btn-excluir-cat {
-    background: #e53935; padding: 10px 14px;
-    width: auto; font-size: 0.85em; border-radius: 10px;
-  }
+  .acoes-cat { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed #eee; }
+  .btn-excluir-cat { background: #e53935; padding: 10px 14px; width: auto; font-size: 0.85em; border-radius: 10px; }
   .btn-excluir-cat:hover { background: #c62828; }
-
   .nova-cat-form { display: flex; flex-direction: column; gap: 10px; }
   .nova-cat-form .linha-cor { display: flex; gap: 10px; align-items: end; }
   .nova-cat-form input[type="color"] { width: 60px; height: 48px; padding: 4px; cursor: pointer; }
 
-  /* ============ PESSOAS ============ */
   .pessoa-view {
     border: 1px solid #e0e0e0; border-radius: 12px;
     padding: 12px 14px; background: white; margin-bottom: 10px;
     display: flex; align-items: center; gap: 12px;
     transition: border-color 0.15s, box-shadow 0.15s;
   }
-  .pessoa-view:hover {
-    border-color: #bbdefb;
-    box-shadow: 0 2px 8px rgba(30,136,229,0.08);
-  }
+  .pessoa-view:hover { border-color: #bbdefb; box-shadow: 0 2px 8px rgba(30,136,229,0.08); }
   .pessoa-view .emoji-pessoa {
     width: 44px; height: 44px; border-radius: 12px;
     background: #f3e5f5; display: flex;
@@ -678,8 +578,7 @@
   .fatura-resumo-geral {
     background: linear-gradient(135deg, #1565c0, #0d47a1);
     color: white; border-radius: 14px; padding: 18px;
-    margin-bottom: 16px;
-    box-shadow: 0 4px 12px rgba(13,71,161,0.25);
+    margin-bottom: 16px; box-shadow: 0 4px 12px rgba(13,71,161,0.25);
   }
   .fatura-resumo-geral .titulo {
     font-size: 0.85em; opacity: 0.85;
@@ -690,7 +589,6 @@
   .fatura-resumo-geral .detalhes-linha .item-resumo { display: flex; flex-direction: column; }
   .fatura-resumo-geral .detalhes-linha .item-resumo .lbl { opacity: 0.75; font-size: 0.9em; }
   .fatura-resumo-geral .detalhes-linha .item-resumo .vlr { font-weight: 700; font-size: 1.1em; margin-top: 2px; }
-
   .cartao-fatura {
     border: 1.5px solid #e0e0e0; border-radius: 14px;
     padding: 14px; margin-bottom: 12px; background: white;
@@ -733,7 +631,6 @@
     font-weight: 600; text-align: left;
   }
   .cf-btn-subs:hover { text-decoration: underline; background: none; color: #0d47a1; }
-
   .badge-status {
     display: inline-block; padding: 2px 8px;
     border-radius: 20px; font-size: 0.68em;
@@ -743,42 +640,24 @@
   .badge-fechada { background: #fff3e0; color: #e65100; }
   .badge-futura { background: #e3f2fd; color: #1565c0; }
   .badge-paga { background: #f5f5f5; color: #666; }
-
   .est-item { border-bottom: 1px solid #f0f0f0; padding: 12px 0; }
   .est-item:last-child { border-bottom: none; }
-  .est-topo {
-    display: flex; justify-content: space-between;
-    align-items: center; gap: 10px; margin-bottom: 8px;
-  }
+  .est-topo { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; }
   .est-nome { font-weight: 600; font-size: 0.95em; color: #333; flex: 1; word-break: break-word; }
   .est-count { color: #999; font-size: 0.78em; font-weight: 600; white-space: nowrap; }
   .est-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
   .est-campos label { font-size: 0.7em; margin-bottom: 4px; color: #888; }
-  .est-campos select {
-    padding: 9px 30px 9px 10px; font-size: 14px;
-    background-position: right 8px center;
-  }
-  .est-info {
-    font-size: 0.78em; color: #888;
-    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
-  }
+  .est-campos select { padding: 9px 30px 9px 10px; font-size: 14px; background-position: right 8px center; }
+  .est-info { font-size: 0.78em; color: #888; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
   .est-info .sep { color: #ccc; }
 
-  /* ============ AGENDA ============ */
-  .agenda-visao-chips {
-    display: flex; gap: 6px; background: #f5f5f5;
-    padding: 5px; border-radius: 12px; margin-bottom: 10px;
-  }
+  .agenda-visao-chips { display: flex; gap: 6px; background: #f5f5f5; padding: 5px; border-radius: 12px; margin-bottom: 10px; }
   .agenda-visao-chips button {
     flex: 1; padding: 10px 8px; background: transparent;
     color: #666; border: none; border-radius: 8px;
     font-weight: 600; font-size: 0.82em; cursor: pointer;
   }
-  .agenda-visao-chips button.ativa {
-    background: white; color: #1565c0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-  }
-
+  .agenda-visao-chips button.ativa { background: white; color: #1565c0; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
   .agenda-filtro-pessoa {
     display: flex; gap: 6px; overflow-x: auto;
     padding: 4px 2px 10px; margin-bottom: 8px;
@@ -799,25 +678,18 @@
     box-shadow: 0 2px 6px rgba(30,136,229,0.3);
   }
   .chip-pessoa .emoji-chip { font-size: 1.1em; }
-
   .agenda-card-hoje {
     background: linear-gradient(135deg, #ff9800, #f57c00);
     color: white; border-radius: 14px; padding: 16px 18px;
-    margin-bottom: 14px;
-    box-shadow: 0 4px 10px rgba(245,124,0,0.3);
+    margin-bottom: 14px; box-shadow: 0 4px 10px rgba(245,124,0,0.3);
   }
   .agenda-card-hoje .titulo-hoje {
     font-size: 0.85em; opacity: 0.9;
     text-transform: uppercase; letter-spacing: 0.5px;
-    margin-bottom: 8px;
-    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
   }
-  .agenda-card-hoje .num-hoje {
-    font-size: 2em; font-weight: 800; line-height: 1;
-  }
-  .agenda-card-hoje .desc-hoje {
-    font-size: 0.85em; opacity: 0.95; margin-top: 4px;
-  }
+  .agenda-card-hoje .num-hoje { font-size: 2em; font-weight: 800; line-height: 1; }
+  .agenda-card-hoje .desc-hoje { font-size: 0.85em; opacity: 0.95; margin-top: 4px; }
   .agenda-card-hoje .proximo-evento {
     margin-top: 12px; padding-top: 12px;
     border-top: 1px solid rgba(255,255,255,0.3);
@@ -827,9 +699,7 @@
     font-size: 0.8em; text-transform: uppercase;
     letter-spacing: 0.5px; opacity: 0.85; margin-bottom: 6px;
   }
-  .agenda-card-hoje .proximo-evento .linha-prox {
-    display: flex; align-items: center; gap: 10px;
-  }
+  .agenda-card-hoje .proximo-evento .linha-prox { display: flex; align-items: center; gap: 10px; }
   .agenda-card-hoje .proximo-evento .quando-prox {
     background: rgba(255,255,255,0.25);
     padding: 4px 10px; border-radius: 8px;
@@ -845,10 +715,7 @@
     font-weight: 700; font-size: 1em; margin-bottom: 2px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .agenda-card-hoje .proximo-evento .meta-prox {
-    font-size: 0.82em; opacity: 0.9;
-  }
-
+  .agenda-card-hoje .proximo-evento .meta-prox { font-size: 0.82em; opacity: 0.9; }
   .agenda-dia { margin-bottom: 16px; }
   .agenda-dia-titulo {
     display: flex; align-items: center; gap: 8px;
@@ -862,10 +729,7 @@
     padding: 2px 8px; border-radius: 10px;
     font-size: 0.75em; margin-left: auto;
   }
-  .agenda-dia-titulo:not(.destaque) .num-eventos {
-    background: rgba(13,71,161,0.15);
-  }
-
+  .agenda-dia-titulo:not(.destaque) .num-eventos { background: rgba(13,71,161,0.15); }
   .agenda-item {
     background: white; border: 1px solid #e0e0e0;
     border-top: none; padding: 12px 14px;
@@ -874,7 +738,6 @@
   }
   .agenda-item:last-child { border-radius: 0 0 10px 10px; }
   .agenda-item:hover { background: #fafafa; }
-
   .agenda-item.passado {
     background: #f8f8f8; border-color: #e8e8e8;
     filter: grayscale(0.85); opacity: 0.72;
@@ -902,14 +765,11 @@
   .agenda-item .btn-remover-evt:hover { background: #c62828; }
   .agenda-item.passado .btn-remover-evt { background: #bdbdbd; }
   .agenda-item.passado .btn-remover-evt:hover { background: #9e9e9e; }
-
   .agenda-item .hora-col {
     width: 52px; flex-shrink: 0;
     text-align: center; padding-top: 2px;
   }
-  .agenda-item .hora-col .hora {
-    font-weight: 800; color: #1565c0; font-size: 0.95em;
-  }
+  .agenda-item .hora-col .hora { font-weight: 800; color: #1565c0; font-size: 0.95em; }
   .agenda-item .hora-col .dia-semana {
     font-size: 0.7em; color: #999;
     text-transform: uppercase; font-weight: 600;
@@ -926,10 +786,7 @@
     gap: 8px; align-items: center; margin-bottom: 4px;
   }
   .agenda-item .meta-evt .sep { color: #ccc; }
-  .agenda-item .tags-evt {
-    display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;
-  }
-
+  .agenda-item .tags-evt { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
   .tag-agenda {
     display: inline-block; padding: 2px 8px;
     border-radius: 20px; font-size: 0.7em;
@@ -943,11 +800,7 @@
   .tag-tipo-trabalho { background: #eceff1; color: #37474f; }
   .tag-tipo-familia { background: #fff8e1; color: #795548; }
   .tag-tipo-outros { background: #f5f5f5; color: #666; }
-  .tag-remarcado {
-    background: #fff3e0; color: #e65100;
-    border: 1px solid #ffb74d;
-  }
-
+  .tag-remarcado { background: #fff3e0; color: #e65100; border: 1px solid #ffb74d; }
   .agenda-acoes-rapidas {
     display: grid; grid-template-columns: 1fr 1fr;
     gap: 8px; margin-bottom: 14px;
@@ -960,28 +813,17 @@
     display: flex; align-items: center; justify-content: center;
     gap: 6px; transition: all 0.15s;
   }
-  .agenda-acoes-rapidas button:hover {
-    background: #e3f2fd; border-color: #1e88e5;
-  }
+  .agenda-acoes-rapidas button:hover { background: #e3f2fd; border-color: #1e88e5; }
   .agenda-acoes-rapidas button .emoji { font-size: 1.2em; }
-
-  .semana-grid {
-    display: grid; grid-template-columns: repeat(7, 1fr);
-    gap: 4px; margin-bottom: 8px;
-  }
+  .semana-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 8px; }
   .semana-dia-header {
     text-align: center; padding: 6px 2px;
     font-size: 0.7em; font-weight: 700;
     color: #666; text-transform: uppercase;
   }
-  .semana-dia-header .num {
-    display: block; font-size: 1.4em;
-    color: #333; font-weight: 800; margin-top: 2px;
-  }
+  .semana-dia-header .num { display: block; font-size: 1.4em; color: #333; font-weight: 800; margin-top: 2px; }
   .semana-dia-header.hoje .num { color: #1e88e5; }
-  .semana-dia-header.hoje {
-    background: #e3f2fd; border-radius: 8px;
-  }
+  .semana-dia-header.hoje { background: #e3f2fd; border-radius: 8px; }
   .semana-dia {
     min-height: 60px; background: #fafafa;
     border-radius: 8px; padding: 4px;
@@ -1001,8 +843,7 @@
   .semana-evt.tem-remarcacao::after {
     content: '🔁';
     position: absolute;
-    top: 0; right: 2px;
-    font-size: 0.7em;
+    top: 0; right: 2px; font-size: 0.7em;
   }
   .semana-evt.passado { filter: grayscale(0.85); opacity: 0.65; }
   .semana-evt.tipo-consulta { border-color: #42a5f5; background: #e3f2fd; }
@@ -1012,11 +853,7 @@
   .semana-evt.tipo-trabalho { border-color: #78909c; background: #eceff1; color: #37474f; }
   .semana-evt.tipo-familia { border-color: #ffb74d; background: #fff8e1; color: #795548; }
   .semana-evt.tipo-outros { border-color: #bdbdbd; background: #f5f5f5; color: #666; }
-
-  .semana-nav {
-    display: flex; justify-content: space-between;
-    align-items: center; margin-bottom: 10px;
-  }
+  .semana-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .semana-nav button {
     background: #f5f5f5; color: #1565c0;
     border: none; padding: 8px 14px;
@@ -1024,22 +861,13 @@
     font-size: 0.85em; width: auto;
   }
   .semana-nav button:hover { background: #e3f2fd; }
-  .semana-nav .mes-titulo {
-    font-weight: 700; color: #333; font-size: 0.95em;
-  }
-
+  .semana-nav .mes-titulo { font-weight: 700; color: #333; font-size: 0.95em; }
   .agenda-pessoa-bloco {
-    margin-bottom: 10px;
-    border: 1px solid #e8e0f0;
-    border-radius: 12px;
-    overflow: hidden;
-    background: white;
-    transition: box-shadow 0.2s;
+    margin-bottom: 10px; border: 1px solid #e8e0f0;
+    border-radius: 12px; overflow: hidden;
+    background: white; transition: box-shadow 0.2s;
   }
-  .agenda-pessoa-bloco.aberto {
-    box-shadow: 0 3px 10px rgba(106,27,154,0.12);
-    border-color: #d1c4e9;
-  }
+  .agenda-pessoa-bloco.aberto { box-shadow: 0 3px 10px rgba(106,27,154,0.12); border-color: #d1c4e9; }
   .agenda-pessoa-header {
     display: flex; align-items: center; gap: 10px;
     padding: 14px 14px;
@@ -1049,9 +877,7 @@
     color: #6a1b9a; font-size: 0.95em;
     transition: background 0.15s;
   }
-  .agenda-pessoa-header:hover {
-    background: linear-gradient(135deg, #ede7f6, #e1d5f0);
-  }
+  .agenda-pessoa-header:hover { background: linear-gradient(135deg, #ede7f6, #e1d5f0); }
   .agenda-pessoa-header .emoji-p { font-size: 1.4em; }
   .agenda-pessoa-header .nome-p { flex: 1; word-break: break-word; }
   .agenda-pessoa-header .count-p {
@@ -1063,9 +889,7 @@
     color: #6a1b9a; font-size: 0.85em;
     transition: transform 0.25s; margin-left: 2px;
   }
-  .agenda-pessoa-bloco.aberto .agenda-pessoa-header .seta-p {
-    transform: rotate(90deg);
-  }
+  .agenda-pessoa-bloco.aberto .agenda-pessoa-header .seta-p { transform: rotate(90deg); }
   .agenda-pessoa-corpo { display: none; }
   .agenda-pessoa-bloco.aberto .agenda-pessoa-corpo { display: block; }
   .agenda-pessoa-corpo .agenda-item {
@@ -1073,7 +897,6 @@
     border-top: 1px solid #f0e8f5; border-radius: 0;
   }
   .agenda-pessoa-corpo .agenda-item:last-child { border-radius: 0; }
-
   .box-remarcacoes {
     background: #fff8e1; border: 1px solid #ffe082;
     border-radius: 12px; padding: 12px;
@@ -1091,32 +914,21 @@
     font-size: 0.82em; border-left: 3px solid #ffb74d;
   }
   .remarcacao-item:last-child { margin-bottom: 0; }
-  .remarcacao-item .de-para {
-    display: flex; flex-direction: column;
-    gap: 4px; margin-bottom: 6px;
-  }
-  .remarcacao-item .de-para .linha {
-    display: flex; align-items: center; gap: 6px; color: #555;
-  }
+  .remarcacao-item .de-para { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
+  .remarcacao-item .de-para .linha { display: flex; align-items: center; gap: 6px; color: #555; }
   .remarcacao-item .de-para .rotulo {
     font-size: 0.75em; text-transform: uppercase;
     letter-spacing: 0.3px; font-weight: 700; min-width: 36px;
   }
   .remarcacao-item .de-para .rotulo-de { color: #999; }
   .remarcacao-item .de-para .rotulo-para { color: #2e7d32; }
-  .remarcacao-item .de-para .valor-orig {
-    text-decoration: line-through;
-    color: #999; font-size: 0.95em;
-  }
-  .remarcacao-item .de-para .valor-novo {
-    color: #2e7d32; font-weight: 700; font-size: 0.95em;
-  }
+  .remarcacao-item .de-para .valor-orig { text-decoration: line-through; color: #999; font-size: 0.95em; }
+  .remarcacao-item .de-para .valor-novo { color: #2e7d32; font-weight: 700; font-size: 0.95em; }
   .remarcacao-item .quando-remarcou {
     font-size: 0.72em; color: #999;
     font-style: italic; margin-top: 4px;
     padding-top: 6px; border-top: 1px dashed #f0f0f0;
   }
-
   .aviso-remarcando {
     background: #fff3e0; border-left: 4px solid #ff9800;
     padding: 10px 12px; border-radius: 8px;
@@ -1124,7 +936,6 @@
     color: #e65100; line-height: 1.5;
   }
   .aviso-remarcando strong { color: #bf360c; }
-
   .btn-excluir-modal {
     background: #e53935; color: white; border: none;
     margin-top: 10px; padding: 14px; width: 100%;
@@ -1133,6 +944,36 @@
     transition: background 0.2s;
   }
   .btn-excluir-modal:hover { background: #c62828; }
+  .modal-agenda {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 1000; display: none;
+    align-items: flex-end; justify-content: center; padding: 0;
+  }
+  .modal-agenda.visivel { display: flex; }
+  .modal-conteudo {
+    background: white; border-radius: 20px 20px 0 0;
+    width: 100%; max-width: 700px; max-height: 92vh;
+    overflow-y: auto; animation: slideUp 0.25s ease-out;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .modal-header {
+    display: flex; justify-content: space-between;
+    align-items: center; padding: 16px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    position: sticky; top: 0;
+    background: white; z-index: 10;
+    border-radius: 20px 20px 0 0;
+  }
+  .modal-header h2 { font-size: 1.1em; color: #1565c0; }
+  .modal-fechar {
+    background: #f5f5f5; color: #666; border: none;
+    width: 34px; height: 34px; border-radius: 50%;
+    font-size: 1em; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-fechar:hover { background: #ebebeb; color: #333; }
+  .modal-corpo { padding: 16px 20px 24px; }
 
   @media (min-width: 800px) {
     .bottom-nav { position: sticky; top: 0; bottom: auto; border-radius: 14px; margin-bottom: 14px; border-top: none; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
@@ -1144,6 +985,9 @@
     .filtros-globais { grid-template-columns: 1fr 1fr 1fr 1fr; }
     .btn-limpar-filtros { grid-column: span 4; }
     .emoji-grid { grid-template-columns: repeat(12, 1fr); }
+    .modal-agenda { align-items: center; padding: 20px; }
+    .modal-conteudo { border-radius: 20px; max-height: 85vh; }
+    .modal-header { border-radius: 20px 20px 0 0; }
   }
 </style>
 </head>
@@ -1161,9 +1005,8 @@
     </div>
   </header>
 
-  <!-- ============================= LANÇAR ============================= -->
+  <!-- LANÇAR -->
   <div class="painel ativo" id="painel-lancar">
-
     <div class="card">
       <h2>➕ Novo Gasto</h2>
 
@@ -1189,7 +1032,6 @@
 
       <div class="secao">
         <div class="secao-titulo"><span class="num">3</span> O que foi</div>
-
         <div class="campo">
           <label>Descrição</label>
           <input type="text" id="descricao" placeholder="Ex: Super Viza" 
@@ -1200,14 +1042,11 @@
             onkeydown="navegarSugestoes(event)">
           <div class="sugestoes-box" id="sugestoesBox"></div>
         </div>
-
         <div class="atalhos-chips" id="atalhosChips"></div>
-
         <div class="campo">
           <label>Categoria</label>
           <select id="categoria" onchange="atualizarSubcategorias()"></select>
         </div>
-
         <div class="campo">
           <label>Subcategoria</label>
           <select id="subcategoria"></select>
@@ -1236,12 +1075,10 @@
       <div class="parcelas-box" id="boxParcelas">
         <label>Data da compra</label>
         <input type="date" id="dataCompraCredito" onchange="atualizarPreviewParcelas()">
-
         <div class="sub-campo">
           <label>Cartão</label>
           <select id="cartaoSelecionado" onchange="atualizarPreviewParcelas()"></select>
         </div>
-
         <div class="sub-campo">
           <label>Número de parcelas</label>
           <select id="parcelas" onchange="atualizarPreviewParcelas()">
@@ -1261,7 +1098,6 @@
             <option value="24">24x</option>
           </select>
         </div>
-
         <div class="preview" id="previewParcelas"></div>
       </div>
 
@@ -1289,18 +1125,15 @@
       <h2>🕐 Últimos lançamentos</h2>
       <div id="ultimosLancamentos"></div>
     </div>
-
   </div>
 
-  <!-- ============================= ANÁLISE ============================= -->
+  <!-- ANÁLISE -->
   <div class="painel" id="painel-analise">
-
     <div class="card">
       <h2 class="com-filtro">
         🔍 Filtros
         <span class="filtro-ativo" id="badgeFiltroAtivo" style="display:none;">Ativos</span>
       </h2>
-
       <div class="campo" style="margin-bottom:12px;">
         <label>📅 Mês</label>
         <div class="mes-selector" style="gap:8px;">
@@ -1308,7 +1141,6 @@
           <button class="secundario" onclick="exportarCSV()" style="width:auto; padding:10px 14px; font-size:0.88em;">⬇️ CSV</button>
         </div>
       </div>
-
       <div class="campo" style="margin-bottom:12px;">
         <label>Filtrar mês por</label>
         <select id="modoFiltroMes" onchange="renderizar()">
@@ -1316,7 +1148,6 @@
           <option value="fatura">📅 Mês da fatura (vencimento)</option>
         </select>
       </div>
-
       <div class="filtros-globais">
         <div class="campo-filtro">
           <label>Categoria</label>
@@ -1350,7 +1181,6 @@
           🧹 Limpar todos os filtros
         </button>
       </div>
-
       <div class="resumo-filtros" id="resumoFiltros" style="display:none;"></div>
     </div>
 
@@ -1405,12 +1235,10 @@
       </div>
       <div id="listaGastosWrap"></div>
     </div>
-
   </div>
 
-  <!-- ============================= FATURAS ============================= -->
+  <!-- FATURAS -->
   <div class="painel" id="painel-faturas">
-
     <div class="card">
       <h2>📅 Mês da Fatura</h2>
       <div class="mes-selector">
@@ -1418,7 +1246,6 @@
         <button class="secundario" onclick="irParaMesAtualFatura()">Hoje</button>
       </div>
     </div>
-
     <div class="fatura-resumo-geral">
       <div class="titulo">Total de todas as faturas</div>
       <div class="total-geral" id="totalGeralFaturas">R$ 0,00</div>
@@ -1437,14 +1264,11 @@
         </div>
       </div>
     </div>
-
     <div id="faturasLista"></div>
-
   </div>
 
-  <!-- ============================= AGENDA ============================= -->
+  <!-- AGENDA -->
   <div class="painel" id="painel-agenda">
-
     <div class="agenda-acoes-rapidas">
       <button onclick="abrirFormEvento()">
         <span class="emoji">➕</span> Novo compromisso
@@ -1453,20 +1277,17 @@
         <span class="emoji">📅</span> Ir para hoje
       </button>
     </div>
-
     <div class="agenda-card-hoje" id="cardHoje">
       <div class="titulo-hoje">📌 HOJE</div>
       <div class="num-hoje" id="numEventosHoje">0</div>
       <div class="desc-hoje" id="descEventosHoje">Nenhum compromisso hoje</div>
       <div class="proximo-evento" id="proximoEvento" style="display:none;"></div>
     </div>
-
     <div class="agenda-visao-chips">
       <button class="ativa" data-visao="dia" onclick="trocarVisaoAgenda('dia')">📋 Por dia</button>
       <button data-visao="semana" onclick="trocarVisaoAgenda('semana')">🗓️ Semana</button>
       <button data-visao="pessoa" onclick="trocarVisaoAgenda('pessoa')">👥 Por pessoa</button>
     </div>
-
     <div class="agenda-filtro-pessoa" id="agendaFiltroPessoa"></div>
 
     <div class="sub-painel ativo" id="visao-dia">
@@ -1488,9 +1309,7 @@
         </div>
         <div class="semana-grid" id="semanaHeader"></div>
         <div class="semana-grid" id="semanaBody"></div>
-        <div class="dica" style="margin-top:10px;">
-          💡 Toque em um compromisso para ver detalhes
-        </div>
+        <div class="dica" style="margin-top:10px;">💡 Toque em um compromisso para ver detalhes</div>
       </div>
     </div>
 
@@ -1503,12 +1322,10 @@
         <div id="agendaListaPessoa"></div>
       </div>
     </div>
-
   </div>
 
-  <!-- ============================= AJUSTES ============================= -->
+  <!-- AJUSTES -->
   <div class="painel" id="painel-ajustes">
-
     <div class="sub-abas">
       <button class="sub-aba ativa" data-sub="cartoes" onclick="trocarSubAba('cartoes')">💳 Cartões</button>
       <button class="sub-aba" data-sub="categorias" onclick="trocarSubAba('categorias')">📂 Categorias</button>
@@ -1521,7 +1338,6 @@
         <h2>💳 Meus Cartões</h2>
         <div id="cartoesLista"></div>
       </div>
-
       <div class="card">
         <h2>➕ Novo Cartão</h2>
         <div class="nova-cat-form">
@@ -1585,7 +1401,6 @@
         </p>
         <div id="pessoasLista"></div>
       </div>
-
       <div class="card">
         <h2>➕ Nova Pessoa</h2>
         <div class="nova-cat-form">
@@ -1604,12 +1419,11 @@
         </div>
       </div>
     </div>
-
   </div>
 
 </div>
 
-<!-- MODAL: Editar despesa -->
+<!-- MODAIS -->
 <div class="modal-agenda" id="modalEditarGasto">
   <div class="modal-conteudo">
     <div class="modal-header">
@@ -1618,27 +1432,22 @@
     </div>
     <div class="modal-corpo">
       <input type="hidden" id="editGastoId">
-
       <div class="campo">
         <label>Valor *</label>
         <input type="number" id="editGastoValor" step="0.01" min="0" inputmode="decimal">
       </div>
-
       <div class="campo">
         <label>Descrição *</label>
         <input type="text" id="editGastoDescricao">
       </div>
-
       <div class="campo">
         <label>Categoria</label>
         <select id="editGastoCategoria" onchange="atualizarSubcategoriasEdicao()"></select>
       </div>
-
       <div class="campo">
         <label>Subcategoria</label>
         <select id="editGastoSubcategoria"></select>
       </div>
-
       <div class="campo">
         <label>Quem</label>
         <select id="editGastoUsuario">
@@ -1646,7 +1455,6 @@
           <option value="Eliane">👩 Eliane</option>
         </select>
       </div>
-
       <div class="campo">
         <label>Forma de pagamento</label>
         <select id="editGastoPagamento">
@@ -1656,23 +1464,19 @@
           <option value="Vale Alimentação">🍽️ Vale Alimentação</option>
         </select>
       </div>
-
       <div class="campo">
         <label>Data</label>
         <input type="date" id="editGastoData">
       </div>
-
       <div class="campo">
         <label>Detalhes (opcional)</label>
         <textarea id="editGastoObservacao"></textarea>
       </div>
-
       <button class="btn-grande" onclick="salvarEdicaoGasto()">✓ Salvar alterações</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL: Detalhes da despesa -->
 <div class="modal-agenda" id="modalDetalhesGasto">
   <div class="modal-conteudo">
     <div class="modal-header">
@@ -1683,7 +1487,6 @@
   </div>
 </div>
 
-<!-- MODAL: Editar cartão -->
 <div class="modal-agenda" id="modalEditarCartao">
   <div class="modal-conteudo">
     <div class="modal-header">
@@ -1712,7 +1515,6 @@
   </div>
 </div>
 
-<!-- MODAL: Editar pessoa -->
 <div class="modal-agenda" id="modalEditarPessoa">
   <div class="modal-conteudo">
     <div class="modal-header">
@@ -1738,7 +1540,6 @@
   </div>
 </div>
 
-<!-- MODAL: Emoji picker -->
 <div class="emoji-modal" id="modalEmoji">
   <div class="emoji-modal-conteudo">
     <div class="emoji-modal-header">
@@ -1750,7 +1551,6 @@
   </div>
 </div>
 
-<!-- MODAL: Novo/Editar evento da agenda -->
 <div class="modal-agenda" id="modalEvento">
   <div class="modal-conteudo">
     <div class="modal-header">
@@ -1759,17 +1559,14 @@
     </div>
     <div class="modal-corpo">
       <input type="hidden" id="evtId">
-
       <div class="aviso-remarcando" id="avisoRemarcando" style="display:none;">
         🔁 <strong>Remarcando compromisso</strong><br>
         <span id="avisoRemarcandoTexto"></span>
       </div>
-
       <div class="campo">
         <label>Título *</label>
         <input type="text" id="evtTitulo" placeholder="Ex: Consulta dentista" autocomplete="off">
       </div>
-
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <div class="campo">
           <label>Data *</label>
@@ -1780,12 +1577,10 @@
           <input type="time" id="evtHora">
         </div>
       </div>
-
       <div class="campo">
         <label>Para quem é</label>
         <select id="evtPessoa"></select>
       </div>
-
       <div class="campo">
         <label>Tipo</label>
         <select id="evtTipo">
@@ -1798,28 +1593,23 @@
           <option value="Outros">📌 Outros</option>
         </select>
       </div>
-
       <div class="campo">
         <label>Local (opcional)</label>
         <input type="text" id="evtLocal" placeholder="Ex: Clínica Sorriso - Centro">
       </div>
-
       <div class="campo">
         <label>Quem leva/acompanha (opcional)</label>
         <input type="text" id="evtAcompanhante" placeholder="Ex: Diego leva">
       </div>
-
       <div class="campo">
         <label>Observações (opcional)</label>
         <textarea id="evtObs" placeholder="Ex: Levar carteirinha do convênio e exames anteriores"></textarea>
       </div>
-
       <button class="btn-grande" onclick="salvarEvento()">✓ Salvar compromisso</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL: Ver detalhes do evento -->
 <div class="modal-agenda" id="modalDetalhes">
   <div class="modal-conteudo">
     <div class="modal-header">
@@ -1829,71 +1619,6 @@
     <div class="modal-corpo" id="detalhesCorpo"></div>
   </div>
 </div>
-
-<style>
-  .modal-agenda {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.6);
-    z-index: 1000;
-    display: none;
-    align-items: flex-end;
-    justify-content: center;
-    padding: 0;
-  }
-  .modal-agenda.visivel { display: flex; }
-  .modal-conteudo {
-    background: white;
-    border-radius: 20px 20px 0 0;
-    width: 100%;
-    max-width: 700px;
-    max-height: 92vh;
-    overflow-y: auto;
-    animation: slideUp 0.25s ease-out;
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
-  }
-  .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 20px;
-    border-bottom: 1px solid #f0f0f0;
-    position: sticky;
-    top: 0;
-    background: white;
-    z-index: 10;
-    border-radius: 20px 20px 0 0;
-  }
-  .modal-header h2 { font-size: 1.1em; color: #1565c0; }
-  .modal-fechar {
-    background: #f5f5f5;
-    color: #666;
-    border: none;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    font-size: 1em;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .modal-fechar:hover { background: #ebebeb; color: #333; }
-  .modal-corpo { padding: 16px 20px 24px; }
-
-  @media (min-width: 800px) {
-    .modal-agenda { align-items: center; padding: 20px; }
-    .modal-conteudo {
-      border-radius: 20px;
-      max-height: 85vh;
-    }
-    .modal-header { border-radius: 20px 20px 0 0; }
-  }
-</style>
 
 <nav class="bottom-nav">
   <button class="ativa" data-aba="lancar" onclick="trocarAba('lancar')">
@@ -2012,7 +1737,7 @@
       "⌚","📱","📲","💻","⌨️","🖥","🖨","🖱","🖲","🕹","🗜","💽","💾","💿","📀","📼","📷","📸","📹","🎥","📽",
       "🎞","📞","☎️","📟","📠","📺","📻","🎙","🎚","🎛","🧭","⏱","⏲","⏰","🕰","⌛","⏳","📡","🔋","🔌","💡",
       "🔦","🕯","🪔","🧯","🛢","💸","💵","💴","💶","💷","💰","💳","💎","⚖️","🧰","🔧","🔨","⚒","🛠","⛏","🪓",
-      "🔩","⚙️","🧱","⛓","🧲","🔫","💣","🧨","🪓","🔪","🗡","⚔️","🛡","🚬","⚰️","🪦","⚱️","🏺","🔮","📿","🧿",
+      "🔩","⚙️","🧱","⛓","🧲","🔫","💣","🧨","🔪","🗡","⚔️","🛡","🚬","⚰️","🪦","⚱️","🏺","🔮","📿","🧿",
       "💈","⚗️","🔭","🔬","🕳","🩹","🩺","💊","💉","🩸","🧬","🦠","🧫","🧪","🌡","🧹","🧺","🧻","🚽","🚰","🚿",
       "🛁","🛀","🧼","🪒","🧽","🧴","🛎","🔑","🗝","🚪","🪑","🛋","🛏","🛌","🧸","🖼","🛍","🛒","🎁","🎈","🎏",
       "🎀","🎊","🎉","🎎","🏮","🎐","🧧","✉️","📩","📨","📧","💌","📥","📤","📦","🏷","📪","📫","📬","📭","📮",
@@ -2379,7 +2104,7 @@
           reconstruirEstabelecimentos();
           renderizar();
           renderizarFaturas();
-          renderizarUltimos(); // ← CORRIGIDO: garante atualização da lista de últimos
+          renderizarUltimos();
         },
         erro => {
           console.error(erro);
@@ -2408,9 +2133,6 @@
     document.getElementById('statusTexto').textContent = texto;
   }
 
-  // ================================================================
-  // CARTÕES
-  // ================================================================
   function renderizarCartoes() {
     const wrap = document.getElementById('cartoesLista');
     if (cartoes.length === 0) {
@@ -2524,9 +2246,6 @@
     } catch (e) { alert('Erro: ' + e.message); }
   }
 
-  // ================================================================
-  // PESSOAS
-  // ================================================================
   function renderizarPessoas() {
     const wrap = document.getElementById('pessoasLista');
     if (!wrap) return;
@@ -2630,9 +2349,6 @@
     } catch (e) { alert('Erro ao salvar pessoas: ' + e.message); }
   }
 
-  // ================================================================
-  // AGENDA
-  // ================================================================
   function dataHojeISO() {
     const h = new Date();
     return `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, '0')}-${String(h.getDate()).padStart(2, '0')}`;
@@ -2932,7 +2648,7 @@
         const temRemarc = (e.remarcacoes && e.remarcacoes.length > 0) ? 'tem-remarcacao' : '';
         const passado = eventoPassado(e) ? 'passado' : '';
         return `
-          <div class="semana-evt ${classeTipo} ${temRemarc} ${passado}" onclick="abrirDetalhesEvento('${e.id}')" title="${escaparHTML(e.titulo)}${e.remarcacoes && e.remarcacoes.length > 0 ? ' (remarcado)' : ''}">
+          <div class="semana-evt ${classeTipo} ${temRemarc} ${passado}" onclick="abrirDetalhesEvento('${e.id}')" title="${escaparHTML(e.titulo)}">
             ${e.hora ? e.hora + ' ' : ''}${escaparHTML(e.titulo).substring(0, 14)}
           </div>
         `;
@@ -2970,7 +2686,7 @@
       const itensHTML = evts.map(e => renderizarItemEvento(e)).join('');
       const aberto = pessoasAbertas.has(nome);
       return `
-        <div class="agenda-pessoa-bloco ${aberto ? 'aberto' : ''}" id="bloco-${normalizarChave(nome)}">
+        <div class="agenda-pessoa-bloco ${aberto ? 'aberto' : ''}">
           <button class="agenda-pessoa-header" onclick="togglePessoaBloco('${nome.replace(/'/g, "\\'")}')">
             <span class="emoji-p">${emoji}</span>
             <span class="nome-p">${escaparHTML(nome)}</span>
@@ -3098,7 +2814,6 @@
     const passado = eventoPassado(e);
 
     const linhas = [];
-
     if (passado) {
       linhas.push(`<div style="background:#f5f5f5; padding:8px 12px; border-radius:8px; margin-bottom:14px; font-size:0.82em; color:#666;">
         ⏱️ Compromisso passado
@@ -3199,9 +2914,6 @@
     } catch (e) { alert('Erro: ' + e.message); }
   }
 
-  // ================================================================
-  // ESTABELECIMENTOS
-  // ================================================================
   function normalizarChave(desc) {
     return String(desc || '').trim().toLowerCase();
   }
@@ -3632,6 +3344,38 @@
     renderizarUltimos();
   }
 
+  // ===== FUNÇÃO QUE ESTAVA FALTANDO =====
+  function renderizarUltimos() {
+    const wrap = document.getElementById('ultimosLancamentos');
+    if (!wrap) return;
+    const ultimos = [...gastos].sort((a, b) => (b.data || '').localeCompare(a.data || '')).slice(0, 5);
+    if (ultimos.length === 0) {
+      wrap.innerHTML = '<div class="vazio">Nenhum gasto lançado ainda</div>';
+      return;
+    }
+    wrap.innerHTML = ultimos.map(g => {
+      const cor = corDa(g.categoria);
+      const parcelaTag = g.parcelaTotal ? `<span class="tag-parcela">${g.parcelaAtual}/${g.parcelaTotal}</span>` : '';
+      const cartaoInfo = g.cartao ? ` · ${g.cartao}` : '';
+      const faturaInfo = (g.formaPagamento === 'Cartão Crédito' && g.mesFatura) ? ` · Fatura ${nomeMes(g.mesFatura)}` : '';
+      return `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #f0f0f0;">
+          <div style="flex:1; min-width:0;">
+            <div style="font-weight:600; font-size:0.92em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+              ${escaparHTML(g.descricao)} ${parcelaTag}
+            </div>
+            <div style="font-size:0.78em; color:#777; margin-top:2px;">
+              ${formatarData(g.data)} · ${g.usuario}${cartaoInfo}${faturaInfo} · <span style="color:${cor}; font-weight:600;">${g.categoria}</span>
+            </div>
+          </div>
+          <div style="font-weight:700; color:#e53935; font-size:0.95em; margin-left:10px; white-space:nowrap;">
+            ${formatarMoeda(g.valor)}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
   function renderizarResumo(lista) {
     const mes = document.getElementById('mesReferencia').value;
     if (!mes) return;
@@ -3737,7 +3481,6 @@
       const cor = corDa(g.categoria);
       const sub = g.subcategoria || '';
       const subTag = sub ? `<span class="tag-sub">${escaparHTML(sub)}</span>` : '';
-
       return `
         <div class="gasto-swipe-container">
           <div class="gasto-swipe-actions acao-excluir">
@@ -3777,9 +3520,6 @@
     ativarSwipeGastos();
   }
 
-  // ================================================================
-  // SWIPE
-  // ================================================================
   let swipeState = null;
   const SWIPE_THRESHOLD = 80;
   const SWIPE_MAX = 110;
@@ -3908,9 +3648,6 @@
     document.addEventListener('mouseup', onUp);
   }
 
-  // ================================================================
-  // DETALHES DO GASTO
-  // ================================================================
   function abrirDetalhesGasto(id) {
     const g = gastos.find(x => x.id === id);
     if (!g) return;
@@ -3968,9 +3705,6 @@
     document.getElementById('modalDetalhesGasto').classList.remove('visivel');
   }
 
-  // ================================================================
-  // EDITAR GASTO
-  // ================================================================
   function abrirEditarGasto(id) {
     const g = gastos.find(x => x.id === id);
     if (!g) return;
@@ -4056,9 +3790,6 @@
       : btn.textContent.replace('▾', '▸');
   }
 
-  // ================================================================
-  // ADICIONAR GASTO — agora LIMPA E RESETA TUDO após salvar
-  // ================================================================
   async function adicionarGasto() {
     if (!firebaseOK) { alert('Firebase não está configurado.'); return; }
     const btn = document.getElementById('btnAdicionar');
@@ -4131,34 +3862,25 @@
       });
       await batch.commit();
 
-      // ===== LIMPEZA COMPLETA DO FORMULÁRIO =====
       document.getElementById('valor').value = '';
       document.getElementById('descricao').value = '';
       document.getElementById('observacao').value = '';
       document.getElementById('observacaoCredito').value = '';
       document.getElementById('parcelas').value = '1';
 
-      // Reseta a forma de pagamento para Dinheiro/PIX
       selecionarPagamento('Dinheiro/PIX');
 
-      // Reseta a categoria para a primeira e atualiza subcategorias
       if (categorias.length > 0) {
         document.getElementById('categoria').value = categorias[0].nome;
         atualizarSubcategorias();
       }
 
-      // Reseta data para hoje
       const hoje = new Date();
       document.getElementById('data').value = hoje.toISOString().split('T')[0];
       document.getElementById('dataCompraCredito').value = hoje.toISOString().split('T')[0];
 
-      // Limpa o preview de parcelas
       atualizarPreviewParcelas();
-
-      // Fecha qualquer sugestão aberta
       fecharSugestoes();
-
-      // Foca de novo no valor
       document.getElementById('valor').focus();
 
       btn.textContent = numParcelas > 1 ? `✓ ${numParcelas} parcelas criadas!` : '✓ Adicionado!';
