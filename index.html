@@ -4352,15 +4352,22 @@ function ouvirGastos() {
     link.click();
   }
 
-  window.onload = () => {
-    const hoje = new Date();
-    document.getElementById('data').value = hoje.toISOString().split('T')[0];
-    document.getElementById('dataCompraCredito').value = hoje.toISOString().split('T')[0];
-    const mesAtual = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
-    document.getElementById('mesReferencia').value = mesAtual;
-    document.getElementById('mesFatura').value = mesAtual;
-    iniciarFirebase();
-  };
+ window.onload = () => {
+  const hoje = new Date();
+  document.getElementById('data').value = hoje.toISOString().split('T')[0];
+  document.getElementById('dataCompraCredito').value = hoje.toISOString().split('T')[0];
+  const mesAtual = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
+  document.getElementById('mesReferencia').value = mesAtual;
+  document.getElementById('mesFatura').value = mesAtual;
+  iniciarFirebase();
+
+  // Força o Service Worker a buscar a versão mais nova do HTML
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(regs => {
+      regs.forEach(r => r.update());
+    });
+  }
+};
 </script>
 </body>
 </html>
