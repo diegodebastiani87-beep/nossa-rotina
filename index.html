@@ -2314,35 +2314,39 @@ function iniciarFirebase() {
     firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
 
-    // settings() SEMPRE antes de qualquer outra operação
+    // settings() sempre antes de qualquer outra operação
     db.settings({ ignoreUndefinedProperties: true });
 
-    // Marca o status inicial com base no estado REAL da rede do dispositivo
+    // Se o app está abrindo já offline, NÃO tenta ativar persistência.
+    // Isso evita o erro "failed-precondition" que desabilita o cache.
+    if (navigator.onLine) {
+      db.enablePersistence({ synchronizeTabs: true })
+        .then(() => console.log('Persistência offline ativa.'))
+        .catch((err) => {
+          if (err.code === 'failed-precondition') {
+            console.warn('Persistência offline: múltiplas abas.');
+          } else if (err.code === 'unimplemented') {
+            console.warn('Persistência offline: não suportada.');
+          } else {
+            console.warn('Persistência offline indisponível:', err.message);
+          }
+        });
+    } else {
+      console.log('App aberto offline: pulando enablePersistence.');
+    }
+
+    firebaseOK = true;
+    ouvirDadosCasa();
+    ouvirGastos();
+    ouvirEventos();
+
+    // Define o status correto imediatamente, ANTES de ouvir o Firestore
     if (!navigator.onLine) {
       atualizarStatus('offline', 'Offline (vai sincronizar)');
     } else {
       atualizarStatus('conectando', 'Conectando...');
     }
 
-    // Ativa persistência só se ainda não foi ativada nesta sessão
-    db.enablePersistence({ synchronizeTabs: true })
-      .then(() => {
-        console.log('Persistência offline ativa.');
-      })
-      .catch((err) => {
-        if (err.code === 'failed-precondition') {
-          console.warn('Persistência offline: múltiplas abas abertas.');
-        } else if (err.code === 'unimplemented') {
-          console.warn('Persistência offline: navegador não suporta.');
-        } else {
-          console.warn('Persistência offline indisponível:', err.message);
-        }
-      });
-
-    firebaseOK = true;
-    ouvirDadosCasa();
-    ouvirGastos();
-    ouvirEventos();
     monitorarConexao();
   } catch (e) {
     console.error(e);
@@ -2351,9 +2355,9 @@ function iniciarFirebase() {
 }
 
 let _timeoutOffline = null;
+let _abriuOffline = !navigator.onLine;
 
 function monitorarConexao() {
-  // Atualiza o status visual
   function aplicarStatus(online) {
     const el = document.getElementById('statusConexao');
     const txt = document.getElementById('statusTexto');
@@ -2371,9 +2375,15 @@ function monitorarConexao() {
     }
   }
 
-  // Chamado pelo listener do Firestore (via onSnapshot com metadata)
   window.__atualizarStatusFirestore = function(fromCache) {
-    // Se veio do cache, agenda mudança para offline (com 1.5s de espera)
+    // Se o app abriu offline, ignora qualquer "online" que o Firestore mandar
+    // enquanto navigator.onLine ainda estiver false
+    if (_abriuOffline && !navigator.onLine) {
+      if (fromCache) {
+        aplicarStatus(false);
+      }
+      return;
+    }
     if (fromCache) {
       if (_timeoutOffline) return;
       _timeoutOffline = setTimeout(() => {
@@ -2385,20 +2395,17 @@ function monitorarConexao() {
     }
   };
 
-  // Escuta também os eventos do navegador (redundância útil)
   window.addEventListener('online', () => {
-    // Aguarda 1s antes de marcar como online (evita falsos positivos)
+    _abriuOffline = false;
     setTimeout(() => {
       if (navigator.onLine) aplicarStatus(true);
     }, 1000);
   });
   window.addEventListener('offline', () => aplicarStatus(false));
 
-  // Checa no início (logo após o onload) — importante para o caso de reload offline
   if (!navigator.onLine) {
     aplicarStatus(false);
   } else {
-    // Faz um teste real com timeout curto para evitar falsos "online"
     Promise.race([
       refDocCasa().get({ source: 'server' }),
       new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))
@@ -2406,12 +2413,12 @@ function monitorarConexao() {
       .catch(() => aplicarStatus(false));
   }
 
-  // Revalida o status a cada 15 segundos (caso fique offline silenciosamente)
   setInterval(() => {
     if (!navigator.onLine) {
       aplicarStatus(false);
       return;
     }
+    _abriuOffline = false;
     Promise.race([
       refDocCasa().get({ source: 'server' }),
       new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))
