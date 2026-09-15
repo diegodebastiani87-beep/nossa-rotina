@@ -2309,20 +2309,31 @@
     preview.innerHTML = html;
   }
 
-  function iniciarFirebase() {
-    try {
-      firebase.initializeApp(firebaseConfig);
-      db = firebase.firestore();
-      db.settings({ ignoreUndefinedProperties: true });
-      firebaseOK = true;
-      ouvirDadosCasa();
-      ouvirGastos();
-      ouvirEventos();
-    } catch (e) {
-      console.error(e);
-      atualizarStatus('offline', 'Erro');
-    }
+ function iniciarFirebase() {
+  try {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+
+    // Ativa a persistência offline (permite lançar sem internet)
+    db.enablePersistence({ synchronizeTabs: true })
+      .catch((err) => {
+        if (err.code === 'failed-precondition') {
+          console.warn('Persistência offline: múltiplas abas abertas. Use apenas uma aba para ter offline.');
+        } else if (err.code === 'unimplemented') {
+          console.warn('Persistência offline: navegador não suporta.');
+        }
+      });
+
+    db.settings({ ignoreUndefinedProperties: true });
+    firebaseOK = true;
+    ouvirDadosCasa();
+    ouvirGastos();
+    ouvirEventos();
+  } catch (e) {
+    console.error(e);
+    atualizarStatus('offline', 'Erro');
   }
+}
 
   function refDocCasa() { return db.collection('casas').doc(CASA_ID); }
   function colecaoGastos() { return refDocCasa().collection('gastos'); }
