@@ -2308,8 +2308,9 @@
     </div>`;
     preview.innerHTML = html;
   }
-
-let estadoRedeReal = null; // true = internet real confirmada, false = confirmadamente offline, null = ainda não testamos
+ 
+let estadoRedeReal = null;
+let alternandoRede = false; // trava para nunca sobrepor chamadas de enable/disableNetwork
 
 async function iniciarFirebase() {
   try {
@@ -2321,7 +2322,9 @@ async function iniciarFirebase() {
     atualizarStatus('conectando', 'Conectando...');
 
     try {
-      await db.enablePersistence({ synchronizeTabs: true });
+      // synchronizeTabs removido: cada dispositivo usa uma única aba, e essa opção
+      // combinada com enableNetwork/disableNetwork causa instabilidade interna no SDK.
+      await db.enablePersistence();
       console.log('Persistência offline ativa.');
     } catch (err) {
       console.warn('Persistência indisponível:', err.code || err.message);
@@ -2337,7 +2340,6 @@ async function iniciarFirebase() {
   }
 }
 
-// Teste de conectividade de verdade — não confia em navigator.onLine sozinho.
 async function testarConectividadeReal() {
   try {
     await Promise.race([
@@ -2355,37 +2357,36 @@ async function testarConectividadeReal() {
 }
 
 async function atualizarConectividade() {
-  if (!firebaseOK) return;
+  if (!firebaseOK || alternandoRede) return; // nunca sobrepor uma chamada à outra
   const online = await testarConectividadeReal();
 
-  if (online === estadoRedeReal) return; // nada mudou, evita chamadas repetidas
+  if (online === estadoRedeReal) return;
   estadoRedeReal = online;
+  alternandoRede = true;
 
-  if (online) {
-    // Libera o Firestore para tentar a rede de novo. O status final
-    // "Sincronizado" só aparece quando o snapshot confirmar dados do servidor.
-    atualizarStatus('conectando', 'Conectando...');
-    db.enableNetwork().catch(() => {});
-  } else {
-    // Corta a rede do Firestore na marra. A partir daqui, qualquer leitura
-    // ou gravação vem do cache local imediatamente — sem esperar o SDK
-    // "perceber" sozinho que a internet caiu.
-    atualizarStatus('offline', 'Offline (vai sincronizar)');
-    db.disableNetwork().catch(() => {});
+  try {
+    if (online) {
+      atualizarStatus('conectando', 'Conectando...');
+      await db.enableNetwork();
+    } else {
+      atualizarStatus('offline', 'Offline (vai sincronizar)');
+      await db.disableNetwork();
+    }
+  } catch (e) {
+    console.warn('Erro ao alternar rede do Firestore:', e.message);
+  } finally {
+    alternandoRede = false;
   }
 }
 
 function monitorarConexaoReal() {
-  atualizarConectividade(); // checa assim que o app abre
-
-  // Reage rápido às pistas do navegador, mas sempre confirma com o teste real.
+  atualizarConectividade();
   window.addEventListener('online', atualizarConectividade);
   window.addEventListener('offline', atualizarConectividade);
-
-  // Rede de segurança: nem todo navegador dispara online/offline de forma
-  // confiável (Wi-Fi sem internet real, modo avião em alguns Androids etc).
-  setInterval(atualizarConectividade, 10000);
+  // Intervalo bem mais espaçado: só como rede de segurança, não como mecanismo principal.
+  setInterval(atualizarConectividade, 30000);
 }
+
   function refDocCasa() { return db.collection('casas').doc(CASA_ID); }
   function colecaoGastos() { return refDocCasa().collection('gastos'); }
   function colecaoEventos() { return refDocCasa().collection('eventos'); }
