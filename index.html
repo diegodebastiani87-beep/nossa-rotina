@@ -2309,45 +2309,58 @@
     preview.innerHTML = html;
   }
 
-function iniciarFirebase() {
+async function iniciarFirebase() {
   try {
     firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
-
-    // settings() sempre antes de qualquer outra operação
     db.settings({ ignoreUndefinedProperties: true });
 
-    // Se o app está abrindo já offline, NÃO tenta ativar persistência.
-    // Isso evita o erro "failed-precondition" que desabilita o cache.
+    // Faz um teste real de conexão antes de decidir ativar persistência.
+    // navigator.onLine mente no celular; o único teste confiável é tentar
+    // bater no servidor com timeout curto.
+    let temInternet = false;
     if (navigator.onLine) {
-      db.enablePersistence({ synchronizeTabs: true })
-        .then(() => console.log('Persistência offline ativa.'))
-        .catch((err) => {
-          if (err.code === 'failed-precondition') {
-            console.warn('Persistência offline: múltiplas abas.');
-          } else if (err.code === 'unimplemented') {
-            console.warn('Persistência offline: não suportada.');
-          } else {
-            console.warn('Persistência offline indisponível:', err.message);
-          }
-        });
-    } else {
-      console.log('App aberto offline: pulando enablePersistence.');
+      try {
+        await Promise.race([
+          fetch('https://www.gstatic.com/generate_204', { method: 'HEAD', cache: 'no-store' }),
+          new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))
+        ]);
+        temInternet = true;
+      } catch (e) {
+        temInternet = false;
+      }
     }
 
     firebaseOK = true;
-    ouvirDadosCasa();
-    ouvirGastos();
-    ouvirEventos();
 
-    // Define o status correto imediatamente, ANTES de ouvir o Firestore
-    if (!navigator.onLine) {
-      atualizarStatus('offline', 'Offline (vai sincronizar)');
-    } else {
+    if (temInternet) {
       atualizarStatus('conectando', 'Conectando...');
+      db.enablePersistence({ synchronizeTabs: true })
+        .then(() => {
+          console.log('Persistência offline ativa.');
+          // Só agora começamos a ouvir
+          ouvirDadosCasa();
+          ouvirGastos();
+          ouvirEventos();
+          monitorarConexao();
+        })
+        .catch((err) => {
+          console.warn('Persistência indisponível:', err.code || err.message);
+          // Mesmo sem persistência, inicia os listeners
+          ouvirDadosCasa();
+          ouvirGastos();
+          ouvirEventos();
+          monitorarConexao();
+        });
+    } else {
+      // Offline confirmado: não tenta ativar persistência agora,
+      // apenas escuta os listeners do Firestore (que usarão o cache existente).
+      atualizarStatus('offline', 'Offline (vai sincronizar)');
+      ouvirDadosCasa();
+      ouvirGastos();
+      ouvirEventos();
+      monitorarConexao();
     }
-
-    monitorarConexao();
   } catch (e) {
     console.error(e);
     atualizarStatus('offline', 'Erro');
@@ -2355,7 +2368,6 @@ function iniciarFirebase() {
 }
 
 let _timeoutOffline = null;
-let _abriuOffline = !navigator.onLine;
 
 function monitorarConexao() {
   function aplicarStatus(online) {
@@ -2375,15 +2387,8 @@ function monitorarConexao() {
     }
   }
 
+  // Chamado por ouvirGastos sempre que o Firestore responde
   window.__atualizarStatusFirestore = function(fromCache) {
-    // Se o app abriu offline, ignora qualquer "online" que o Firestore mandar
-    // enquanto navigator.onLine ainda estiver false
-    if (_abriuOffline && !navigator.onLine) {
-      if (fromCache) {
-        aplicarStatus(false);
-      }
-      return;
-    }
     if (fromCache) {
       if (_timeoutOffline) return;
       _timeoutOffline = setTimeout(() => {
@@ -2396,35 +2401,17 @@ function monitorarConexao() {
   };
 
   window.addEventListener('online', () => {
-    _abriuOffline = false;
+    // Aguarda um instante antes de marcar online (evita falso positivo)
     setTimeout(() => {
       if (navigator.onLine) aplicarStatus(true);
-    }, 1000);
+    }, 2000);
   });
   window.addEventListener('offline', () => aplicarStatus(false));
 
+  // Status inicial: se onLine for false, marca offline direto
   if (!navigator.onLine) {
     aplicarStatus(false);
-  } else {
-    Promise.race([
-      refDocCasa().get({ source: 'server' }),
-      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))
-    ]).then(() => aplicarStatus(true))
-      .catch(() => aplicarStatus(false));
   }
-
-  setInterval(() => {
-    if (!navigator.onLine) {
-      aplicarStatus(false);
-      return;
-    }
-    _abriuOffline = false;
-    Promise.race([
-      refDocCasa().get({ source: 'server' }),
-      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))
-    ]).then(() => aplicarStatus(true))
-      .catch(() => aplicarStatus(false));
-  }, 15000);
 }
   function refDocCasa() { return db.collection('casas').doc(CASA_ID); }
   function colecaoGastos() { return refDocCasa().collection('gastos'); }
