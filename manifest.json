@@ -2,12 +2,13 @@
   "name": "Nossa Rotina",
   "short_name": "Rotina",
   "start_url": "/nossa-rotina/",
+  "scope": "/nossa-rotina/",
   "display": "standalone",
   "background_color": "#f0f2f5",
   "theme_color": "#1e88e5",
   "icons": [
     {
-      "src": "icon-512.png",
+      "src": "/nossa-rotina/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
