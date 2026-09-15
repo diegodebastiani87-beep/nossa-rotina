@@ -2298,78 +2298,29 @@
   let estadoRedeReal = null;
 
   async function iniciarFirebase() {
+  try {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    db.settings({ ignoreUndefinedProperties: true });
+    firebaseOK = true;
+
+    atualizarStatus('conectando', 'Conectando...');
+
     try {
-      firebase.initializeApp(firebaseConfig);
-      db = firebase.firestore();
-      db.settings({ ignoreUndefinedProperties: true });
-
-      // Habilita persistência com tratamento para falhas iniciais sem internet
-      try {
-        await db.enablePersistence({ synchronizeTabs: true });
-        console.log('Persistência offline ativa.');
-      } catch (err) {
-        console.warn('Persistência indisponível:', err.code || err.message);
-      }
-
-      firebaseOK = true;
-
-      // Se a rede já estiver indisponível ao abrir, define imediatamente o status como offline
-      if (!navigator.onLine) {
-        atualizarStatus('offline', 'Offline (vai sincronizar)');
-        estadoRedeReal = false;
-      } else {
-        atualizarStatus('conectando', 'Conectando...');
-      }
-
-      ouvirDadosCasa();
-      ouvirGastos();
-      ouvirEventos();
-      monitorarConexaoReal();
-    } catch (e) {
-      console.error(e);
-      atualizarStatus('offline', 'Erro ao iniciar');
+      await db.enablePersistence();
+      console.log('Persistência offline ativa.');
+    } catch (err) {
+      console.warn('Persistência indisponível:', err.code || err.message);
     }
+
+    ouvirDadosCasa();
+    ouvirGastos();
+    ouvirEventos();
+  } catch (e) {
+    console.error(e);
+    atualizarStatus('offline', 'Erro');
   }
-
-  async function testarConectividadeReal() {
-    if (!navigator.onLine) return false;
-    try {
-      await Promise.race([
-        fetch('https://www.gstatic.com/generate_204?t=' + Date.now(), {
-          method: 'GET',
-          mode: 'no-cors',
-          cache: 'no-store'
-        }),
-        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))
-      ]);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  async function atualizarConectividade() {
-    if (!firebaseOK) return;
-    const online = await testarConectividadeReal();
-
-    if (online === estadoRedeReal) return;
-    estadoRedeReal = online;
-
-    if (online) {
-      atualizarStatus('conectando', 'Conectando...');
-      db.enableNetwork().catch(() => {});
-    } else {
-      atualizarStatus('offline', 'Offline (vai sincronizar)');
-      db.disableNetwork().catch(() => {});
-    }
-  }
-
-  function monitorarConexaoReal() {
-    atualizarConectividade();
-    window.addEventListener('online', atualizarConectividade);
-    window.addEventListener('offline', atualizarConectividade);
-    setInterval(atualizarConectividade, 10000);
-  }
+}
 
   function refDocCasa() { return db.collection('casas').doc(CASA_ID); }
   function colecaoGastos() { return refDocCasa().collection('gastos'); }
