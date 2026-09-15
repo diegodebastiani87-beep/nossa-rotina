@@ -2339,15 +2339,23 @@ function iniciarFirebase() {
 }
 
 function monitorarConexao() {
-  function aplicarStatus(online) {
-    if (online) {
-      atualizarStatus('online', 'Sincronizado');
+  let online = true;
+
+  function aplicarStatus(novoStatus) {
+    online = novoStatus;
+    const el = document.getElementById('statusConexao');
+    const txt = document.getElementById('statusTexto');
+    el.classList.remove('online', 'offline');
+    if (novoStatus) {
+      el.classList.add('online');
+      txt.textContent = 'Sincronizado';
     } else {
-      atualizarStatus('offline', 'Offline (vai sincronizar)');
+      el.classList.add('offline');
+      txt.textContent = 'Offline (vai sincronizar)';
     }
   }
 
-  async function testarConexaoReal() {
+  async function testar() {
     if (!navigator.onLine) {
       aplicarStatus(false);
       return;
@@ -2355,7 +2363,7 @@ function monitorarConexao() {
     try {
       await Promise.race([
         refDocCasa().get({ source: 'server' }),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000))
+        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 4000))
       ]);
       aplicarStatus(true);
     } catch (e) {
@@ -2363,41 +2371,24 @@ function monitorarConexao() {
     }
   }
 
-  window.addEventListener('online', testarConexaoReal);
+  window.addEventListener('online', testar);
   window.addEventListener('offline', () => aplicarStatus(false));
-
-  testarConexaoReal();
-
-  setInterval(testarConexaoReal, 30000);
+  testar();
+  setInterval(testar, 20000);
 }
-let _timeoutOffline = null;
-
 function monitorarConexao() {
   window.__atualizarStatusFirestore = function(fromCache) {
     const el = document.getElementById('statusConexao');
     const txt = document.getElementById('statusTexto');
-
+    el.classList.remove('online', 'offline');
     if (fromCache) {
-      // Só mostra "Offline" se ficar 3s sem voltar
-      if (_timeoutOffline) return;
-      _timeoutOffline = setTimeout(() => {
-        el.classList.remove('online');
-        el.classList.add('offline');
-        txt.textContent = 'Offline (vai sincronizar)';
-        _timeoutOffline = null;
-      }, 3000);
+      el.classList.add('offline');
+      txt.textContent = 'Offline (vai sincronizar)';
     } else {
-      // Voltou online: cancela o aviso de offline pendente
-      if (_timeoutOffline) {
-        clearTimeout(_timeoutOffline);
-        _timeoutOffline = null;
-      }
-      el.classList.remove('offline');
       el.classList.add('online');
       txt.textContent = 'Sincronizado';
     }
   };
-  atualizarStatus('conectando', 'Conectando...');
 }
   function refDocCasa() { return db.collection('casas').doc(CASA_ID); }
   function colecaoGastos() { return refDocCasa().collection('gastos'); }
@@ -2504,16 +2495,12 @@ function monitorarConexao() {
     return arr.length ? arr : padrao;
   }
 
- function ouvirGastos() {
+function ouvirGastos() {
   colecaoGastos()
     .orderBy('data', 'desc')
     .onSnapshot(
-      { includeMetadataChanges: true },
       snapshot => {
         gastos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        if (window.__atualizarStatusFirestore) {
-          window.__atualizarStatusFirestore(snapshot.metadata.fromCache);
-        }
         reconstruirEstabelecimentos();
         renderizar();
         renderizarFaturas();
