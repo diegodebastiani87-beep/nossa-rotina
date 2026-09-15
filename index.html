@@ -2309,12 +2309,15 @@
     preview.innerHTML = html;
   }
 
- function iniciarFirebase() {
+function iniciarFirebase() {
   try {
     firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
 
-    // Ativa a persistência offline
+    // IMPORTANTE: settings() deve vir ANTES de qualquer outra operação
+    db.settings({ ignoreUndefinedProperties: true });
+
+    // Depois ativa a persistência offline
     db.enablePersistence({ synchronizeTabs: true })
       .catch((err) => {
         if (err.code === 'failed-precondition') {
@@ -2324,7 +2327,6 @@
         }
       });
 
-    db.settings({ ignoreUndefinedProperties: true });
     firebaseOK = true;
     ouvirDadosCasa();
     ouvirGastos();
@@ -2336,6 +2338,18 @@
   }
 }
 
+function monitorarConexao() {
+  function atualizar() {
+    if (navigator.onLine) {
+      atualizarStatus('online', 'Sincronizado');
+    } else {
+      atualizarStatus('offline', 'Offline (vai sincronizar)');
+    }
+  }
+  window.addEventListener('online', atualizar);
+  window.addEventListener('offline', atualizar);
+  atualizar();
+}
 function monitorarConexao() {
   function atualizar() {
     if (navigator.onLine) {
