@@ -2469,12 +2469,16 @@ function ouvirGastos() {
       snapshot => {
         gastos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        // Fonte única de verdade: veio do cache local (offline/ainda não
-        // confirmado pelo servidor) ou já foi confirmado pelo servidor?
-        if (snapshot.metadata.fromCache) {
-          atualizarStatus('offline', 'Offline (vai sincronizar)');
-        } else {
+        // Só consideramos "Sincronizado" quando o Firestore confirma que o
+        // dado veio do servidor E o navegador também concorda que há rede.
+        // Isso evita marcar como online por causa de um estado residual do
+        // Firestore que ainda não percebeu a queda de conexão.
+        const realmenteOnline = !snapshot.metadata.fromCache && navigator.onLine;
+
+        if (realmenteOnline) {
           atualizarStatus('online', 'Sincronizado');
+        } else {
+          atualizarStatus('offline', 'Offline (vai sincronizar)');
         }
 
         reconstruirEstabelecimentos();
