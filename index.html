@@ -3159,7 +3159,7 @@ function monitorarConexao() {
 
     const dados = { titulo, data, hora, pessoa, tipo, local, acompanhante, obs, atualizadoEm: firebase.firestore.FieldValue.serverTimestamp() };
 
-    try {
+        try {
       if (id) {
         const e = eventos.find(x => x.id === id);
         if (e && (e.data !== data || (e.hora || '') !== hora)) {
@@ -3173,10 +3173,14 @@ function monitorarConexao() {
           const remarcacoes = e.remarcacoes ? [...e.remarcacoes, remarcacao] : [remarcacao];
           dados.remarcacoes = remarcacoes;
         }
-        await colecaoEventos().doc(id).update(dados);
+        colecaoEventos().doc(id).update(dados).catch(e => {
+          console.error('Erro ao sincronizar evento:', e);
+        });
       } else {
         dados.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
-        await colecaoEventos().add(dados);
+        colecaoEventos().add(dados).catch(e => {
+          console.error('Erro ao sincronizar evento:', e);
+        });
       }
       fecharFormEvento();
     } catch (e) {
@@ -3975,13 +3979,18 @@ function monitorarConexao() {
         });
       }
 
-      const batch = db.batch();
+            const batch = db.batch();
       lancamentos.forEach(l => {
         const ref = colecaoGastos().doc();
         batch.set(ref, l);
       });
-      await batch.commit();
 
+      // Não espera a confirmação do servidor — apenas dispara
+      batch.commit().catch(e => {
+        console.error('Erro ao sincronizar gasto:', e);
+      });
+
+      // Libera a UI imediatamente
       document.getElementById('valor').value = '';
       document.getElementById('descricao').value = '';
       document.getElementById('observacao').value = '';
@@ -3990,13 +3999,13 @@ function monitorarConexao() {
       atualizarPreviewParcelas();
       document.getElementById('valor').focus();
 
+      btn.disabled = false;
       btn.textContent = numParcelas > 1 ? `✓ ${numParcelas} parcelas criadas!` : '✓ Adicionado!';
       setTimeout(() => { btn.textContent = '✓ Adicionar Gasto'; }, 1400);
     } catch (e) {
       console.error(e);
       alert('Erro ao salvar: ' + e.message);
       btn.textContent = '✓ Adicionar Gasto';
-    } finally {
       btn.disabled = false;
     }
   }
