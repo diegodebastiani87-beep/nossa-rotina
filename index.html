@@ -2314,53 +2314,25 @@ async function iniciarFirebase() {
     firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
     db.settings({ ignoreUndefinedProperties: true });
-
-    // Faz um teste real de conexão antes de decidir ativar persistência.
-    // navigator.onLine mente no celular; o único teste confiável é tentar
-    // bater no servidor com timeout curto.
-    let temInternet = false;
-    if (navigator.onLine) {
-      try {
-        await Promise.race([
-          fetch('https://www.gstatic.com/generate_204', { method: 'HEAD', cache: 'no-store' }),
-          new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))
-        ]);
-        temInternet = true;
-      } catch (e) {
-        temInternet = false;
-      }
-    }
-
     firebaseOK = true;
 
-    if (temInternet) {
-      atualizarStatus('conectando', 'Conectando...');
-      db.enablePersistence({ synchronizeTabs: true })
-        .then(() => {
-          console.log('Persistência offline ativa.');
-          // Só agora começamos a ouvir
-          ouvirDadosCasa();
-          ouvirGastos();
-          ouvirEventos();
-          monitorarConexao();
-        })
-        .catch((err) => {
-          console.warn('Persistência indisponível:', err.code || err.message);
-          // Mesmo sem persistência, inicia os listeners
-          ouvirDadosCasa();
-          ouvirGastos();
-          ouvirEventos();
-          monitorarConexao();
-        });
-    } else {
-      // Offline confirmado: não tenta ativar persistência agora,
-      // apenas escuta os listeners do Firestore (que usarão o cache existente).
-      atualizarStatus('offline', 'Offline (vai sincronizar)');
-      ouvirDadosCasa();
-      ouvirGastos();
-      ouvirEventos();
-      monitorarConexao();
+    atualizarStatus('conectando', 'Conectando...');
+
+    // Sempre tenta ativar a persistência offline, esteja você online ou não.
+    // É isso que garante que, ao atualizar a página (ou dar pull-to-refresh)
+    // enquanto offline, os dados e lançamentos pendentes continuem no
+    // IndexedDB local e sincronizem sozinhos quando a internet voltar.
+    try {
+      await db.enablePersistence({ synchronizeTabs: true });
+      console.log('Persistência offline ativa.');
+    } catch (err) {
+      console.warn('Persistência indisponível:', err.code || err.message);
     }
+
+    ouvirDadosCasa();
+    ouvirGastos();
+    ouvirEventos();
+    monitorarConexao();
   } catch (e) {
     console.error(e);
     atualizarStatus('offline', 'Erro');
@@ -2368,70 +2340,22 @@ async function iniciarFirebase() {
 }
 
 function monitorarConexao() {
-  // Não fazemos mais nenhum teste de rede.
-  // O único sinal confiável é o próprio Firestore, via metadata.fromCache,
-  // que chega através do listener global __atualizarStatusFirestore (chamado por ouvirGastos).
-  // Enquanto isso, mostramos "Conectando..." e deixamos o Firestore assumir.
-  atualizarStatus('conectando', 'Conectando...');
-
-  // Escuta os eventos de rede como reforço visual (só pinta a bolinha,
-  // sem decidir nada de negócio).
+  // A fonte de verdade real é o metadata.fromCache dos snapshots do
+  // Firestore (tratado em ouvirGastos). Aqui só damos um retorno visual
+  // imediato quando o navegador percebe a rede caindo/voltando, sem
+  // nunca cravar "Sincronizado" por conta própria.
   window.addEventListener('online', () => {
-    // Espera 3s antes de marcar online — se o Firestore já tiver dito online,
-    // essa chamada não vai fazer nada visível.
-    setTimeout(() => {
-      const el = document.getElementById('statusConexao');
-      const txt = document.getElementById('statusTexto');
-      el.classList.remove('offline');
-      el.classList.add('online');
-      txt.textContent = 'Sincronizado';
-    }, 3000);
+    atualizarStatus('conectando', 'Conectando...');
   });
   window.addEventListener('offline', () => {
-    const el = document.getElementById('statusConexao');
-    const txt = document.getElementById('statusTexto');
-    el.classList.remove('online');
-    el.classList.add('offline');
-    txt.textContent = 'Offline (vai sincronizar)';
+    atualizarStatus('offline', 'Offline (vai sincronizar)');
   });
 
-  // Se a rede já está claramente offline no momento da carga, pinta vermelho.
   if (!navigator.onLine) {
-    const el = document.getElementById('statusConexao');
-    const txt = document.getElementById('statusTexto');
-    el.classList.add('offline');
-    txt.textContent = 'Offline (vai sincronizar)';
+    atualizarStatus('offline', 'Offline (vai sincronizar)');
   }
 }
-  // Teste real de conexão: tenta bater em um servidor rápido.
-  // Se responder, está online; se falhar, está offline.
-  async function testarConexao() {
-    try {
-      await Promise.race([
-        fetch('https://www.gstatic.com/generate_204?t=' + Date.now(), {
-          method: 'HEAD',
-          cache: 'no-store'
-        }),
-        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))
-      ]);
-      aplicarStatus(true);
-      return true;
-    } catch (e) {
-      aplicarStatus(false);
-      return false;
-    }
-  }
 
-  // Dispara imediatamente ao carregar
-  testarConexao();
-
-  // Repete o teste a cada 10 segundos
-  setInterval(testarConexao, 10000);
-
-  // Reforça também nas transições de rede
-  window.addEventListener('online', () => setTimeout(testarConexao, 1000));
-  window.addEventListener('offline', () => aplicarStatus(false));
-}
   function refDocCasa() { return db.collection('casas').doc(CASA_ID); }
   function colecaoGastos() { return refDocCasa().collection('gastos'); }
   function colecaoEventos() { return refDocCasa().collection('eventos'); }
@@ -2538,8 +2462,6 @@ function monitorarConexao() {
   }
 
 function ouvirGastos() {
-  let primeiroSnapshotRecebido = false;
-
   colecaoGastos()
     .orderBy('data', 'desc')
     .onSnapshot(
@@ -2547,21 +2469,14 @@ function ouvirGastos() {
       snapshot => {
         gastos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        // A fonte da verdade: o próprio Firestore diz se veio do cache (offline) ou do servidor (online).
-        const veioDoCache = snapshot.metadata.fromCache;
-        const el = document.getElementById('statusConexao');
-        const txt = document.getElementById('statusTexto');
-
-        el.classList.remove('online', 'offline');
-        if (veioDoCache) {
-          el.classList.add('offline');
-          txt.textContent = 'Offline (vai sincronizar)';
+        // Fonte única de verdade: veio do cache local (offline/ainda não
+        // confirmado pelo servidor) ou já foi confirmado pelo servidor?
+        if (snapshot.metadata.fromCache) {
+          atualizarStatus('offline', 'Offline (vai sincronizar)');
         } else {
-          el.classList.add('online');
-          txt.textContent = 'Sincronizado';
+          atualizarStatus('online', 'Sincronizado');
         }
 
-        primeiroSnapshotRecebido = true;
         reconstruirEstabelecimentos();
         renderizar();
         renderizarFaturas();
