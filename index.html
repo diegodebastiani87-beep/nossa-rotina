@@ -2339,16 +2339,36 @@ function iniciarFirebase() {
 }
 
 function monitorarConexao() {
-  function atualizar() {
-    if (navigator.onLine) {
+  function aplicarStatus(online) {
+    if (online) {
       atualizarStatus('online', 'Sincronizado');
     } else {
       atualizarStatus('offline', 'Offline (vai sincronizar)');
     }
   }
-  window.addEventListener('online', atualizar);
-  window.addEventListener('offline', atualizar);
-  atualizar();
+
+  async function testarConexaoReal() {
+    if (!navigator.onLine) {
+      aplicarStatus(false);
+      return;
+    }
+    try {
+      await Promise.race([
+        refDocCasa().get({ source: 'server' }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000))
+      ]);
+      aplicarStatus(true);
+    } catch (e) {
+      aplicarStatus(false);
+    }
+  }
+
+  window.addEventListener('online', testarConexaoReal);
+  window.addEventListener('offline', () => aplicarStatus(false));
+
+  testarConexaoReal();
+
+  setInterval(testarConexaoReal, 30000);
 }
 function monitorarConexao() {
   function atualizar() {
