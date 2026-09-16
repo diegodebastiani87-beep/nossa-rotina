@@ -1,16 +1,12 @@
 {
-  "name": "Nossa Rotina",
-  "short_name": "Rotina",
-  "start_url": "/nossa-rotina/",
-  "scope": "/nossa-rotina/",
+  "background_color": "#f7f8fa",
+  "dir": "ltr",
   "display": "standalone",
-  "background_color": "#f0f2f5",
-  "theme_color": "#1e88e5",
-  "icons": [
-    {
-      "src": "/nossa-rotina/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+  "name": "Nossa Rotina",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "Rotina",
+  "start_url": "/",
+  "theme_color": "#6d809d",
+  "description": "App de finanças e agenda do casal"
 }
