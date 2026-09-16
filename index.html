@@ -1443,6 +1443,15 @@
   }
   .aviso-remarcando strong { color: #78350f; }
 
+  .aviso-edicao-parcela {
+    background: var(--accent-soft);
+    border-left: 4px solid var(--accent);
+    padding: 12px 14px; border-radius: 8px;
+    margin-bottom: 14px; font-size: 0.82em;
+    color: #3730a3; line-height: 1.5;
+  }
+  .aviso-edicao-parcela strong { color: #312e81; }
+
   .btn-excluir-modal {
     background: var(--surface);
     color: var(--danger);
@@ -1498,6 +1507,8 @@
     border-radius: 12px;
     padding: 14px;
   }
+
+  .oculto { display: none !important; }
 
   @media (min-width: 800px) {
     .bottom-nav {
@@ -1858,7 +1869,6 @@
     <div class="sub-abas">
       <button class="sub-aba ativa" data-sub="cartoes" onclick="trocarSubAba('cartoes')">💳 Cartões</button>
       <button class="sub-aba" data-sub="categorias" onclick="trocarSubAba('categorias')">📂 Categorias</button>
-      <button class="sub-aba" data-sub="estabelecimentos" onclick="trocarSubAba('estabelecimentos')">🏪 Locais</button>
       <button class="sub-aba" data-sub="pessoas" onclick="trocarSubAba('pessoas')">👥 Pessoas</button>
     </div>
 
@@ -1921,16 +1931,6 @@
       </div>
     </div>
 
-    <div class="sub-painel" id="sub-estabelecimentos">
-      <div class="card">
-        <h2>🏪 Locais Frequentes</h2>
-        <p style="color:var(--text-3); font-size:0.85em; margin-bottom:14px; line-height:1.5;">
-          O sistema aprende com seus lançamentos. Aqui você pode ajustar categoria/subcategoria se aprendeu errado.
-        </p>
-        <div id="estabelecimentosLista"></div>
-      </div>
-    </div>
-
     <div class="sub-painel" id="sub-pessoas">
       <div class="card">
         <h2>👥 Pessoas cadastradas</h2>
@@ -1970,9 +1970,16 @@
     </div>
     <div class="modal-corpo">
       <input type="hidden" id="editGastoId">
+      <input type="hidden" id="editGastoGrupoId">
+      <div class="aviso-edicao-parcela" id="avisoEdicaoParcela" style="display:none;">
+        💳 <strong>Compra parcelada</strong><br>
+        <span id="avisoEdicaoParcelaTexto"></span>
+      </div>
+
       <div class="campo">
-        <label>Valor *</label>
+        <label>Valor total *</label>
         <input type="number" id="editGastoValor" step="0.01" min="0" inputmode="decimal">
+        <span class="dica" id="editGastoValorDica" style="display:none;"></span>
       </div>
       <div class="campo">
         <label>Descrição *</label>
@@ -1995,16 +2002,44 @@
       </div>
       <div class="campo">
         <label>Forma de pagamento</label>
-        <select id="editGastoPagamento">
+        <select id="editGastoPagamento" onchange="atualizarCamposEdicaoPagamento()">
           <option value="Dinheiro/PIX">💵 Dinheiro/PIX</option>
           <option value="Cartão Crédito">💳 Cartão Crédito</option>
           <option value="Cartão Débito">🏦 Cartão Débito</option>
           <option value="Vale Alimentação">🍽️ Vale Alimentação</option>
         </select>
       </div>
+
+      <div id="editBoxCartao" style="display:none;">
+        <div class="campo">
+          <label>Cartão</label>
+          <select id="editGastoCartao"></select>
+        </div>
+        <div class="campo">
+          <label>Número de parcelas</label>
+          <select id="editGastoParcelas">
+            <option value="1">1x (à vista)</option>
+            <option value="2">2x</option>
+            <option value="3">3x</option>
+            <option value="4">4x</option>
+            <option value="5">5x</option>
+            <option value="6">6x</option>
+            <option value="7">7x</option>
+            <option value="8">8x</option>
+            <option value="9">9x</option>
+            <option value="10">10x</option>
+            <option value="11">11x</option>
+            <option value="12">12x</option>
+            <option value="18">18x</option>
+            <option value="24">24x</option>
+          </select>
+        </div>
+        <div class="preview" id="editPreviewParcelas" style="background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:12px; font-size:0.82em; color:var(--text-2); margin-bottom:14px; line-height:1.6;"></div>
+      </div>
+
       <div class="campo">
-        <label>Data</label>
-        <input type="date" id="editGastoData">
+        <label>Data da compra</label>
+        <input type="date" id="editGastoData" onchange="atualizarPreviewEdicao()">
       </div>
       <div class="campo">
         <label>Detalhes (opcional)</label>
@@ -2383,8 +2418,11 @@
     if (nome === 'faturas') {
       const inp = document.getElementById('mesFatura');
       if (!inp.value) {
-        const hoje = new Date();
-        inp.value = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
+        inp.value = mesFaturaPadrao();
+      } else {
+        // Recalcula sempre que abre a aba, para trazer o mês padrão correto
+        // caso o usuário não tenha mexido manualmente ainda
+        if (!inp.dataset.tocado) inp.value = mesFaturaPadrao();
       }
       renderizarFaturas();
     }
@@ -2401,7 +2439,6 @@
     document.querySelectorAll('.sub-painel').forEach(p => p.classList.remove('ativo'));
     document.querySelector(`.sub-aba[data-sub="${nome}"]`).classList.add('ativa');
     document.getElementById('sub-' + nome).classList.add('ativo');
-    if (nome === 'estabelecimentos') renderizarEstabelecimentos();
     if (nome === 'pessoas') renderizarPessoas();
   }
 
@@ -2467,6 +2504,29 @@
       mesVenc = { ano: m.getFullYear(), mes: m.getMonth() + 1 };
     }
     return `${mesVenc.ano}-${String(mesVenc.mes).padStart(2, '0')}`;
+  }
+
+  // ===== NOVO: mês padrão da fatura =====
+  // Se ainda não passou do vencimento do mês atual, mostra o mês atual.
+  // Se já passou, mostra o próximo mês.
+  function mesFaturaPadrao() {
+    const hoje = new Date();
+    let ano = hoje.getFullYear();
+    let mes = hoje.getMonth() + 1;
+    const diaHoje = hoje.getDate();
+
+    // Determina o maior dia de vencimento entre os cartões cadastrados
+    let diaVenc = 12;
+    if (cartoes.length > 0) {
+      diaVenc = Math.max(...cartoes.map(c => c.vencimento || 12));
+    }
+
+    if (diaHoje > diaVenc) {
+      const prox = new Date(ano, mes, 1);
+      ano = prox.getFullYear();
+      mes = prox.getMonth() + 1;
+    }
+    return `${ano}-${String(mes).padStart(2, '0')}`;
   }
 
   function atualizarPreviewParcelas() {
@@ -2561,6 +2621,9 @@
       renderizarAgendaFiltros();
       renderizar();
       renderizarFaturas();
+      // Atualiza o mês padrão da fatura quando os cartões carregam
+      const inp = document.getElementById('mesFatura');
+      if (inp && !inp.dataset.tocado) inp.value = mesFaturaPadrao();
     }, err => console.error('Erro dados casa:', err));
   }
 
@@ -2712,7 +2775,6 @@
     document.getElementById('modalEditarCartao').classList.remove('visivel');
   }
 
-  // ===== CORREÇÃO 1: renomeação propaga para os gastos vinculados =====
   async function salvarEdicaoCartao() {
     const idx = parseInt(document.getElementById('editCartaoIdx').value);
     const nomeAntigo = cartoes[idx]?.nome;
@@ -2756,7 +2818,6 @@
     );
 
     if (!ok) {
-      // Desfaz a renomeação para manter consistência
       const i = cartoes.findIndex(c => c.nome === nomeNovo);
       if (i >= 0) cartoes[i] = { ...cartoes[i], nome: nomeAntigo };
       await salvarCartoes();
@@ -2779,7 +2840,6 @@
     await batch.commit();
   }
 
-  // ===== CORREÇÃO 2: reparo automático de lançamentos órfãos =====
   function repararLancamentosOrfaos() {
     if (!cartoes.length || !gastos.length) return;
 
@@ -2817,7 +2877,6 @@
     }
   }
 
-  // ===== CORREÇÃO 3: botão manual em Ajustes → Cartões =====
   function verificarLancamentosOrfaos() {
     const nomesCartoes = new Set(cartoes.map(c => c.nome));
     const orfaos = gastos.filter(g =>
@@ -3621,7 +3680,6 @@
 
     estabelecimentosCache = mapa;
     renderizarAtalhos();
-    renderizarEstabelecimentos();
   }
 
   function topChave(obj) {
@@ -3793,99 +3851,6 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function renderizarEstabelecimentos() {
-    const wrap = document.getElementById('estabelecimentosLista');
-    if (!wrap) return;
-    const todos = Object.values(estabelecimentosCache).sort((a, b) => b.count - a.count);
-    if (todos.length === 0) {
-      wrap.innerHTML = '<div class="vazio">Nenhum local aprendido ainda. Lance alguns gastos e eles aparecerão aqui.</div>';
-      return;
-    }
-    wrap.innerHTML = todos.map(e => {
-      const chave = normalizarChave(e.nome);
-      const chaveJs = chave.replace(/'/g, "\\'").replace(/\\/g, '\\\\');
-      const subsHTML = (acharCategoria(e.categoria) || {}).subs || [];
-      const catsHTML = categorias.map(c =>
-        `<option value="${c.nome}" ${c.nome === e.categoria ? 'selected' : ''}>${c.nome}</option>`
-      ).join('');
-      const subsOptionsHTML = subsHTML.map(s =>
-        `<option value="${s}" ${s === e.subcategoria ? 'selected' : ''}>${s}</option>`
-      ).join('');
-      const infoExtra = [];
-      if (e.valorMedio) infoExtra.push(`💰 ${formatarMoeda(e.valorMedio)}`);
-      if (e.formaPagamento) infoExtra.push(`${emojiPag(e.formaPagamento)} ${e.formaPagamento}`);
-      if (e.cartao) infoExtra.push(e.cartao);
-      return `
-        <div class="est-item">
-          <div class="est-topo">
-            <div class="est-nome">${escaparHTML(e.nome)}</div>
-            <div class="est-count">${e.count}x</div>
-          </div>
-          <div class="est-campos">
-            <div>
-              <label>Categoria</label>
-              <select id="est-cat-${chaveJs}" onchange="alterarEstCat('${chaveJs}', this.value)">
-                ${catsHTML}
-              </select>
-            </div>
-            <div>
-              <label>Subcategoria</label>
-              <select id="est-sub-${chaveJs}">
-                ${subsOptionsHTML || '<option value="">—</option>'}
-              </select>
-            </div>
-          </div>
-          ${infoExtra.length > 0 ? `
-            <div class="est-info">
-              ${infoExtra.map(i => `<span>${i}</span>`).join('<span class="sep">·</span>')}
-            </div>
-          ` : ''}
-        </div>
-      `;
-    }).join('');
-  }
-
-  function alterarEstCat(chave, novaCat) {
-    const e = estabelecimentosCache[chave];
-    if (!e) return;
-    e.categoria = novaCat;
-    e.subcategoria = null;
-    const selSub = document.getElementById('est-sub-' + chave);
-    if (selSub) {
-      const subs = (acharCategoria(novaCat) || {}).subs || [];
-      selSub.innerHTML = subs.map(s => `<option value="${s}">${s}</option>`).join('') || '<option value="">—</option>';
-      if (subs.length > 0) {
-        e.subcategoria = subs[0];
-        selSub.value = subs[0];
-      }
-    }
-    aplicarCategoriaRetroativa(e.nome, novaCat, e.subcategoria);
-  }
-
-  async function aplicarCategoriaRetroativa(nome, novaCat, novaSub) {
-    const alvo = normalizarChave(nome);
-    const paraAtualizar = gastos.filter(g =>
-      normalizarChave(g.descricao) === alvo &&
-      (g.categoria !== novaCat || g.subcategoria !== novaSub)
-    );
-    if (paraAtualizar.length === 0) return;
-    const ok = confirm(
-      `Encontrei ${paraAtualizar.length} lançamento(s) com "${nome}".\n\n` +
-      `Deseja atualizar todos para "${novaCat}"${novaSub ? ` / "${novaSub}"` : ''}?`
-    );
-    if (!ok) return;
-    try {
-      const batch = db.batch();
-      paraAtualizar.forEach(g => {
-        const ref = colecaoGastos().doc(g.id);
-        const update = { categoria: novaCat };
-        if (novaSub) update.subcategoria = novaSub;
-        batch.update(ref, update);
-      });
-      await batch.commit();
-    } catch (e) { alert('Erro: ' + e.message); }
-  }
-
   async function salvarCategorias() {
     if (!firebaseOK) return;
     try { await refDocCasa().set({ categorias }, { merge: true }); }
@@ -3965,6 +3930,44 @@
     return lista;
   }
 
+  // Retorna uma lista "colapsada": cada compra parcelada aparece uma única vez,
+  // representada pela primeira parcela, mas com o total da compra e n° de parcelas
+  function colapsarParcelas(lista) {
+    const grupos = {};
+    const resultado = [];
+    const jaVistos = new Set();
+
+    lista.forEach(g => {
+      if (g.grupoId && g.parcelaTotal && g.parcelaTotal > 1) {
+        if (!grupos[g.grupoId]) grupos[g.grupoId] = [];
+        grupos[g.grupoId].push(g);
+      }
+    });
+
+    lista.forEach(g => {
+      if (g.grupoId && g.parcelaTotal && g.parcelaTotal > 1) {
+        if (jaVistos.has(g.grupoId)) return;
+        jaVistos.add(g.grupoId);
+        const grupo = grupos[g.grupoId];
+        // Ordena por parcelaAtual e pega a primeira
+        const ordenado = [...grupo].sort((a, b) => (a.parcelaAtual || 1) - (b.parcelaAtual || 1));
+        const primeira = ordenado[0];
+        const total = grupo.reduce((s, x) => s + x.valor, 0);
+        resultado.push({
+          ...primeira,
+          _parcelado: true,
+          _valorParcela: primeira.valor,
+          _valorTotal: total,
+          _numParcelas: g.parcelaTotal
+        });
+      } else {
+        resultado.push(g);
+      }
+    });
+
+    return resultado;
+  }
+
   function limparFiltros() {
     document.getElementById('filtroCategoria').value = '';
     document.getElementById('filtroUsuario').value = '';
@@ -4003,26 +4006,37 @@
   function renderizar() {
     atualizarIndicadoresFiltro();
     const lista = gastosFiltrados();
-    renderizarResumo(lista);
-    renderizarPorPagamento(lista);
-    renderizarGrafico(lista);
-    renderizarLista(lista);
+    // Cálculos usam a lista colapsada
+    const listaColapsada = colapsarParcelas(lista);
+    renderizarResumo(listaColapsada);
+    renderizarPorPagamento(listaColapsada);
+    renderizarGrafico(listaColapsada);
+    renderizarLista(listaColapsada);
     renderizarUltimos();
   }
 
   function renderizarUltimos() {
     const wrap = document.getElementById('ultimosLancamentos');
     if (!wrap) return;
-    const ultimos = [...gastos].sort((a, b) => (b.data || '').localeCompare(a.data || '')).slice(0, 5);
+    const ordenados = [...gastos].sort((a, b) => (b.data || '').localeCompare(a.data || ''));
+    const ultimos = colapsarParcelas(ordenados).slice(0, 5);
     if (ultimos.length === 0) {
       wrap.innerHTML = '<div class="vazio">Nenhum gasto lançado ainda</div>';
       return;
     }
     wrap.innerHTML = ultimos.map(g => {
       const cor = corDa(g.categoria);
-      const parcelaTag = g.parcelaTotal ? `<span class="tag-parcela">${g.parcelaAtual}/${g.parcelaTotal}</span>` : '';
       const cartaoInfo = g.cartao ? ` · ${g.cartao}` : '';
       const faturaInfo = (g.formaPagamento === 'Cartão Crédito' && g.mesFatura) ? ` · Fatura ${nomeMes(g.mesFatura)}` : '';
+
+      let valorHTML, parcelaTag = '';
+      if (g._parcelado) {
+        parcelaTag = `<span class="tag-parcela">${g._numParcelas}x</span>`;
+        valorHTML = `${g._numParcelas} x ${formatarMoeda(g._valorParcela)}`;
+      } else {
+        valorHTML = formatarMoeda(g.valor);
+      }
+
       return `
         <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border);">
           <div style="flex:1; min-width:0;">
@@ -4034,7 +4048,7 @@
             </div>
           </div>
           <div style="font-weight:700; color:var(--text); font-size:0.92em; margin-left:10px; white-space:nowrap; letter-spacing:-0.01em;">
-            ${formatarMoeda(g.valor)}
+            ${valorHTML}
           </div>
         </div>
       `;
@@ -4044,9 +4058,9 @@
   function renderizarResumo(lista) {
     const mes = document.getElementById('mesReferencia').value;
     if (!mes) return;
-    const total = lista.reduce((s, g) => s + g.valor, 0);
-    const totalDiego = lista.filter(g => g.usuario === 'Diego').reduce((s, g) => s + g.valor, 0);
-    const totalEliane = lista.filter(g => g.usuario === 'Eliane').reduce((s, g) => s + g.valor, 0);
+    const total = lista.reduce((s, g) => s + (g._parcelado ? g._valorTotal : g.valor), 0);
+    const totalDiego = lista.filter(g => g.usuario === 'Diego').reduce((s, g) => s + (g._parcelado ? g._valorTotal : g.valor), 0);
+    const totalEliane = lista.filter(g => g.usuario === 'Eliane').reduce((s, g) => s + (g._parcelado ? g._valorTotal : g.valor), 0);
     const hoje = new Date();
     const [ano, mesNum] = mes.split('-').map(Number);
     const diasNoMes = new Date(ano, mesNum, 0).getDate();
@@ -4059,11 +4073,11 @@
   }
 
   function renderizarPorPagamento(lista) {
-    const total = lista.reduce((s, g) => s + g.valor, 0);
+    const total = lista.reduce((s, g) => s + (g._parcelado ? g._valorTotal : g.valor), 0);
     const porPag = {};
     lista.forEach(g => {
       const p = g.formaPagamento || 'Dinheiro/PIX';
-      porPag[p] = (porPag[p] || 0) + g.valor;
+      porPag[p] = (porPag[p] || 0) + (g._parcelado ? g._valorTotal : g.valor);
     });
     const wrap = document.getElementById('porPagamento');
     if (Object.keys(porPag).length === 0) {
@@ -4086,13 +4100,14 @@
   }
 
   function renderizarGrafico(lista) {
-    const total = lista.reduce((s, g) => s + g.valor, 0);
+    const total = lista.reduce((s, g) => s + (g._parcelado ? g._valorTotal : g.valor), 0);
     const porCat = {};
     lista.forEach(g => {
+      const valorEfetivo = g._parcelado ? g._valorTotal : g.valor;
       if (!porCat[g.categoria]) porCat[g.categoria] = { total: 0, subs: {} };
-      porCat[g.categoria].total += g.valor;
+      porCat[g.categoria].total += valorEfetivo;
       const sub = g.subcategoria || "(sem sub)";
-      porCat[g.categoria].subs[sub] = (porCat[g.categoria].subs[sub] || 0) + g.valor;
+      porCat[g.categoria].subs[sub] = (porCat[g.categoria].subs[sub] || 0) + valorEfetivo;
     });
     const grafico = document.getElementById('graficoCategorias');
     if (Object.keys(porCat).length === 0) {
@@ -4146,6 +4161,17 @@
       const cor = corDa(g.categoria);
       const sub = g.subcategoria || '';
       const subTag = sub ? `<span class="tag-sub">${escaparHTML(sub)}</span>` : '';
+
+      let valorHTML, parcelaTag = '';
+      if (g._parcelado) {
+        parcelaTag = `<span class="tag-parcela">${g._numParcelas}x</span>`;
+        valorHTML = `${g._numParcelas} x ${formatarMoeda(g._valorParcela)}`;
+      } else {
+        valorHTML = formatarMoeda(g.valor);
+      }
+
+      const cartaoTag = (g.formaPagamento === 'Cartão Crédito' && g.cartao) ? `<span class="tag-fatura">${escaparHTML(g.cartao)}</span>` : '';
+
       return `
         <div class="gasto-swipe-container">
           <div class="gasto-swipe-actions acao-excluir">
@@ -4164,7 +4190,7 @@
                data-id="${g.id}"
                onclick="abrirDetalhesGasto('${g.id}')">
             <div class="info-principal">
-              <div class="desc-linha">${escaparHTML(g.descricao)}</div>
+              <div class="desc-linha">${escaparHTML(g.descricao)} ${parcelaTag}</div>
               <div class="meta-linha">
                 <span>${formatarData(g.data)}</span>
                 <span class="sep">·</span>
@@ -4173,10 +4199,11 @@
               <div class="tags-linha">
                 <span class="tag" style="background:${cor};">${g.categoria}</span>
                 ${subTag}
+                ${cartaoTag}
               </div>
             </div>
             <div class="valor-linha">
-              <div class="valor-num">${formatarMoeda(g.valor)}</div>
+              <div class="valor-num">${valorHTML}</div>
             </div>
           </div>
         </div>
@@ -4319,12 +4346,27 @@
     const cor = corDa(g.categoria);
     const pag = FORMAS_PAGAMENTO.find(f => f.valor === g.formaPagamento);
 
+    // Se for parcela, mostra os dados da compra completa
+    const todasParcelas = (g.grupoId && g.parcelaTotal && g.parcelaTotal > 1)
+      ? gastos.filter(x => x.grupoId === g.grupoId).sort((a, b) => (a.parcelaAtual || 1) - (b.parcelaAtual || 1))
+      : [];
+    const ehParcelado = todasParcelas.length > 1;
+    const valorTotal = ehParcelado ? todasParcelas.reduce((s, x) => s + x.valor, 0) : g.valor;
+
     const linhas = [];
     linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; font-weight:600;">Descrição</div>
       <div style="font-size:1.1em; font-weight:700; margin-bottom:16px; letter-spacing:-0.01em;">${escaparHTML(g.descricao)}</div>`);
 
-    linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; font-weight:600;">Valor</div>
-      <div style="font-size:1.5em; font-weight:800; color:var(--text); margin-bottom:16px; letter-spacing:-0.02em;">${formatarMoeda(g.valor)}</div>`);
+    if (ehParcelado) {
+      linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; font-weight:600;">Valor total da compra</div>
+        <div style="font-size:1.4em; font-weight:800; color:var(--text); margin-bottom:4px; letter-spacing:-0.02em;">${formatarMoeda(valorTotal)}</div>
+        <div style="font-size:0.85em; color:var(--text-3); margin-bottom:16px;">
+          ${g.parcelaTotal}x de aproximadamente ${formatarMoeda(valorTotal / g.parcelaTotal)}
+        </div>`);
+    } else {
+      linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; font-weight:600;">Valor</div>
+        <div style="font-size:1.5em; font-weight:800; color:var(--text); margin-bottom:16px; letter-spacing:-0.02em;">${formatarMoeda(g.valor)}</div>`);
+    }
 
     linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; font-weight:600;">Quando</div>
       <div style="font-size:1em; margin-bottom:16px;">📅 ${formatarData(g.data)}/${g.data.substring(0,4)} · ${escaparHTML(g.usuario)}</div>`);
@@ -4341,9 +4383,9 @@
         ${g.cartao ? ` · <strong>${escaparHTML(g.cartao)}</strong>` : ''}
       </div>`);
 
-    if (g.parcelaTotal) {
-      linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; font-weight:600;">Parcela</div>
-        <div style="font-size:1em; margin-bottom:16px;">${g.parcelaAtual}/${g.parcelaTotal}${g.valorTotalCompra ? ' · Total: ' + formatarMoeda(g.valorTotalCompra) : ''}</div>`);
+    if (ehParcelado) {
+      linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; font-weight:600;">Parcelas</div>
+        <div style="font-size:1em; margin-bottom:16px;">${g.parcelaTotal}x${g.valorTotalCompra ? ' · Total: ' + formatarMoeda(g.valorTotalCompra) : ''}</div>`);
     }
 
     if (g.formaPagamento === 'Cartão Crédito' && g.mesFatura) {
@@ -4356,12 +4398,13 @@
         <div style="font-size:0.95em; margin-bottom:16px; white-space:pre-wrap; color:var(--text-2);">${escaparHTML(g.observacao)}</div>`);
     }
 
-    document.getElementById('detalhesGastoTitulo').textContent = '📌 Detalhes do lançamento';
+    document.getElementById('detalhesGastoTitulo').textContent = ehParcelado ? '📌 Detalhes (compra parcelada)' : '📌 Detalhes do lançamento';
     document.getElementById('detalhesGastoCorpo').innerHTML = linhas.join('') + `
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
         <button onclick="fecharDetalhesGasto(); abrirEditarGasto('${g.id}')" style="padding:14px; background:var(--warning);">✏️ Editar</button>
         <button onclick="fecharDetalhesGasto(); removerGasto('${g.id}')" style="padding:14px; background:var(--danger);">🗑️ Excluir</button>
       </div>
+      ${ehParcelado ? `<p style="font-size:0.75em; color:var(--text-3); margin-top:12px; text-align:center; font-style:italic;">Ao editar ou excluir, todas as ${g.parcelaTotal} parcelas serão afetadas.</p>` : ''}
     `;
     document.getElementById('modalDetalhesGasto').classList.add('visivel');
   }
@@ -4370,11 +4413,37 @@
     document.getElementById('modalDetalhesGasto').classList.remove('visivel');
   }
 
+  // ===== EDITAR GASTO (com suporte a cartão e parcelas) =====
   function abrirEditarGasto(id) {
     const g = gastos.find(x => x.id === id);
     if (!g) return;
+
     document.getElementById('editGastoId').value = g.id;
-    document.getElementById('editGastoValor').value = g.valor;
+    document.getElementById('editGastoGrupoId').value = g.grupoId || '';
+
+    // Detecta se é parcelado
+    const ehParcelado = !!(g.grupoId && g.parcelaTotal && g.parcelaTotal > 1);
+
+    const avisoEl = document.getElementById('avisoEdicaoParcela');
+    const dicaEl = document.getElementById('editGastoValorDica');
+
+    if (ehParcelado) {
+      const todas = gastos.filter(x => x.grupoId === g.grupoId);
+      const totalAtual = todas.reduce((s, x) => s + x.valor, 0);
+      avisoEl.style.display = 'block';
+      document.getElementById('avisoEdicaoParcelaTexto').innerHTML =
+        `Esta é a parcela <strong>${g.parcelaAtual}/${g.parcelaTotal}</strong>. As alterações serão aplicadas a <strong>todas as ${g.parcelaTotal} parcelas</strong>.<br><br>
+         Valor total da compra hoje: <strong>${formatarMoeda(totalAtual)}</strong>`;
+      document.getElementById('editGastoValor').value = totalAtual.toFixed(2);
+      dicaEl.style.display = 'block';
+      dicaEl.textContent = 'Informe o valor TOTAL da compra (não o valor da parcela).';
+    } else {
+      avisoEl.style.display = 'none';
+      document.getElementById('editGastoValor').value = g.valor;
+      dicaEl.style.display = 'none';
+      dicaEl.textContent = '';
+    }
+
     document.getElementById('editGastoDescricao').value = g.descricao;
     document.getElementById('editGastoUsuario').value = g.usuario;
     document.getElementById('editGastoPagamento').value = g.formaPagamento || 'Dinheiro/PIX';
@@ -4389,8 +4458,72 @@
     const selSub = document.getElementById('editGastoSubcategoria');
     selSub.value = g.subcategoria || '';
 
+    // Popular cartões
+    const selCartao = document.getElementById('editGastoCartao');
+    selCartao.innerHTML = cartoes.map(c =>
+      `<option value="${c.nome}" ${c.nome === g.cartao ? 'selected' : ''}>${c.nome}</option>`
+    ).join('') || '<option value="">Nenhum cartão cadastrado</option>';
+
+    // Popular parcelas
+    const selParcelas = document.getElementById('editGastoParcelas');
+    selParcelas.value = String(g.parcelaTotal || 1);
+
+    atualizarCamposEdicaoPagamento();
+    atualizarPreviewEdicao();
+
     document.getElementById('modalEditarGasto').classList.add('visivel');
     setTimeout(() => document.getElementById('editGastoValor').focus(), 250);
+  }
+
+  function atualizarCamposEdicaoPagamento() {
+    const pag = document.getElementById('editGastoPagamento').value;
+    const box = document.getElementById('editBoxCartao');
+    if (pag === 'Cartão Crédito') {
+      box.style.display = 'block';
+    } else {
+      box.style.display = 'none';
+    }
+    atualizarPreviewEdicao();
+  }
+
+  function atualizarPreviewEdicao() {
+    const pag = document.getElementById('editGastoPagamento').value;
+    const preview = document.getElementById('editPreviewParcelas');
+    if (!preview) return;
+    if (pag !== 'Cartão Crédito') { preview.innerHTML = ''; return; }
+
+    const valor = parseFloat(document.getElementById('editGastoValor').value) || 0;
+    const n = parseInt(document.getElementById('editGastoParcelas').value) || 1;
+    const dataCompra = document.getElementById('editGastoData').value;
+    const cartaoNome = document.getElementById('editGastoCartao').value;
+
+    if (valor <= 0 || !dataCompra) {
+      preview.innerHTML = '<em>Preencha valor e data.</em>';
+      return;
+    }
+    if (!cartaoNome || !acharCartao(cartaoNome)) {
+      preview.innerHTML = '<em>⚠️ Selecione um cartão cadastrado.</em>';
+      return;
+    }
+
+    const mesInicio = calcularMesFatura(dataCompra, cartaoNome);
+    const [anoBase, mesBase] = mesInicio.split('-').map(Number);
+    const valorParcela = valor / n;
+    const meses = [];
+    for (let i = 0; i < n; i++) {
+      const m = new Date(anoBase, mesBase - 1 + i, 1);
+      meses.push(m.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }).replace('.', ''));
+    }
+    const c = acharCartao(cartaoNome);
+
+    if (n === 1) {
+      preview.innerHTML = `<strong>${formatarMoeda(valor)}</strong> à vista · fatura vence em <strong>${meses[0]}</strong><br>
+        <span style="font-size:0.9em;">💳 ${cartaoNome} · fecha dia ${c.fechamento} · vence dia ${c.vencimento}</span>`;
+    } else {
+      preview.innerHTML = `<strong>${n}x de ${formatarMoeda(valorParcela)}</strong> · Total ${formatarMoeda(valor)}<br>
+        <span style="font-size:0.9em;">Faturas: ${meses.join(' • ')}</span><br>
+        <span style="font-size:0.9em;">💳 ${cartaoNome} · fecha dia ${c.fechamento} · vence dia ${c.vencimento}</span>`;
+    }
   }
 
   function atualizarSubcategoriasEdicao() {
@@ -4405,9 +4538,26 @@
     document.getElementById('modalEditarGasto').classList.remove('visivel');
   }
 
+  // Divide um valor total em N parcelas, ajustando centavos na última
+  function dividirEmParcelas(valorTotal, n) {
+    const valorParcela = Number((valorTotal / n).toFixed(2));
+    const parcelas = [];
+    let acumulado = 0;
+    for (let i = 0; i < n; i++) {
+      if (i === n - 1) {
+        parcelas.push(Number((valorTotal - acumulado).toFixed(2)));
+      } else {
+        parcelas.push(valorParcela);
+        acumulado += valorParcela;
+      }
+    }
+    return parcelas;
+  }
+
+  // ===== SALVAR EDIÇÃO (com replicação para todas as parcelas) =====
   async function salvarEdicaoGasto() {
     const id = document.getElementById('editGastoId').value;
-    const valor = parseFloat(document.getElementById('editGastoValor').value);
+    const grupoId = document.getElementById('editGastoGrupoId').value;
     const descricao = document.getElementById('editGastoDescricao').value.trim();
     const categoria = document.getElementById('editGastoCategoria').value;
     const subcategoria = document.getElementById('editGastoSubcategoria').value;
@@ -4415,21 +4565,86 @@
     const formaPagamento = document.getElementById('editGastoPagamento').value;
     const data = document.getElementById('editGastoData').value;
     const observacao = document.getElementById('editGastoObservacao').value.trim();
+    const cartaoNovo = document.getElementById('editGastoCartao').value;
+    const numParcelasNovo = parseInt(document.getElementById('editGastoParcelas').value) || 1;
 
     if (!valor || valor <= 0) { alert('Informe um valor válido.'); return; }
     if (!descricao) { alert('Informe uma descrição.'); return; }
     if (!data) { alert('Informe uma data.'); return; }
+    if (formaPagamento === 'Cartão Crédito' && (!cartaoNovo || !acharCartao(cartaoNovo))) {
+      alert('Selecione um cartão cadastrado.'); return;
+    }
 
     try {
+      // Se faz parte de um grupo parcelado → replica para todas as parcelas
+      if (grupoId) {
+        const parcelas = gastos.filter(x => x.grupoId === grupoId);
+        if (parcelas.length > 0) {
+          // Ordena por parcelaAtual
+          parcelas.sort((a, b) => (a.parcelaAtual || 1) - (b.parcelaAtual || 1));
+
+          const batch = db.batch();
+
+          if (formaPagamento === 'Cartão Crédito' && numParcelasNovo > 1) {
+            // Recalcula as parcelas a partir do novo valor total
+            const valoresParcelas = dividirEmParcelas(valor, numParcelasNovo);
+            const mesInicio = calcularMesFatura(data, cartaoNovo);
+            const [anoBase, mesBase] = mesInicio.split('-').map(Number);
+
+            // Remove as parcelas antigas e recria com a nova divisão
+            parcelas.forEach(p => batch.delete(colecaoGastos().doc(p.id)));
+
+            for (let i = 0; i < numParcelasNovo; i++) {
+              const m = new Date(anoBase, mesBase - 1 + i, 1);
+              const mesFatura = `${m.getFullYear()}-${String(m.getMonth() + 1).padStart(2, '0')}`;
+              const novaRef = colecaoGastos().doc();
+              batch.set(novaRef, {
+                usuario, data, mesFatura, descricao, categoria, subcategoria, observacao,
+                formaPagamento, cartao: cartaoNovo, valor: valoresParcelas[i],
+                parcelaAtual: i + 1,
+                parcelaTotal: numParcelasNovo,
+                valorTotalCompra: valor,
+                grupoId,
+                criadoEm: parcelas[0].criadoEm || firebase.firestore.FieldValue.serverTimestamp(),
+                atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+              });
+            }
+          } else {
+            // Não é mais parcelado ou mudou para outra forma de pagamento:
+            // apaga todas as parcelas antigas e cria um único lançamento
+            parcelas.forEach(p => batch.delete(colecaoGastos().doc(p.id)));
+
+            const novoRef = colecaoGastos().doc();
+            const novoMesFatura = formaPagamento === 'Cartão Crédito'
+              ? calcularMesFatura(data, cartaoNovo)
+              : data.substring(0, 7);
+
+            batch.set(novoRef, {
+              usuario, data, mesFatura: novoMesFatura, descricao, categoria, subcategoria, observacao,
+              formaPagamento,
+              cartao: formaPagamento === 'Cartão Crédito' ? cartaoNovo : null,
+              valor,
+              parcelaAtual: null, parcelaTotal: null, valorTotalCompra: null,
+              grupoId: null,
+              criadoEm: parcelas[0].criadoEm || firebase.firestore.FieldValue.serverTimestamp(),
+              atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+            });
+          }
+          await batch.commit();
+          fecharEditarGasto();
+          return;
+        }
+      }
+
+      // Edição normal (não parcelado)
       const update = {
         valor, descricao, categoria, subcategoria, usuario, formaPagamento, data, observacao,
         mesFatura: data.substring(0, 7),
+        cartao: formaPagamento === 'Cartão Crédito' ? cartaoNovo : null,
         atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
       };
-
-      const g = gastos.find(x => x.id === id);
-      if (g && formaPagamento === 'Cartão Crédito' && g.cartao && acharCartao(g.cartao)) {
-        update.mesFatura = calcularMesFatura(data, g.cartao);
+      if (formaPagamento === 'Cartão Crédito') {
+        update.mesFatura = calcularMesFatura(data, cartaoNovo);
       }
 
       await colecaoGastos().doc(id).update(update);
@@ -4487,23 +4702,18 @@
 
     try {
       const grupoId = 'g' + Date.now() + Math.random().toString(36).slice(2, 7);
-      const valorParcela = valor / numParcelas;
       const lancamentos = [];
 
       if (ehCredito) {
         const mesFaturaInicio = calcularMesFatura(data, cartaoNome);
         const [anoBase, mesBase] = mesFaturaInicio.split('-').map(Number);
+        const valoresParcelas = dividirEmParcelas(valor, numParcelas);
         for (let i = 0; i < numParcelas; i++) {
           const m = new Date(anoBase, mesBase - 1 + i, 1);
           const mesFatura = `${m.getFullYear()}-${String(m.getMonth() + 1).padStart(2, '0')}`;
-          let valorFinal = Number(valorParcela.toFixed(2));
-          if (i === numParcelas - 1) {
-            const soma = Number((valorParcela.toFixed(2) * (numParcelas - 1)).toFixed(2));
-            valorFinal = Number((valor - soma).toFixed(2));
-          }
           lancamentos.push({
             usuario, data, mesFatura, descricao, categoria, subcategoria, observacao,
-            formaPagamento, cartao: cartaoNome, valor: valorFinal,
+            formaPagamento, cartao: cartaoNome, valor: valoresParcelas[i],
             parcelaAtual: numParcelas > 1 ? i + 1 : null,
             parcelaTotal: numParcelas > 1 ? numParcelas : null,
             valorTotalCompra: numParcelas > 1 ? valor : null,
@@ -4612,9 +4822,8 @@
   }
 
   function irParaMesAtualFatura() {
-    const hoje = new Date();
-    document.getElementById('mesFatura').value =
-      `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
+    document.getElementById('mesFatura').value = mesFaturaPadrao();
+    document.getElementById('mesFatura').dataset.tocado = '1';
     renderizarFaturas();
   }
 
@@ -4893,7 +5102,13 @@
     document.getElementById('dataCompraCredito').value = hoje.toISOString().split('T')[0];
     const mesAtual = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
     document.getElementById('mesReferencia').value = mesAtual;
-    document.getElementById('mesFatura').value = mesAtual;
+    document.getElementById('mesFatura').value = mesAtual; // será substituído quando os cartões carregarem
+
+    // Marca o input da fatura como "tocado" quando o usuário altera manualmente
+    document.getElementById('mesFatura').addEventListener('change', function() {
+      this.dataset.tocado = '1';
+    });
+
     iniciarFirebase();
   };
 </script>
