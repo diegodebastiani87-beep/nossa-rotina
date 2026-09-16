@@ -8,5 +8,19 @@
   "short_name": "Rotina",
   "start_url": "/",
   "theme_color": "#6d809d",
-  "description": "App de finanças e agenda do casal"
+  "description": "App de finanças e agenda do casal",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
