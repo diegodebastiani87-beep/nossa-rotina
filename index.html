@@ -2394,6 +2394,12 @@
   function acharCartao(nome) { return cartoes.find(c => c.nome === nome); }
   function acharPessoa(nome) { return pessoas.find(p => p.nome === nome); }
 
+  // ============ DATA LOCAL (corrige bug de UTC) ============
+  function dataLocalISO(d) {
+    const dt = d || new Date();
+    return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+  }
+
   // ============ AVATARES ============
   function iniciais(nome) {
     const partes = String(nome || '').trim().split(/\s+/);
@@ -3065,10 +3071,7 @@
   }
 
   // ============ AGENDA ============
-  function dataHojeISO() {
-    const h = new Date();
-    return `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, '0')}-${String(h.getDate()).padStart(2, '0')}`;
-  }
+  function dataHojeISO() { return dataLocalISO(new Date()); }
 
   function horaAgora() {
     const h = new Date();
@@ -3091,7 +3094,7 @@
     const hoje = dataHojeISO();
     const amanha = new Date();
     amanha.setDate(amanha.getDate() + 1);
-    const amanhaISO = `${amanha.getFullYear()}-${String(amanha.getMonth() + 1).padStart(2, '0')}-${String(amanha.getDate()).padStart(2, '0')}`;
+    const amanhaISO = dataLocalISO(amanha);
     if (iso === hoje) return 'Hoje';
     if (iso === amanhaISO) return 'Amanhã';
     const dias = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
@@ -3218,7 +3221,7 @@
     const dt = new Date(proximoGeral.data + 'T00:00:00');
     const amanha = new Date();
     amanha.setDate(amanha.getDate() + 1);
-    const amanhaISO = `${amanha.getFullYear()}-${String(amanha.getMonth() + 1).padStart(2, '0')}-${String(amanha.getDate()).padStart(2, '0')}`;
+    const amanhaISO = dataLocalISO(amanha);
     const diaCurto = proximoGeral.data === amanhaISO
       ? 'Amanhã'
       : `${String(dt.getDate()).padStart(2, '0')}/${String(dt.getMonth() + 1).padStart(2, '0')}`;
@@ -3343,7 +3346,7 @@
     const eventosVisiveis = eventosFiltrados();
 
     const headerHTML = dias.map(d => {
-      const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      const iso = dataLocalISO(d);
       const ehHoje = iso === hojeISO;
       return `
         <div class="semana-dia-header ${ehHoje ? 'hoje' : ''}">
@@ -3355,7 +3358,7 @@
     document.getElementById('semanaHeader').innerHTML = headerHTML;
 
     const bodyHTML = dias.map(d => {
-      const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      const iso = dataLocalISO(d);
       const ehHoje = iso === hojeISO;
       const evts = eventosVisiveis.filter(e => e.data === iso).sort((a, b) => (a.hora || '').localeCompare(b.hora || ''));
       const evtsHTML = evts.map(e => {
@@ -3565,10 +3568,6 @@
     }
   }
 
-  function formatarISO(d) {
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-  }
-
   function gerarDatasSerie(dataBase, recorrencia, diasSemana, dataFim, contagem) {
     const datas = [];
     const base = new Date(dataBase + 'T00:00:00');
@@ -3578,7 +3577,7 @@
     if (recorrencia === 'diaria') {
       let d = new Date(base);
       while (datas.length < limite) {
-        const iso = formatarISO(d);
+        const iso = dataLocalISO(d);
         if (dataFim && iso > dataFim) break;
         datas.push(iso);
         d.setDate(d.getDate() + 1);
@@ -3593,7 +3592,7 @@
         const semanasOffset = Math.floor((d - base) / (7 * 24 * 60 * 60 * 1000));
         const ehSemanaCerta = recorrencia === 'semanal' || semanasOffset % 2 === 0;
         if (dias.includes(diaSemanaAtual) && ehSemanaCerta && d >= base) {
-          const iso = formatarISO(d);
+          const iso = dataLocalISO(d);
           if (dataFim && iso > dataFim) break;
           if (!datas.includes(iso)) datas.push(iso);
         }
@@ -3602,7 +3601,7 @@
     } else if (recorrencia === 'mensal') {
       let d = new Date(base);
       while (datas.length < limite) {
-        const iso = formatarISO(d);
+        const iso = dataLocalISO(d);
         if (dataFim && iso > dataFim) break;
         datas.push(iso);
         d.setMonth(d.getMonth() + 1);
@@ -3610,7 +3609,7 @@
     } else if (recorrencia === 'anual') {
       let d = new Date(base);
       while (datas.length < limite) {
-        const iso = formatarISO(d);
+        const iso = dataLocalISO(d);
         if (dataFim && iso > dataFim) break;
         datas.push(iso);
         d.setFullYear(d.getFullYear() + 1);
@@ -4403,10 +4402,29 @@
     `;
   }
 
+  // ============ ÚLTIMO LANÇAMENTO (corrigido) ============
+  function timestampDe(g) {
+    // criadoEm é um Timestamp do Firestore
+    if (g.criadoEm && typeof g.criadoEm.toMillis === 'function') return g.criadoEm.toMillis();
+    if (g.criadoEm && typeof g.criadoEm.seconds === 'number') return g.criadoEm.seconds * 1000;
+    if (g.criadoEm && typeof g.criadoEm === 'number') return g.criadoEm;
+    // Sem timestamp, usa a data como fallback
+    return new Date((g.data || '1970-01-01') + 'T00:00:00').getTime();
+  }
+
   function renderizarUltimos() {
     const wrap = document.getElementById('ultimosLancamentos');
     if (!wrap) return;
-    const ordenados = [...gastos].sort((a, b) => (b.data || '').localeCompare(a.data || ''));
+
+    // Ordena por timestamp de criação real (mais recente primeiro),
+    // depois por data como desempate
+    const ordenados = [...gastos].sort((a, b) => {
+      const ta = timestampDe(a);
+      const tb = timestampDe(b);
+      if (tb !== ta) return tb - ta;
+      return (b.data || '').localeCompare(a.data || '');
+    });
+
     const ultimos = colapsarParcelas(ordenados).slice(0, 1);
     if (ultimos.length === 0) {
       wrap.innerHTML = '<div class="vazio">Nenhum gasto lançado ainda</div>';
@@ -5022,9 +5040,9 @@
         document.getElementById('categoria').value = categorias[0].nome;
         atualizarSubcategorias();
       }
-      const hoje = new Date();
-      document.getElementById('data').value = hoje.toISOString().split('T')[0];
-      document.getElementById('dataCompraCredito').value = hoje.toISOString().split('T')[0];
+      const hojeISO = dataLocalISO(new Date());
+      document.getElementById('data').value = hojeISO;
+      document.getElementById('dataCompraCredito').value = hojeISO;
       atualizarPreviewParcelas();
       fecharSugestoes();
       document.getElementById('valor').focus();
@@ -5101,7 +5119,6 @@
     const mesISO = String(document.getElementById('mesFatura').value || '');
     if (!mesISO) return;
 
-    // Todos os lançamentos de crédito cujo mesFatura === mesISO
     const doMes = gastos.filter(g =>
       g.formaPagamento === 'Cartão Crédito' &&
       g.mesFatura === mesISO
@@ -5114,7 +5131,6 @@
       return;
     }
 
-    // Agrupa por cartão (cada cartão = uma fatura separada, como na vida real)
     const porCartao = {};
     doMes.forEach(g => {
       const nome = g.cartao || '(sem cartão)';
@@ -5122,12 +5138,10 @@
       porCartao[nome].push(g);
     });
 
-    // Ordem alfabética de cartão para estabilidade
     const nomesCartoes = Object.keys(porCartao).sort();
 
     wrap.innerHTML = nomesCartoes.map(nomeCartao => {
       const itens = porCartao[nomeCartao];
-      // Ordena por data da compra (mais antigo primeiro) — espelho da fatura real
       itens.sort((a, b) => (a.data || '').localeCompare(b.data || ''));
 
       const c = acharCartao(nomeCartao);
@@ -5332,10 +5346,10 @@
 
   // ============ INICIALIZAÇÃO ============
   window.onload = () => {
-    const hoje = new Date();
-    document.getElementById('data').value = hoje.toISOString().split('T')[0];
-    document.getElementById('dataCompraCredito').value = hoje.toISOString().split('T')[0];
-    const mesAtual = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
+    const hojeISO = dataLocalISO(new Date());
+    document.getElementById('data').value = hojeISO;
+    document.getElementById('dataCompraCredito').value = hojeISO;
+    const mesAtual = hojeISO.substring(0, 7);
     document.getElementById('mesReferencia').value = mesAtual;
     document.getElementById('mesFatura').value = mesAtual;
     mesLancamentos = mesAtual;
