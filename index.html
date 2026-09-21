@@ -854,7 +854,6 @@
   }
   .cf-btn-subs:hover { text-decoration: underline; background: none; color: var(--text); }
 
-  /* Lançamentos individuais dentro da fatura */
   .cf-lancamentos {
     margin-left: 18px; margin-top: 6px; padding-left: 10px;
     border-left: 2px solid var(--border);
@@ -892,10 +891,6 @@
     font-size: 0.72em; font-weight: 700;
     background: var(--success-soft); color: var(--success);
     border: 1px solid #a7f3d0;
-  }
-  .badge-pessoa-mini {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-size: 0.78em; color: var(--text-3);
   }
 
   .badge-status {
@@ -990,6 +985,97 @@
   .lanc-dia-corpo .gasto-swipe-container:first-child { margin-top: 12px; }
 
   .lanc-vazio { text-align: center; padding: 44px 20px; color: var(--text-muted); font-size: 0.9em; }
+
+  /* ====== ABAS DA FATURA ====== */
+  .sub-aba-fatura {
+    flex: 1; padding: 10px 12px;
+    background: transparent;
+    color: var(--text-3);
+    border: none; border-radius: 9px;
+    font-weight: 600; font-size: 0.82em; cursor: pointer; white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .sub-aba-fatura.ativa {
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow-xs);
+  }
+
+  /* ====== EXTRATO DA FATURA ====== */
+  .extrato-filtros {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .extrato-filtros .campo-filtro { display: flex; flex-direction: column; }
+  .extrato-filtros label { font-size: 0.68em; margin-bottom: 5px; color: var(--text-3); }
+  .extrato-filtros select {
+    padding: 11px 34px 11px 12px;
+    font-size: 14px;
+    border-radius: 10px;
+    background-position: right 10px center;
+  }
+  .extrato-filtros .btn-limpar-filtros { grid-column: span 2; }
+
+  .extrato-dia { margin-bottom: 14px; }
+  .extrato-dia-header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 4px;
+  }
+  .extrato-dia-header .data-ext {
+    font-size: 0.78em; font-weight: 700; color: var(--text-2);
+    text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .extrato-dia-header .total-ext-dia {
+    font-size: 0.8em; font-weight: 700; color: var(--text-2);
+  }
+  .extrato-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--border);
+    cursor: pointer;
+  }
+  .extrato-item:last-child { border-bottom: none; }
+  .extrato-item:hover { background: var(--surface-2); }
+  .extrato-item .ext-info { flex: 1; min-width: 0; }
+  .extrato-item .ext-empresa {
+    font-weight: 700; font-size: 0.92em; color: var(--text);
+    word-break: break-word;
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .extrato-item .ext-meta {
+    font-size: 0.76em; color: var(--text-3);
+    display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+    margin-bottom: 6px;
+  }
+  .extrato-item .ext-meta .sep { color: var(--border-strong); }
+  .extrato-item .ext-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .extrato-item .ext-valor {
+    text-align: right; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    align-items: flex-end; gap: 3px;
+  }
+  .extrato-item .ext-valor-num {
+    font-weight: 700; color: var(--text);
+    font-size: 1em; white-space: nowrap;
+    letter-spacing: -0.01em;
+  }
+  .extrato-item .ext-valor-total {
+    font-size: 0.7em; color: var(--text-muted); font-weight: 500;
+    white-space: nowrap;
+  }
+  .extrato-vazio {
+    text-align: center; padding: 40px 20px;
+    color: var(--text-muted); font-style: italic; font-size: 0.9em;
+  }
 
   /* AGENDA */
   .agenda-visao-chips {
@@ -1615,7 +1701,7 @@
       </div>
     </div>
 
-    <!-- NOVO: Filtros da aba Lançamentos -->
+    <!-- Filtros da aba Lançamentos -->
     <div class="card">
       <button class="filtros-cabecalho" id="lancFiltrosCabecalho" onclick="toggleFiltrosLanc()">
         <span class="ftitulo">🔍 Filtros <span class="filtro-ativo" id="badgeFiltroLancAtivo" style="display:none;">Ativos</span></span>
@@ -1794,6 +1880,12 @@
         <button class="secundario" onclick="irParaMesAtualFatura()">Hoje</button>
       </div>
     </div>
+
+    <div class="sub-abas">
+      <button class="sub-aba-fatura ativa" data-vista="categorias" onclick="trocarVistaFatura('categorias')">📊 Por categoria</button>
+      <button class="sub-aba-fatura" data-vista="extrato" onclick="trocarVistaFatura('extrato')">📄 Extrato</button>
+    </div>
+
     <div class="fatura-resumo-geral">
       <div class="titulo">Total de todas as faturas</div>
       <div class="total-geral" id="totalGeralFaturas">R$ 0,00</div>
@@ -1810,9 +1902,45 @@
           <span class="lbl">Eliane</span>
           <span class="vlr" id="totalCartoesEliane">R$ 0,00</span>
         </div>
+        <div class="item-resumo">
+          <span class="lbl">Lançamentos</span>
+          <span class="vlr" id="totalLancamentosFatura">0</span>
+        </div>
       </div>
     </div>
-    <div id="faturasLista"></div>
+
+    <!-- Vista: Por categoria -->
+    <div id="faturasVistaCategorias">
+      <div id="faturasLista"></div>
+    </div>
+
+    <!-- Vista: Extrato cronológico -->
+    <div id="faturasVistaExtrato" style="display:none;">
+      <div class="card">
+        <h2 class="com-filtro">
+          📄 Extrato da fatura
+          <span class="filtro-ativo" id="badgeExtratoFiltro" style="display:none;">Filtrado</span>
+        </h2>
+        <div class="extrato-filtros">
+          <div class="campo-filtro">
+            <label>Cartão</label>
+            <select id="extratoFiltroCartao" onchange="renderizarExtrato()">
+              <option value="">Todos</option>
+            </select>
+          </div>
+          <div class="campo-filtro">
+            <label>Pessoa</label>
+            <select id="extratoFiltroUsuario" onchange="renderizarExtrato()">
+              <option value="">Todos</option>
+              <option value="Diego">👨 Diego</option>
+              <option value="Eliane">👩 Eliane</option>
+            </select>
+          </div>
+          <button class="btn-limpar-filtros" onclick="limparFiltrosExtrato()">🧹 Limpar filtros</button>
+        </div>
+        <div id="extratoLista"></div>
+      </div>
+    </div>
   </div>
 
   <!-- AGENDA -->
@@ -2354,21 +2482,23 @@
   let mesLancamentos = null;
   let diasSemanaSelecionados = new Set();
 
-  // ====== Novos filtros da aba Lançamentos ======
+  // Filtros da aba Lançamentos
   let filtrosLancExpandidos = false;
   let modoLancMes = 'compra';
+
+  // Vista atual da aba Faturas
+  let vistaFatura = 'categorias';
 
   function acharCategoria(nome) { return categorias.find(c => c.nome === nome); }
   function acharCartao(nome) { return cartoes.find(c => c.nome === nome); }
   function acharPessoa(nome) { return pessoas.find(p => p.nome === nome); }
 
-  // ============ AVATARES AUTOMÁTICOS ============
+  // ============ AVATARES ============
   function iniciais(nome) {
     const partes = String(nome || '').trim().split(/\s+/);
     if (partes.length === 1) return partes[0].substring(0, 2).toUpperCase();
     return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
   }
-
   function corAvatar(nome) {
     let hash = 0;
     const s = String(nome || '');
@@ -2378,11 +2508,8 @@
     }
     return CORES_AVATAR[Math.abs(hash) % CORES_AVATAR.length];
   }
-
   function avatarHTML(nome, extraClass) {
-    const cor = corAvatar(nome);
-    const ini = iniciais(nome);
-    return `<span class="avatar-mini ${extraClass || ''}" style="background:${cor};">${ini}</span>`;
+    return `<span class="avatar-mini ${extraClass || ''}" style="background:${corAvatar(nome)};">${iniciais(nome)}</span>`;
   }
 
   // ============ NAVEGAÇÃO ============
@@ -2394,7 +2521,12 @@
     if (nome === 'faturas') {
       const inp = document.getElementById('mesFatura');
       if (!inp.value || !inp.dataset.tocado) inp.value = mesFaturaPadrao();
-      renderizarFaturas();
+      if (vistaFatura === 'extrato') {
+        popularExtratoCartoes();
+        renderizarExtrato();
+      } else {
+        renderizarFaturas();
+      }
     }
     if (nome === 'agenda') renderizarAgenda();
     if (nome === 'lancar') renderizarUltimos();
@@ -2661,6 +2793,10 @@
       renderizar();
       renderizarFaturas();
       renderizarLancamentos();
+      if (vistaFatura === 'extrato') {
+        popularExtratoCartoes();
+        renderizarExtrato();
+      }
       const inp = document.getElementById('mesFatura');
       if (inp && !inp.dataset.tocado) inp.value = mesFaturaPadrao();
     }, err => console.error('Erro dados casa:', err));
@@ -2736,6 +2872,7 @@
         renderizarFaturas();
         renderizarUltimos();
         renderizarLancamentos();
+        if (vistaFatura === 'extrato') renderizarExtrato();
       },
       erro => { console.error(erro); atualizarStatus('offline', 'Erro'); }
     );
@@ -2847,8 +2984,7 @@
     afetados.forEach(g => {
       const ref = colecaoGastos().doc(g.id);
       const update = { cartao: nomeNovo };
-      const novoCartao = acharCartao(nomeNovo);
-      if (novoCartao && g.data) update.mesFatura = calcularMesFatura(g.data, nomeNovo);
+      if (acharCartao(nomeNovo) && g.data) update.mesFatura = calcularMesFatura(g.data, nomeNovo);
       batch.update(ref, update);
     });
     await batch.commit();
@@ -2949,20 +3085,16 @@
       wrap.innerHTML = '<div class="vazio">Nenhuma pessoa cadastrada</div>';
       return;
     }
-    wrap.innerHTML = pessoas.map((p, idx) => {
-      const cor = corAvatar(p.nome);
-      const ini = iniciais(p.nome);
-      return `
-        <div class="pessoa-view">
-          <div class="avatar-pessoa" style="background:${cor};">${ini}</div>
-          <div class="nome-pessoa">${escaparHTML(p.nome)}</div>
-          <div class="acoes-pessoa">
-            <button class="btn-edit-pessoa" onclick="abrirEditarPessoa(${idx})" title="Editar">✏️</button>
-            <button class="btn-excluir-pessoa" onclick="removerPessoa(${idx})" title="Excluir">🗑️</button>
-          </div>
+    wrap.innerHTML = pessoas.map((p, idx) => `
+      <div class="pessoa-view">
+        <div class="avatar-pessoa" style="background:${corAvatar(p.nome)};">${iniciais(p.nome)}</div>
+        <div class="nome-pessoa">${escaparHTML(p.nome)}</div>
+        <div class="acoes-pessoa">
+          <button class="btn-edit-pessoa" onclick="abrirEditarPessoa(${idx})" title="Editar">✏️</button>
+          <button class="btn-excluir-pessoa" onclick="removerPessoa(${idx})" title="Excluir">🗑️</button>
         </div>
-      `;
-    }).join('');
+      </div>
+    `).join('');
   }
 
   function abrirEditarPessoa(idx) {
@@ -4235,7 +4367,6 @@
   function lancamentosDoMesAtual() {
     const mes = mesLancamentos || mesAtualISO();
     const modo = modoLancMes;
-    // Filtra por mês
     let lista = gastos.filter(g => {
       if (modo === 'fatura') {
         const referencia = g.mesFatura || (g.data || '').substring(0, 7);
@@ -4243,7 +4374,6 @@
       }
       return (g.data || '').substring(0, 7) === mes;
     });
-    // Aplica filtros de usuário/pagamento/cartão
     const u = document.getElementById('filtroLancUsuario').value;
     const p = document.getElementById('filtroLancPagamento').value;
     const c = document.getElementById('filtroLancCartao').value;
@@ -4279,11 +4409,9 @@
     document.getElementById('lancQtd').textContent = colapsado.length;
 
     const tituloResumo = document.getElementById('lancResumoTitulo');
-    if (modoLancMes === 'fatura') {
-      tituloResumo.textContent = 'Total da fatura (vencimentos)';
-    } else {
-      tituloResumo.textContent = 'Total do mês (compras)';
-    }
+    tituloResumo.textContent = modoLancMes === 'fatura'
+      ? 'Total da fatura (vencimentos)'
+      : 'Total do mês (compras)';
 
     const wrap = document.getElementById('lancLista');
     if (colapsado.length === 0) {
@@ -5074,7 +5202,8 @@
   function irParaMesAtualFatura() {
     document.getElementById('mesFatura').value = mesFaturaPadrao();
     document.getElementById('mesFatura').dataset.tocado = '1';
-    renderizarFaturas();
+    if (vistaFatura === 'extrato') renderizarExtrato();
+    else renderizarFaturas();
   }
 
   function statusFatura(mesISO) {
@@ -5092,7 +5221,148 @@
     return `<span class="badge-status ${classes[s]}">${textos[s]}</span>`;
   }
 
-  // ============ FATURAS ============
+  // ============ VISTA FATURA: ABAS ============
+  function trocarVistaFatura(vista) {
+    vistaFatura = vista;
+    document.querySelectorAll('.sub-aba-fatura').forEach(b => {
+      b.classList.toggle('ativa', b.dataset.vista === vista);
+    });
+    document.getElementById('faturasVistaCategorias').style.display = vista === 'categorias' ? 'block' : 'none';
+    document.getElementById('faturasVistaExtrato').style.display = vista === 'extrato' ? 'block' : 'none';
+    if (vista === 'extrato') {
+      popularExtratoCartoes();
+      renderizarExtrato();
+    } else {
+      renderizarFaturas();
+    }
+  }
+
+  function popularExtratoCartoes() {
+    const sel = document.getElementById('extratoFiltroCartao');
+    if (!sel) return;
+    const atual = sel.value;
+    sel.innerHTML = '<option value="">Todos</option>' +
+      cartoes.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
+    if (atual && acharCartao(atual)) sel.value = atual;
+  }
+
+  function limparFiltrosExtrato() {
+    document.getElementById('extratoFiltroCartao').value = '';
+    document.getElementById('extratoFiltroUsuario').value = '';
+    renderizarExtrato();
+  }
+
+  function atualizarBadgeExtrato() {
+    const cartao = document.getElementById('extratoFiltroCartao').value;
+    const usuario = document.getElementById('extratoFiltroUsuario').value;
+    const ativo = !!(cartao || usuario);
+    const badge = document.getElementById('badgeExtratoFiltro');
+    if (badge) badge.style.display = ativo ? 'inline-block' : 'none';
+  }
+
+  function renderizarExtrato() {
+    const mesISO = String(document.getElementById('mesFatura').value || '');
+    if (!mesISO) return;
+    atualizarBadgeExtrato();
+
+    let lista = gastos.filter(g =>
+      g.formaPagamento === 'Cartão Crédito' &&
+      g.mesFatura === mesISO
+    );
+
+    const cartaoFiltro = document.getElementById('extratoFiltroCartao').value;
+    const usuarioFiltro = document.getElementById('extratoFiltroUsuario').value;
+    if (cartaoFiltro) lista = lista.filter(g => g.cartao === cartaoFiltro);
+    if (usuarioFiltro) lista = lista.filter(g => g.usuario === usuarioFiltro);
+
+    const elQtdLanc = document.getElementById('totalLancamentosFatura');
+    if (elQtdLanc) elQtdLanc.textContent = lista.length;
+
+    const wrap = document.getElementById('extratoLista');
+    if (lista.length === 0) {
+      wrap.innerHTML = `<div class="extrato-vazio">Nenhum lançamento em ${nomeMesLongo(mesISO)}</div>`;
+      return;
+    }
+
+    const porDia = {};
+    lista.forEach(g => {
+      const dia = g.data;
+      if (!porDia[dia]) porDia[dia] = [];
+      porDia[dia].push(g);
+    });
+
+    const diasOrdenados = Object.keys(porDia).sort();
+    const totalGeral = lista.reduce((s, g) => s + (g.valor || 0), 0);
+
+    let html = `
+      <div style="font-size:0.8em; color:var(--text-3); margin-bottom:14px; padding:10px 12px; background:var(--surface-2); border-radius:8px; border:1px solid var(--border); line-height:1.5;">
+        📄 <strong>${lista.length}</strong> lançamento${lista.length > 1 ? 's' : ''} ·
+        Total <strong>${formatarMoeda(totalGeral)}</strong><br>
+        <span style="font-size:0.9em;">Ordenado por data da compra (mais antigo primeiro)</span>
+      </div>
+    `;
+
+    html += diasOrdenados.map(dia => {
+      const itens = porDia[dia].sort((a, b) =>
+        (a.descricao || '').localeCompare(b.descricao || '')
+      );
+      const totalDia = itens.reduce((s, g) => s + (g.valor || 0), 0);
+
+      const itensHTML = itens.map(g => {
+        const ehParcela = !!(g.parcelaTotal && g.parcelaTotal > 1);
+        const badgeParcela = ehParcela
+          ? `<span class="badge-parcela-mini">${g.parcelaAtual}/${g.parcelaTotal}</span>`
+          : '';
+        const valorTotalCompra = ehParcela
+          ? `<div class="ext-valor-total">Total: ${formatarMoeda(g.valorTotalCompra || g.valor * g.parcelaTotal)}</div>`
+          : '';
+        const corCat = corDa(g.categoria);
+        const subTag = g.subcategoria
+          ? `<span class="tag-sub">${escaparHTML(g.subcategoria)}</span>`
+          : '';
+        const cartaoTag = g.cartao
+          ? `<span class="tag-fatura">${escaparHTML(g.cartao)}</span>`
+          : '';
+
+        return `
+          <div class="extrato-item" onclick="abrirDetalhesGasto('${g.id}')">
+            <div class="ext-info">
+              <div class="ext-empresa">
+                ${escaparHTML(g.descricao)} ${badgeParcela}
+              </div>
+              <div class="ext-meta">
+                <span>${escaparHTML(g.usuario)}</span>
+                ${g.observacao ? `<span class="sep">·</span><span>${escaparHTML(g.observacao)}</span>` : ''}
+              </div>
+              <div class="ext-tags">
+                <span class="tag" style="background:${corCat};">${g.categoria}</span>
+                ${subTag}
+                ${cartaoTag}
+              </div>
+            </div>
+            <div class="ext-valor">
+              <div class="ext-valor-num">${formatarMoeda(g.valor)}</div>
+              ${valorTotalCompra}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="extrato-dia">
+          <div class="extrato-dia-header">
+            <span class="data-ext">📅 ${escaparHTML(formatarDataLonga(dia))}</span>
+            <span class="total-ext-dia">${formatarMoeda(totalDia)}</span>
+          </div>
+          ${itensHTML}
+        </div>
+      `;
+    }).join('');
+
+    wrap.innerHTML = html;
+  }
+
+  // ============ FATURAS (VISTA CATEGORIAS) ============
   function renderizarFaturas() {
     const mesISO = String(document.getElementById('mesFatura').value || '');
     if (!mesISO) return;
@@ -5117,6 +5387,7 @@
     const wrap = document.getElementById('faturasLista');
     if (qtdCartoes === 0) {
       wrap.innerHTML = `<div class="card"><div class="vazio">Nenhuma fatura para ${nomeMesLongo(mesISO)}</div></div>`;
+      if (vistaFatura === 'extrato') renderizarExtrato();
       return;
     }
 
@@ -5162,7 +5433,6 @@
           </div>
         `).join('');
 
-        // ====== NÍVEL 3: lançamentos individuais ======
         const lancsOrdenados = [...info.lancamentos].sort((a, b) => (a.data || '').localeCompare(b.data || ''));
         const lancsHTML = lancsOrdenados.map(g => {
           const ehParcela = !!(g.parcelaTotal && g.parcelaTotal > 1);
@@ -5230,6 +5500,8 @@
         </div>
       `;
     }).join('');
+
+    if (vistaFatura === 'extrato') renderizarExtrato();
   }
 
   function toggleFatura(id) {
