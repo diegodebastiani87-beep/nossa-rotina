@@ -97,6 +97,7 @@
   .painel.ativo { display: block; animation: fadeIn 0.25s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
+  /* ====== BOTTOM NAV ====== */
   .bottom-nav {
     position: fixed; bottom: 0; left: 0; right: 0;
     background: rgba(255,255,255,0.95);
@@ -116,15 +117,28 @@
     letter-spacing: 0.02em;
     transition: color 0.15s, transform 0.15s;
     position: relative;
+    border-radius: 10px;
   }
   .bottom-nav button .icone { font-size: 1.35em; line-height: 1; }
-  .bottom-nav button.ativa { color: var(--primary); }
+  .bottom-nav button.ativa {
+    color: var(--primary);
+    background: transparent;
+  }
   .bottom-nav button.ativa::before {
     content: ''; position: absolute; top: 0; left: 30%; right: 30%;
     height: 2px; background: var(--primary); border-radius: 2px;
   }
+  /* Cobre todos os estados para evitar sobreposição da regra global button:hover */
+  .bottom-nav button:hover,
+  .bottom-nav button:focus,
+  .bottom-nav button.ativa,
+  .bottom-nav button.ativa:hover,
+  .bottom-nav button.ativa:focus {
+    background: transparent;
+  }
   .bottom-nav button:hover { color: var(--text-2); }
- .bottom-nav button.ativa:hover { color: var(--primary); }
+  .bottom-nav button.ativa:hover,
+  .bottom-nav button.ativa:focus { color: var(--primary); }
 
   .card {
     background: var(--surface);
@@ -1516,7 +1530,10 @@
     }
     .bottom-nav button .icone { font-size: 1.1em; }
     .bottom-nav button.ativa::before { display: none; }
-    .bottom-nav button.ativa {
+    /* No desktop, botão ativo ganha chip de fundo claro */
+    .bottom-nav button.ativa,
+    .bottom-nav button.ativa:hover,
+    .bottom-nav button.ativa:focus {
       background: var(--primary-soft);
       color: var(--primary);
     }
@@ -4408,11 +4425,9 @@
 
   // ============ ÚLTIMO LANÇAMENTO (corrigido) ============
   function timestampDe(g) {
-    // criadoEm é um Timestamp do Firestore
     if (g.criadoEm && typeof g.criadoEm.toMillis === 'function') return g.criadoEm.toMillis();
     if (g.criadoEm && typeof g.criadoEm.seconds === 'number') return g.criadoEm.seconds * 1000;
     if (g.criadoEm && typeof g.criadoEm === 'number') return g.criadoEm;
-    // Sem timestamp, usa a data como fallback
     return new Date((g.data || '1970-01-01') + 'T00:00:00').getTime();
   }
 
@@ -4420,8 +4435,6 @@
     const wrap = document.getElementById('ultimosLancamentos');
     if (!wrap) return;
 
-    // Ordena por timestamp de criação real (mais recente primeiro),
-    // depois por data como desempate
     const ordenados = [...gastos].sort((a, b) => {
       const ta = timestampDe(a);
       const tb = timestampDe(b);
