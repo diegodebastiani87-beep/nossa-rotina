@@ -854,6 +854,50 @@
   }
   .cf-btn-subs:hover { text-decoration: underline; background: none; color: var(--text); }
 
+  /* Lançamentos individuais dentro da fatura */
+  .cf-lancamentos {
+    margin-left: 18px; margin-top: 6px; padding-left: 10px;
+    border-left: 2px solid var(--border);
+    display: none;
+  }
+  .cf-lancamentos.aberto { display: block; }
+  .cf-lanc-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 0; border-bottom: 1px dashed var(--border);
+    font-size: 0.82em;
+  }
+  .cf-lanc-item:last-child { border-bottom: none; }
+  .cf-lanc-item .cf-li-info { flex: 1; min-width: 0; }
+  .cf-lanc-item .cf-li-empresa {
+    font-weight: 600; color: var(--text);
+    word-break: break-word;
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  }
+  .cf-lanc-item .cf-li-meta {
+    font-size: 0.88em; color: var(--text-3);
+    margin-top: 2px;
+  }
+  .cf-lanc-item .cf-li-valor {
+    text-align: right; flex-shrink: 0;
+    font-weight: 700; color: var(--text);
+    white-space: nowrap;
+    letter-spacing: -0.01em;
+  }
+  .cf-lanc-item .cf-li-valor .total-compra {
+    display: block; font-size: 0.72em; font-weight: 500;
+    color: var(--text-muted); margin-top: 2px;
+  }
+  .badge-parcela-mini {
+    display: inline-block; padding: 2px 7px; border-radius: 10px;
+    font-size: 0.72em; font-weight: 700;
+    background: var(--success-soft); color: var(--success);
+    border: 1px solid #a7f3d0;
+  }
+  .badge-pessoa-mini {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 0.78em; color: var(--text-3);
+  }
+
   .badge-status {
     display: inline-block; padding: 4px 10px;
     border-radius: 20px; font-size: 0.68em;
@@ -1571,8 +1615,55 @@
       </div>
     </div>
 
+    <!-- NOVO: Filtros da aba Lançamentos -->
+    <div class="card">
+      <button class="filtros-cabecalho" id="lancFiltrosCabecalho" onclick="toggleFiltrosLanc()">
+        <span class="ftitulo">🔍 Filtros <span class="filtro-ativo" id="badgeFiltroLancAtivo" style="display:none;">Ativos</span></span>
+        <span class="fseta" id="lancFiltrosSeta">▶</span>
+      </button>
+      <div class="filtros-conteudo" id="lancFiltrosConteudo">
+        <div class="campo" style="margin-bottom:12px;">
+          <label>Filtrar mês por</label>
+          <select id="modoLancMes" onchange="renderizarLancamentos()">
+            <option value="compra" selected>🛒 Mês da compra (data do gasto)</option>
+            <option value="fatura">📅 Mês da fatura (vencimento)</option>
+          </select>
+        </div>
+        <div class="filtros-globais">
+          <div class="campo-filtro">
+            <label>Quem lançou</label>
+            <select id="filtroLancUsuario" onchange="renderizarLancamentos()">
+              <option value="">Todos</option>
+              <option value="Diego">👨 Diego</option>
+              <option value="Eliane">👩 Eliane</option>
+            </select>
+          </div>
+          <div class="campo-filtro">
+            <label>Pagamento</label>
+            <select id="filtroLancPagamento" onchange="atualizarFiltroCartaoLanc(); renderizarLancamentos()">
+              <option value="">Todos</option>
+              <option value="Dinheiro/PIX">💵 Dinheiro/PIX</option>
+              <option value="Cartão Crédito">💳 Cartão Crédito</option>
+              <option value="Cartão Débito">🏦 Cartão Débito</option>
+              <option value="Vale Alimentação">🍽️ Vale Alimentação</option>
+            </select>
+          </div>
+          <div class="campo-filtro" id="campoLancFiltroCartao" style="display:none;">
+            <label>Cartão</label>
+            <select id="filtroLancCartao" onchange="renderizarLancamentos()">
+              <option value="">Todos</option>
+            </select>
+          </div>
+          <button class="btn-limpar-filtros" id="btnLimparFiltrosLanc" onclick="limparFiltrosLanc()">
+            🧹 Limpar filtros
+          </button>
+        </div>
+        <div class="resumo-filtros" id="resumoFiltrosLanc" style="display:none;"></div>
+      </div>
+    </div>
+
     <div class="lanc-resumo-mes" id="lancResumoMes">
-      <div class="titulo">Total do mês</div>
+      <div class="titulo" id="lancResumoTitulo">Total do mês</div>
       <div class="total" id="lancTotalMes">R$ 0,00</div>
       <div class="quebra">
         <div class="item">
@@ -2219,7 +2310,6 @@
     { nome: "Mãe" }
   ];
 
-  // Paleta de cores para avatares automáticos
   const CORES_AVATAR = [
     "#1e40af", "#0891b2", "#059669", "#7c3aed", "#be185d",
     "#dc2626", "#ea580c", "#ca8a04", "#0f766e", "#4338ca"
@@ -2251,6 +2341,7 @@
   let firebaseOK = false;
   const catAbertas = new Set();
   const faturasAbertas = new Set();
+  const lancsFaturaAbertos = new Set();
   const pessoasAbertas = new Set();
   const diasAgendaAbertos = new Set();
   const diasLancAbertos = new Set();
@@ -2262,6 +2353,10 @@
   let filtrosExpandidos = false;
   let mesLancamentos = null;
   let diasSemanaSelecionados = new Set();
+
+  // ====== Novos filtros da aba Lançamentos ======
+  let filtrosLancExpandidos = false;
+  let modoLancMes = 'compra';
 
   function acharCategoria(nome) { return categorias.find(c => c.nome === nome); }
   function acharCartao(nome) { return cartoes.find(c => c.nome === nome); }
@@ -2323,6 +2418,77 @@
     filtrosExpandidos = !filtrosExpandidos;
     document.getElementById('filtrosCabecalho').classList.toggle('aberto', filtrosExpandidos);
     document.getElementById('filtrosConteudo').classList.toggle('aberto', filtrosExpandidos);
+  }
+
+  // ============ FILTROS LANÇAMENTOS ============
+  function toggleFiltrosLanc() {
+    filtrosLancExpandidos = !filtrosLancExpandidos;
+    document.getElementById('lancFiltrosCabecalho').classList.toggle('aberto', filtrosLancExpandidos);
+    document.getElementById('lancFiltrosConteudo').classList.toggle('aberto', filtrosLancExpandidos);
+  }
+
+  function limparFiltrosLanc() {
+    document.getElementById('filtroLancUsuario').value = '';
+    document.getElementById('filtroLancPagamento').value = '';
+    document.getElementById('filtroLancCartao').value = '';
+    document.getElementById('modoLancMes').value = 'compra';
+    atualizarFiltroCartaoLanc();
+    renderizarLancamentos();
+  }
+
+  function atualizarFiltroCartaoLanc() {
+    const pag = document.getElementById('filtroLancPagamento').value;
+    const campo = document.getElementById('campoLancFiltroCartao');
+    if (pag === 'Cartão Crédito') {
+      campo.style.display = 'flex';
+      popularFiltroCartoesLanc();
+    } else {
+      campo.style.display = 'none';
+      document.getElementById('filtroLancCartao').value = '';
+    }
+  }
+
+  function popularFiltroCartoesLanc() {
+    const sel = document.getElementById('filtroLancCartao');
+    if (!sel) return;
+    const atual = sel.value;
+    sel.innerHTML = '<option value="">Todos</option>' +
+      cartoes.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
+    if (atual && acharCartao(atual)) sel.value = atual;
+  }
+
+  function temFiltroLancAtivo() {
+    return !!(
+      document.getElementById('filtroLancUsuario').value ||
+      document.getElementById('filtroLancPagamento').value ||
+      document.getElementById('filtroLancCartao').value ||
+      document.getElementById('modoLancMes').value !== 'compra'
+    );
+  }
+
+  function atualizarIndicadoresFiltroLanc() {
+    const ativo = temFiltroLancAtivo();
+    const btn = document.getElementById('btnLimparFiltrosLanc');
+    const resumo = document.getElementById('resumoFiltrosLanc');
+    const badge = document.getElementById('badgeFiltroLancAtivo');
+    if (badge) badge.style.display = ativo ? 'inline-block' : 'none';
+    if (ativo) {
+      btn.classList.add('ativo');
+      const partes = [];
+      const u = document.getElementById('filtroLancUsuario').value;
+      const p = document.getElementById('filtroLancPagamento').value;
+      const c = document.getElementById('filtroLancCartao').value;
+      const m = document.getElementById('modoLancMes').value;
+      if (u) partes.push(`pessoa "<strong>${u}</strong>"`);
+      if (p) partes.push(`pagamento "<strong>${p}</strong>"`);
+      if (c) partes.push(`cartão "<strong>${c}</strong>"`);
+      if (m === 'fatura') partes.push(`mês pela <strong>fatura</strong>`);
+      resumo.style.display = 'block';
+      resumo.innerHTML = `🔍 Mostrando apenas ${partes.join(' · ')}`;
+    } else {
+      btn.classList.remove('ativo');
+      resumo.style.display = 'none';
+    }
   }
 
   function selecionarUsuario(nome) {
@@ -2486,6 +2652,7 @@
       pessoas = migrarPessoasParaArray(data.pessoas, PESSOAS_PADRAO);
       popularCategorias();
       popularFiltroCartoes();
+      popularFiltroCartoesLanc();
       popularSelectCartoes();
       renderizarConfig();
       renderizarCartoes();
@@ -2653,6 +2820,7 @@
       await salvarCartoes();
       if (renomeou) await propagarRenomeacaoCartao(nomeAntigo, nome);
       popularFiltroCartoes();
+      popularFiltroCartoesLanc();
       popularSelectCartoes();
       fecharEditarCartao();
     } catch (e) { alert('Erro ao salvar cartão: ' + e.message); }
@@ -2672,6 +2840,7 @@
       await salvarCartoes();
       popularSelectCartoes();
       popularFiltroCartoes();
+      popularFiltroCartoesLanc();
       return;
     }
     const batch = db.batch();
@@ -2727,6 +2896,7 @@
     cartoes.splice(idx, 1);
     await salvarCartoes();
     popularFiltroCartoes();
+    popularFiltroCartoesLanc();
     popularSelectCartoes();
     fecharEditarCartao();
   }
@@ -2744,6 +2914,7 @@
     document.getElementById('novoCartaoFechamento').value = '';
     document.getElementById('novoCartaoVencimento').value = '';
     popularFiltroCartoes();
+    popularFiltroCartoesLanc();
     popularSelectCartoes();
     await salvarCartoes();
   }
@@ -2757,6 +2928,7 @@
     if (!confirm(msg)) return;
     cartoes.splice(idx, 1);
     popularFiltroCartoes();
+    popularFiltroCartoesLanc();
     popularSelectCartoes();
     await salvarCartoes();
   }
@@ -3263,7 +3435,6 @@
     document.getElementById('avisoRemarcando').style.display = 'none';
     document.getElementById('avisoSerie').style.display = 'none';
 
-    // Reset recorrência
     document.getElementById('evtRecorrencia').value = '';
     document.getElementById('evtRecorrenciaFim').value = 'indefinido';
     document.getElementById('evtDataFim').value = '';
@@ -3452,7 +3623,6 @@
     try {
       const dadosBase = { titulo, hora, pessoa, tipo, local, acompanhante, obs };
 
-      // Edição de evento existente (sem recorrência nova)
       if (id && !recorrencia) {
         const e = eventos.find(x => x.id === id);
         const dados = { ...dadosBase, data, atualizadoEm: firebase.firestore.FieldValue.serverTimestamp() };
@@ -3469,7 +3639,6 @@
         return;
       }
 
-      // Novo evento com recorrência
       if (recorrencia) {
         const datas = gerarDatasSerie(data, recorrencia, [...diasSemanaSelecionados], dataFim, contagem);
         if (datas.length === 0) { alert('Nenhuma data gerada. Verifique a configuração.'); return; }
@@ -3495,7 +3664,6 @@
         return;
       }
 
-      // Novo evento simples
       const dados = { ...dadosBase, data, criadoEm: firebase.firestore.FieldValue.serverTimestamp() };
       await colecaoEventos().add(dados);
       fecharFormEvento();
@@ -4064,8 +4232,30 @@
     renderizarLancamentos();
   }
 
+  function lancamentosDoMesAtual() {
+    const mes = mesLancamentos || mesAtualISO();
+    const modo = modoLancMes;
+    // Filtra por mês
+    let lista = gastos.filter(g => {
+      if (modo === 'fatura') {
+        const referencia = g.mesFatura || (g.data || '').substring(0, 7);
+        return referencia === mes;
+      }
+      return (g.data || '').substring(0, 7) === mes;
+    });
+    // Aplica filtros de usuário/pagamento/cartão
+    const u = document.getElementById('filtroLancUsuario').value;
+    const p = document.getElementById('filtroLancPagamento').value;
+    const c = document.getElementById('filtroLancCartao').value;
+    if (u) lista = lista.filter(g => g.usuario === u);
+    if (p) lista = lista.filter(g => (g.formaPagamento || 'Dinheiro/PIX') === p);
+    if (c) lista = lista.filter(g => g.cartao === c);
+    return lista;
+  }
+
   function renderizarLancamentos() {
     if (!mesLancamentos) mesLancamentos = mesAtualISO();
+    atualizarIndicadoresFiltroLanc();
     const [ano, mes] = mesLancamentos.split('-').map(Number);
     const dataRef = new Date(ano, mes - 1, 1);
     const mesNome = dataRef.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
@@ -4075,7 +4265,7 @@
     const btnProx = document.getElementById('btnProxMes');
     btnProx.disabled = mesLancamentos >= atual;
 
-    const doMes = gastos.filter(g => (g.data || '').substring(0, 7) === mesLancamentos);
+    const doMes = lancamentosDoMesAtual();
     const colapsado = colapsarParcelas(doMes);
 
     const valorDe = g => g._parcelado ? g._valorTotal : g.valor;
@@ -4087,6 +4277,13 @@
     document.getElementById('lancTotalDiego').textContent = formatarMoeda(totalDiego);
     document.getElementById('lancTotalEliane').textContent = formatarMoeda(totalEliane);
     document.getElementById('lancQtd').textContent = colapsado.length;
+
+    const tituloResumo = document.getElementById('lancResumoTitulo');
+    if (modoLancMes === 'fatura') {
+      tituloResumo.textContent = 'Total da fatura (vencimentos)';
+    } else {
+      tituloResumo.textContent = 'Total do mês (compras)';
+    }
 
     const wrap = document.getElementById('lancLista');
     if (colapsado.length === 0) {
@@ -4936,10 +5133,13 @@
       const infoDatas = c ? `Fecha dia ${c.fechamento} · Vence dia ${c.vencimento}` : 'Cartão não cadastrado';
       const porCat = {};
       itens.forEach(g => {
-        if (!porCat[g.categoria]) porCat[g.categoria] = { total: 0, subs: {} };
+        if (!porCat[g.categoria]) porCat[g.categoria] = { total: 0, subs: {}, lancamentos: [] };
         porCat[g.categoria].total += g.valor;
         const sub = g.subcategoria || '(sem sub)';
-        porCat[g.categoria].subs[sub] = (porCat[g.categoria].subs[sub] || 0) + g.valor;
+        if (!porCat[g.categoria].subs[sub]) porCat[g.categoria].subs[sub] = { total: 0, lancamentos: [] };
+        porCat[g.categoria].subs[sub].total += g.valor;
+        porCat[g.categoria].subs[sub].lancamentos.push(g);
+        porCat[g.categoria].lancamentos.push(g);
       });
       const catsOrdenadas = Object.entries(porCat).sort((a, b) => b[1].total - a[1].total);
       const maxCat = Math.max(...catsOrdenadas.map(c => c[1].total));
@@ -4950,14 +5150,48 @@
         const cor = corDa(cat);
         const pct = (info.total / maxCat) * 100;
         const pctCartao = totalCartao > 0 ? ((info.total / totalCartao) * 100).toFixed(0) : 0;
-        const subsOrdenadas = Object.entries(info.subs).sort((a, b) => b[1] - a[1]);
-        const subsHTML = subsOrdenadas.map(([sub, val]) => `
+        const subsOrdenadas = Object.entries(info.subs).sort((a, b) => b[1].total - a[1].total);
+        const subId = `subs-${catId}-${cat.replace(/[^a-zA-Z0-9]/g, '_')}`;
+        const lancId = `lanc-${catId}-${cat.replace(/[^a-zA-Z0-9]/g, '_')}`;
+        const lancAberto = lancsFaturaAbertos.has(lancId);
+
+        const subsHTML = subsOrdenadas.map(([sub, subInfo]) => `
           <div class="cf-linha-sub">
             <span class="nome-sub">↳ ${sub}</span>
-            <span class="valor-sub">${formatarMoeda(val)}</span>
+            <span class="valor-sub">${formatarMoeda(subInfo.total)}</span>
           </div>
         `).join('');
-        const subId = `subs-${catId}-${cat.replace(/[^a-zA-Z0-9]/g, '_')}`;
+
+        // ====== NÍVEL 3: lançamentos individuais ======
+        const lancsOrdenados = [...info.lancamentos].sort((a, b) => (a.data || '').localeCompare(b.data || ''));
+        const lancsHTML = lancsOrdenados.map(g => {
+          const ehParcela = !!(g.parcelaTotal && g.parcelaTotal > 1);
+          const badgeParcela = ehParcela
+            ? `<span class="badge-parcela-mini">${g.parcelaAtual}/${g.parcelaTotal}</span>`
+            : '';
+          const valorTotalCompra = ehParcela
+            ? `<span class="total-compra">Total: ${formatarMoeda(g.valorTotalCompra || g.valor * g.parcelaTotal)}</span>`
+            : '';
+          const sub = g.subcategoria ? ` · ${escaparHTML(g.subcategoria)}` : '';
+          const obs = g.observacao ? ` · ${escaparHTML(g.observacao)}` : '';
+          return `
+            <div class="cf-lanc-item">
+              <div class="cf-li-info">
+                <div class="cf-li-empresa">
+                  ${escaparHTML(g.descricao)} ${badgeParcela}
+                </div>
+                <div class="cf-li-meta">
+                  ${formatarData(g.data)} · ${escaparHTML(g.usuario)}${sub}${obs}
+                </div>
+              </div>
+              <div class="cf-li-valor">
+                ${formatarMoeda(g.valor)}
+                ${valorTotalCompra}
+              </div>
+            </div>
+          `;
+        }).join('');
+
         return `
           <div class="cf-linha-cat">
             <div class="cf-linha-cat-topo">
@@ -4972,6 +5206,10 @@
               </button>
               <div class="cf-subs" id="${subId}">${subsHTML}</div>
             ` : ''}
+            <button class="cf-btn-subs" onclick="toggleLancsFatura('${lancId}')">
+              ${lancAberto ? '▾' : '▸'} Ver ${lancsOrdenados.length} lançamento(s)
+            </button>
+            <div class="cf-lancamentos ${lancAberto ? 'aberto' : ''}" id="${lancId}">${lancsHTML}</div>
           </div>
         `;
       }).join('');
@@ -5007,6 +5245,12 @@
     const btn = el.previousElementSibling;
     if (el.classList.contains('aberto')) btn.textContent = btn.textContent.replace('▸', '▾');
     else btn.textContent = btn.textContent.replace('▾', '▸');
+  }
+
+  function toggleLancsFatura(lancId) {
+    if (lancsFaturaAbertos.has(lancId)) lancsFaturaAbertos.delete(lancId);
+    else lancsFaturaAbertos.add(lancId);
+    renderizarFaturas();
   }
 
   // ============ CONFIG CATEGORIAS ============
