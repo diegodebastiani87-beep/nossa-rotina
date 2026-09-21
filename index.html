@@ -803,95 +803,154 @@
   .fatura-resumo-geral .detalhes-linha .item-resumo .lbl { opacity: 0.7; font-size: 0.9em; font-weight: 500; }
   .fatura-resumo-geral .detalhes-linha .item-resumo .vlr { font-weight: 700; font-size: 1.08em; margin-top: 3px; letter-spacing: -0.01em; }
 
-  .cartao-fatura {
+  /* ====== FATURA ESTILO EXTRATO BANCÁRIO ====== */
+  .fatura-cabecalho {
+    background: linear-gradient(135deg, #1e40af, #1e3a8a);
+    color: white;
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    margin-bottom: 14px;
+    box-shadow: 0 8px 24px rgba(30,64,175,0.25);
+  }
+  .fatura-cabecalho .fc-topo {
+    display: flex; justify-content: space-between;
+    align-items: flex-start; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .fatura-cabecalho .fc-cartao {
+    font-size: 1.05em; font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+  }
+  .fatura-cabecalho .fc-datas {
+    font-size: 0.78em; opacity: 0.8;
+  }
+  .fatura-cabecalho .fc-total-label {
+    font-size: 0.72em; opacity: 0.75;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    font-weight: 700;
+    margin-top: 6px;
+  }
+  .fatura-cabecalho .fc-total {
+    font-size: 1.9em; font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  .fatura-tabela {
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 18px;
-    margin-bottom: 12px;
-    background: var(--surface);
-    transition: border-color 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow-xs);
   }
-  .cartao-fatura:hover { border-color: var(--border-strong); box-shadow: var(--shadow-xs); }
-  .cartao-fatura .cf-header {
-    display: flex; justify-content: space-between;
-    align-items: flex-start; margin-bottom: 14px;
-    gap: 10px; padding-bottom: 14px;
+  .fatura-tabela-header {
+    display: grid;
+    grid-template-columns: 62px 1fr 100px;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--surface-2);
     border-bottom: 1px solid var(--border);
+    font-size: 0.7em; font-weight: 700;
+    color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.5px;
   }
-  .cartao-fatura .cf-info { flex: 1; min-width: 0; }
-  .cartao-fatura .cf-nome {
-    font-weight: 700; font-size: 1em;
-    color: var(--text);
-    display: flex; align-items: center;
-    gap: 8px; margin-bottom: 6px; flex-wrap: wrap;
-    letter-spacing: -0.01em;
-  }
-  .cartao-fatura .cf-datas { font-size: 0.76em; color: var(--text-3); }
-  .cartao-fatura .cf-total {
-    font-size: 1.35em; font-weight: 800;
-    color: var(--text); text-align: right;
-    white-space: nowrap;
-    letter-spacing: -0.02em;
-  }
-  .cartao-fatura .cf-categorias { display: flex; flex-direction: column; gap: 10px; }
-  .cf-linha-cat { display: flex; flex-direction: column; gap: 6px; }
-  .cf-linha-cat-topo { display: flex; align-items: center; gap: 8px; }
-  .cf-linha-cat-topo .dot-cat { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .cf-linha-cat-topo .nome-cat { flex: 1; font-weight: 600; font-size: 0.85em; color: var(--text-2); }
-  .cf-linha-cat-topo .valor-cat { font-weight: 700; font-size: 0.88em; color: var(--text); white-space: nowrap; letter-spacing: -0.01em; }
-  .cf-barra-bg { background: var(--surface-3); border-radius: 8px; height: 6px; overflow: hidden; margin-left: 18px; }
-  .cf-barra-fill { height: 100%; border-radius: 8px; transition: width 0.5s; }
-  .cf-subs { margin-left: 18px; margin-top: 4px; display: none; padding-left: 10px; border-left: 2px solid var(--border); }
-  .cf-subs.aberto { display: block; }
-  .cf-linha-sub { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 0.78em; }
-  .cf-linha-sub .nome-sub { flex: 1; color: var(--text-3); font-size: 0.92em; }
-  .cf-linha-sub .valor-sub { color: var(--text-2); font-weight: 600; white-space: nowrap; }
-  .cf-btn-subs {
-    background: none; color: var(--text-3); border: none;
-    cursor: pointer; font-size: 0.75em;
-    padding: 4px 0 0 18px; width: auto;
-    font-weight: 600; text-align: left;
-  }
-  .cf-btn-subs:hover { text-decoration: underline; background: none; color: var(--text); }
+  .fatura-tabela-header .col-valor { text-align: right; }
 
-  .cf-lancamentos {
-    margin-left: 18px; margin-top: 6px; padding-left: 10px;
-    border-left: 2px solid var(--border);
-    display: none;
+  .fatura-linha {
+    display: grid;
+    grid-template-columns: 62px 1fr 100px;
+    gap: 8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    align-items: baseline;
+    font-size: 0.88em;
   }
-  .cf-lancamentos.aberto { display: block; }
-  .cf-lanc-item {
-    display: flex; align-items: flex-start; gap: 10px;
-    padding: 8px 0; border-bottom: 1px dashed var(--border);
+  .fatura-linha:last-child { border-bottom: none; }
+  .fatura-linha .fl-data {
     font-size: 0.82em;
-  }
-  .cf-lanc-item:last-child { border-bottom: none; }
-  .cf-lanc-item .cf-li-info { flex: 1; min-width: 0; }
-  .cf-lanc-item .cf-li-empresa {
-    font-weight: 600; color: var(--text);
-    word-break: break-word;
-    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
-  }
-  .cf-lanc-item .cf-li-meta {
-    font-size: 0.88em; color: var(--text-3);
-    margin-top: 2px;
-  }
-  .cf-lanc-item .cf-li-valor {
-    text-align: right; flex-shrink: 0;
-    font-weight: 700; color: var(--text);
+    color: var(--text-3);
+    font-weight: 600;
     white-space: nowrap;
+  }
+  .fatura-linha .fl-desc {
+    color: var(--text);
+    font-weight: 500;
+    word-break: break-word;
+    line-height: 1.35;
+  }
+  .fatura-linha .fl-desc .fl-parcela {
+    color: var(--text-muted);
+    font-size: 0.85em;
+    font-weight: 600;
+    margin-left: 4px;
+    white-space: nowrap;
+  }
+  .fatura-linha .fl-desc .fl-quem {
+    display: block;
+    font-size: 0.78em;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-top: 1px;
+  }
+  .fatura-linha .fl-valor {
+    text-align: right;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+    font-size: 0.94em;
     letter-spacing: -0.01em;
   }
-  .cf-lanc-item .cf-li-valor .total-compra {
-    display: block; font-size: 0.72em; font-weight: 500;
-    color: var(--text-muted); margin-top: 2px;
+
+  .fatura-total-rodape {
+    display: grid;
+    grid-template-columns: 62px 1fr 100px;
+    gap: 8px;
+    padding: 14px 16px;
+    background: var(--surface-2);
+    border-top: 2px solid var(--border-strong);
+    font-weight: 800;
+    font-size: 0.95em;
+    letter-spacing: -0.01em;
   }
-  .badge-parcela-mini {
-    display: inline-block; padding: 2px 7px; border-radius: 10px;
-    font-size: 0.72em; font-weight: 700;
-    background: var(--success-soft); color: var(--success);
-    border: 1px solid #a7f3d0;
+  .fatura-total-rodape .col-total-label {
+    grid-column: 1 / 3;
+    text-align: right;
+    color: var(--text-2);
+    text-transform: uppercase;
+    font-size: 0.82em;
+    letter-spacing: 0.5px;
+    align-self: center;
   }
+  .fatura-total-rodape .col-total-valor {
+    text-align: right;
+    color: var(--text);
+    font-weight: 800;
+    font-size: 1em;
+  }
+
+  .fatura-vazio {
+    text-align: center;
+    padding: 44px 20px;
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 0.9em;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+  }
+
+  .fatura-subtotais {
+    display: flex; gap: 18px; flex-wrap: wrap;
+    padding: 12px 16px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.76em;
+    color: var(--text-3);
+  }
+  .fatura-subtotais .st-item { display: flex; gap: 5px; align-items: baseline; }
+  .fatura-subtotais .st-item strong { color: var(--text-2); font-weight: 700; }
 
   .badge-status {
     display: inline-block; padding: 4px 10px;
@@ -985,97 +1044,6 @@
   .lanc-dia-corpo .gasto-swipe-container:first-child { margin-top: 12px; }
 
   .lanc-vazio { text-align: center; padding: 44px 20px; color: var(--text-muted); font-size: 0.9em; }
-
-  /* ====== ABAS DA FATURA ====== */
-  .sub-aba-fatura {
-    flex: 1; padding: 10px 12px;
-    background: transparent;
-    color: var(--text-3);
-    border: none; border-radius: 9px;
-    font-weight: 600; font-size: 0.82em; cursor: pointer; white-space: nowrap;
-    transition: all 0.15s;
-  }
-  .sub-aba-fatura.ativa {
-    background: var(--surface);
-    color: var(--text);
-    box-shadow: var(--shadow-xs);
-  }
-
-  /* ====== EXTRATO DA FATURA ====== */
-  .extrato-filtros {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 16px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--border);
-  }
-  .extrato-filtros .campo-filtro { display: flex; flex-direction: column; }
-  .extrato-filtros label { font-size: 0.68em; margin-bottom: 5px; color: var(--text-3); }
-  .extrato-filtros select {
-    padding: 11px 34px 11px 12px;
-    font-size: 14px;
-    border-radius: 10px;
-    background-position: right 10px center;
-  }
-  .extrato-filtros .btn-limpar-filtros { grid-column: span 2; }
-
-  .extrato-dia { margin-bottom: 14px; }
-  .extrato-dia-header {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 10px;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 4px;
-  }
-  .extrato-dia-header .data-ext {
-    font-size: 0.78em; font-weight: 700; color: var(--text-2);
-    text-transform: uppercase; letter-spacing: 0.4px;
-  }
-  .extrato-dia-header .total-ext-dia {
-    font-size: 0.8em; font-weight: 700; color: var(--text-2);
-  }
-  .extrato-item {
-    display: flex; gap: 12px; align-items: flex-start;
-    padding: 12px 0;
-    border-bottom: 1px dashed var(--border);
-    cursor: pointer;
-  }
-  .extrato-item:last-child { border-bottom: none; }
-  .extrato-item:hover { background: var(--surface-2); }
-  .extrato-item .ext-info { flex: 1; min-width: 0; }
-  .extrato-item .ext-empresa {
-    font-weight: 700; font-size: 0.92em; color: var(--text);
-    word-break: break-word;
-    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-    margin-bottom: 4px;
-    letter-spacing: -0.01em;
-  }
-  .extrato-item .ext-meta {
-    font-size: 0.76em; color: var(--text-3);
-    display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
-    margin-bottom: 6px;
-  }
-  .extrato-item .ext-meta .sep { color: var(--border-strong); }
-  .extrato-item .ext-tags { display: flex; flex-wrap: wrap; gap: 4px; }
-  .extrato-item .ext-valor {
-    text-align: right; flex-shrink: 0;
-    display: flex; flex-direction: column;
-    align-items: flex-end; gap: 3px;
-  }
-  .extrato-item .ext-valor-num {
-    font-weight: 700; color: var(--text);
-    font-size: 1em; white-space: nowrap;
-    letter-spacing: -0.01em;
-  }
-  .extrato-item .ext-valor-total {
-    font-size: 0.7em; color: var(--text-muted); font-weight: 500;
-    white-space: nowrap;
-  }
-  .extrato-vazio {
-    text-align: center; padding: 40px 20px;
-    color: var(--text-muted); font-style: italic; font-size: 0.9em;
-  }
 
   /* AGENDA */
   .agenda-visao-chips {
@@ -1701,7 +1669,6 @@
       </div>
     </div>
 
-    <!-- Filtros da aba Lançamentos -->
     <div class="card">
       <button class="filtros-cabecalho" id="lancFiltrosCabecalho" onclick="toggleFiltrosLanc()">
         <span class="ftitulo">🔍 Filtros <span class="filtro-ativo" id="badgeFiltroLancAtivo" style="display:none;">Ativos</span></span>
@@ -1874,73 +1841,13 @@
   <!-- FATURAS -->
   <div class="painel" id="painel-faturas">
     <div class="card">
-      <h2>📅 Mês da Fatura</h2>
+      <h2>📅 Mês de vencimento da fatura</h2>
       <div class="mes-selector">
         <input type="month" id="mesFatura" onchange="renderizarFaturas()">
         <button class="secundario" onclick="irParaMesAtualFatura()">Hoje</button>
       </div>
     </div>
-
-    <div class="sub-abas">
-      <button class="sub-aba-fatura ativa" data-vista="categorias" onclick="trocarVistaFatura('categorias')">📊 Por categoria</button>
-      <button class="sub-aba-fatura" data-vista="extrato" onclick="trocarVistaFatura('extrato')">📄 Extrato</button>
-    </div>
-
-    <div class="fatura-resumo-geral">
-      <div class="titulo">Total de todas as faturas</div>
-      <div class="total-geral" id="totalGeralFaturas">R$ 0,00</div>
-      <div class="detalhes-linha">
-        <div class="item-resumo">
-          <span class="lbl">Cartões com gasto</span>
-          <span class="vlr" id="qtdCartoesFatura">0</span>
-        </div>
-        <div class="item-resumo">
-          <span class="lbl">Diego</span>
-          <span class="vlr" id="totalCartoesDiego">R$ 0,00</span>
-        </div>
-        <div class="item-resumo">
-          <span class="lbl">Eliane</span>
-          <span class="vlr" id="totalCartoesEliane">R$ 0,00</span>
-        </div>
-        <div class="item-resumo">
-          <span class="lbl">Lançamentos</span>
-          <span class="vlr" id="totalLancamentosFatura">0</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Vista: Por categoria -->
-    <div id="faturasVistaCategorias">
-      <div id="faturasLista"></div>
-    </div>
-
-    <!-- Vista: Extrato cronológico -->
-    <div id="faturasVistaExtrato" style="display:none;">
-      <div class="card">
-        <h2 class="com-filtro">
-          📄 Extrato da fatura
-          <span class="filtro-ativo" id="badgeExtratoFiltro" style="display:none;">Filtrado</span>
-        </h2>
-        <div class="extrato-filtros">
-          <div class="campo-filtro">
-            <label>Cartão</label>
-            <select id="extratoFiltroCartao" onchange="renderizarExtrato()">
-              <option value="">Todos</option>
-            </select>
-          </div>
-          <div class="campo-filtro">
-            <label>Pessoa</label>
-            <select id="extratoFiltroUsuario" onchange="renderizarExtrato()">
-              <option value="">Todos</option>
-              <option value="Diego">👨 Diego</option>
-              <option value="Eliane">👩 Eliane</option>
-            </select>
-          </div>
-          <button class="btn-limpar-filtros" onclick="limparFiltrosExtrato()">🧹 Limpar filtros</button>
-        </div>
-        <div id="extratoLista"></div>
-      </div>
-    </div>
+    <div id="faturasLista"></div>
   </div>
 
   <!-- AGENDA -->
@@ -2468,8 +2375,6 @@
   let db = null;
   let firebaseOK = false;
   const catAbertas = new Set();
-  const faturasAbertas = new Set();
-  const lancsFaturaAbertos = new Set();
   const pessoasAbertas = new Set();
   const diasAgendaAbertos = new Set();
   const diasLancAbertos = new Set();
@@ -2482,12 +2387,8 @@
   let mesLancamentos = null;
   let diasSemanaSelecionados = new Set();
 
-  // Filtros da aba Lançamentos
   let filtrosLancExpandidos = false;
   let modoLancMes = 'compra';
-
-  // Vista atual da aba Faturas
-  let vistaFatura = 'categorias';
 
   function acharCategoria(nome) { return categorias.find(c => c.nome === nome); }
   function acharCartao(nome) { return cartoes.find(c => c.nome === nome); }
@@ -2521,12 +2422,7 @@
     if (nome === 'faturas') {
       const inp = document.getElementById('mesFatura');
       if (!inp.value || !inp.dataset.tocado) inp.value = mesFaturaPadrao();
-      if (vistaFatura === 'extrato') {
-        popularExtratoCartoes();
-        renderizarExtrato();
-      } else {
-        renderizarFaturas();
-      }
+      renderizarFaturas();
     }
     if (nome === 'agenda') renderizarAgenda();
     if (nome === 'lancar') renderizarUltimos();
@@ -2793,10 +2689,6 @@
       renderizar();
       renderizarFaturas();
       renderizarLancamentos();
-      if (vistaFatura === 'extrato') {
-        popularExtratoCartoes();
-        renderizarExtrato();
-      }
       const inp = document.getElementById('mesFatura');
       if (inp && !inp.dataset.tocado) inp.value = mesFaturaPadrao();
     }, err => console.error('Erro dados casa:', err));
@@ -2872,7 +2764,6 @@
         renderizarFaturas();
         renderizarUltimos();
         renderizarLancamentos();
-        if (vistaFatura === 'extrato') renderizarExtrato();
       },
       erro => { console.error(erro); atualizarStatus('offline', 'Erro'); }
     );
@@ -5199,178 +5090,31 @@
     return txt.charAt(0).toUpperCase() + txt.slice(1);
   }
 
+  // ============ FATURAS ============
   function irParaMesAtualFatura() {
     document.getElementById('mesFatura').value = mesFaturaPadrao();
     document.getElementById('mesFatura').dataset.tocado = '1';
-    if (vistaFatura === 'extrato') renderizarExtrato();
-    else renderizarFaturas();
+    renderizarFaturas();
   }
 
-  function statusFatura(mesISO) {
-    const hoje = new Date();
-    const mesAtual = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
-    if (mesISO < mesAtual) return 'paga';
-    if (mesISO === mesAtual) return 'aberta';
-    return 'futura';
-  }
-
-  function badgeStatus(mesISO) {
-    const s = statusFatura(mesISO);
-    const textos = { paga: 'Vencida', aberta: 'Em aberto', futura: 'A vencer' };
-    const classes = { paga: 'badge-paga', aberta: 'badge-aberta', futura: 'badge-futura' };
-    return `<span class="badge-status ${classes[s]}">${textos[s]}</span>`;
-  }
-
-  // ============ VISTA FATURA: ABAS ============
-  function trocarVistaFatura(vista) {
-    vistaFatura = vista;
-    document.querySelectorAll('.sub-aba-fatura').forEach(b => {
-      b.classList.toggle('ativa', b.dataset.vista === vista);
-    });
-    document.getElementById('faturasVistaCategorias').style.display = vista === 'categorias' ? 'block' : 'none';
-    document.getElementById('faturasVistaExtrato').style.display = vista === 'extrato' ? 'block' : 'none';
-    if (vista === 'extrato') {
-      popularExtratoCartoes();
-      renderizarExtrato();
-    } else {
-      renderizarFaturas();
-    }
-  }
-
-  function popularExtratoCartoes() {
-    const sel = document.getElementById('extratoFiltroCartao');
-    if (!sel) return;
-    const atual = sel.value;
-    sel.innerHTML = '<option value="">Todos</option>' +
-      cartoes.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
-    if (atual && acharCartao(atual)) sel.value = atual;
-  }
-
-  function limparFiltrosExtrato() {
-    document.getElementById('extratoFiltroCartao').value = '';
-    document.getElementById('extratoFiltroUsuario').value = '';
-    renderizarExtrato();
-  }
-
-  function atualizarBadgeExtrato() {
-    const cartao = document.getElementById('extratoFiltroCartao').value;
-    const usuario = document.getElementById('extratoFiltroUsuario').value;
-    const ativo = !!(cartao || usuario);
-    const badge = document.getElementById('badgeExtratoFiltro');
-    if (badge) badge.style.display = ativo ? 'inline-block' : 'none';
-  }
-
-  function renderizarExtrato() {
+  function renderizarFaturas() {
     const mesISO = String(document.getElementById('mesFatura').value || '');
     if (!mesISO) return;
-    atualizarBadgeExtrato();
 
-    let lista = gastos.filter(g =>
+    // Todos os lançamentos de crédito cujo mesFatura === mesISO
+    const doMes = gastos.filter(g =>
       g.formaPagamento === 'Cartão Crédito' &&
       g.mesFatura === mesISO
     );
 
-    const cartaoFiltro = document.getElementById('extratoFiltroCartao').value;
-    const usuarioFiltro = document.getElementById('extratoFiltroUsuario').value;
-    if (cartaoFiltro) lista = lista.filter(g => g.cartao === cartaoFiltro);
-    if (usuarioFiltro) lista = lista.filter(g => g.usuario === usuarioFiltro);
+    const wrap = document.getElementById('faturasLista');
 
-    const elQtdLanc = document.getElementById('totalLancamentosFatura');
-    if (elQtdLanc) elQtdLanc.textContent = lista.length;
-
-    const wrap = document.getElementById('extratoLista');
-    if (lista.length === 0) {
-      wrap.innerHTML = `<div class="extrato-vazio">Nenhum lançamento em ${nomeMesLongo(mesISO)}</div>`;
+    if (doMes.length === 0) {
+      wrap.innerHTML = `<div class="fatura-vazio">Nenhum lançamento na fatura de ${nomeMesLongo(mesISO)}</div>`;
       return;
     }
 
-    const porDia = {};
-    lista.forEach(g => {
-      const dia = g.data;
-      if (!porDia[dia]) porDia[dia] = [];
-      porDia[dia].push(g);
-    });
-
-    const diasOrdenados = Object.keys(porDia).sort();
-    const totalGeral = lista.reduce((s, g) => s + (g.valor || 0), 0);
-
-    let html = `
-      <div style="font-size:0.8em; color:var(--text-3); margin-bottom:14px; padding:10px 12px; background:var(--surface-2); border-radius:8px; border:1px solid var(--border); line-height:1.5;">
-        📄 <strong>${lista.length}</strong> lançamento${lista.length > 1 ? 's' : ''} ·
-        Total <strong>${formatarMoeda(totalGeral)}</strong><br>
-        <span style="font-size:0.9em;">Ordenado por data da compra (mais antigo primeiro)</span>
-      </div>
-    `;
-
-    html += diasOrdenados.map(dia => {
-      const itens = porDia[dia].sort((a, b) =>
-        (a.descricao || '').localeCompare(b.descricao || '')
-      );
-      const totalDia = itens.reduce((s, g) => s + (g.valor || 0), 0);
-
-      const itensHTML = itens.map(g => {
-        const ehParcela = !!(g.parcelaTotal && g.parcelaTotal > 1);
-        const badgeParcela = ehParcela
-          ? `<span class="badge-parcela-mini">${g.parcelaAtual}/${g.parcelaTotal}</span>`
-          : '';
-        const valorTotalCompra = ehParcela
-          ? `<div class="ext-valor-total">Total: ${formatarMoeda(g.valorTotalCompra || g.valor * g.parcelaTotal)}</div>`
-          : '';
-        const corCat = corDa(g.categoria);
-        const subTag = g.subcategoria
-          ? `<span class="tag-sub">${escaparHTML(g.subcategoria)}</span>`
-          : '';
-        const cartaoTag = g.cartao
-          ? `<span class="tag-fatura">${escaparHTML(g.cartao)}</span>`
-          : '';
-
-        return `
-          <div class="extrato-item" onclick="abrirDetalhesGasto('${g.id}')">
-            <div class="ext-info">
-              <div class="ext-empresa">
-                ${escaparHTML(g.descricao)} ${badgeParcela}
-              </div>
-              <div class="ext-meta">
-                <span>${escaparHTML(g.usuario)}</span>
-                ${g.observacao ? `<span class="sep">·</span><span>${escaparHTML(g.observacao)}</span>` : ''}
-              </div>
-              <div class="ext-tags">
-                <span class="tag" style="background:${corCat};">${g.categoria}</span>
-                ${subTag}
-                ${cartaoTag}
-              </div>
-            </div>
-            <div class="ext-valor">
-              <div class="ext-valor-num">${formatarMoeda(g.valor)}</div>
-              ${valorTotalCompra}
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      return `
-        <div class="extrato-dia">
-          <div class="extrato-dia-header">
-            <span class="data-ext">📅 ${escaparHTML(formatarDataLonga(dia))}</span>
-            <span class="total-ext-dia">${formatarMoeda(totalDia)}</span>
-          </div>
-          ${itensHTML}
-        </div>
-      `;
-    }).join('');
-
-    wrap.innerHTML = html;
-  }
-
-  // ============ FATURAS (VISTA CATEGORIAS) ============
-  function renderizarFaturas() {
-    const mesISO = String(document.getElementById('mesFatura').value || '');
-    if (!mesISO) return;
-    const doMes = gastos.filter(g => g.formaPagamento === 'Cartão Crédito' && g.mesFatura === mesISO);
-    const totalGeral = doMes.reduce((s, g) => s + g.valor, 0);
-    const totalDiego = doMes.filter(g => g.usuario === 'Diego').reduce((s, g) => s + g.valor, 0);
-    const totalEliane = doMes.filter(g => g.usuario === 'Eliane').reduce((s, g) => s + g.valor, 0);
-
+    // Agrupa por cartão (cada cartão = uma fatura separada, como na vida real)
     const porCartao = {};
     doMes.forEach(g => {
       const nome = g.cartao || '(sem cartão)';
@@ -5378,151 +5122,76 @@
       porCartao[nome].push(g);
     });
 
-    const qtdCartoes = Object.keys(porCartao).length;
-    document.getElementById('totalGeralFaturas').textContent = formatarMoeda(totalGeral);
-    document.getElementById('qtdCartoesFatura').textContent = qtdCartoes;
-    document.getElementById('totalCartoesDiego').textContent = formatarMoeda(totalDiego);
-    document.getElementById('totalCartoesEliane').textContent = formatarMoeda(totalEliane);
+    // Ordem alfabética de cartão para estabilidade
+    const nomesCartoes = Object.keys(porCartao).sort();
 
-    const wrap = document.getElementById('faturasLista');
-    if (qtdCartoes === 0) {
-      wrap.innerHTML = `<div class="card"><div class="vazio">Nenhuma fatura para ${nomeMesLongo(mesISO)}</div></div>`;
-      if (vistaFatura === 'extrato') renderizarExtrato();
-      return;
-    }
-
-    const nomes = Object.keys(porCartao).sort((a, b) => {
-      const tA = porCartao[a].reduce((s, g) => s + g.valor, 0);
-      const tB = porCartao[b].reduce((s, g) => s + g.valor, 0);
-      return tB - tA;
-    });
-
-    wrap.innerHTML = nomes.map(nomeCartao => {
+    wrap.innerHTML = nomesCartoes.map(nomeCartao => {
       const itens = porCartao[nomeCartao];
-      const totalCartao = itens.reduce((s, g) => s + g.valor, 0);
+      // Ordena por data da compra (mais antigo primeiro) — espelho da fatura real
+      itens.sort((a, b) => (a.data || '').localeCompare(b.data || ''));
+
       const c = acharCartao(nomeCartao);
-      const infoDatas = c ? `Fecha dia ${c.fechamento} · Vence dia ${c.vencimento}` : 'Cartão não cadastrado';
-      const porCat = {};
-      itens.forEach(g => {
-        if (!porCat[g.categoria]) porCat[g.categoria] = { total: 0, subs: {}, lancamentos: [] };
-        porCat[g.categoria].total += g.valor;
-        const sub = g.subcategoria || '(sem sub)';
-        if (!porCat[g.categoria].subs[sub]) porCat[g.categoria].subs[sub] = { total: 0, lancamentos: [] };
-        porCat[g.categoria].subs[sub].total += g.valor;
-        porCat[g.categoria].subs[sub].lancamentos.push(g);
-        porCat[g.categoria].lancamentos.push(g);
-      });
-      const catsOrdenadas = Object.entries(porCat).sort((a, b) => b[1].total - a[1].total);
-      const maxCat = Math.max(...catsOrdenadas.map(c => c[1].total));
-      const catId = `cf-${nomeCartao.replace(/[^a-zA-Z0-9]/g, '_')}-${mesISO}`;
-      const aberta = faturasAbertas.has(catId);
+      const infoDatas = c
+        ? `Fecha dia ${c.fechamento} · Vence dia ${c.vencimento}`
+        : 'Cartão não cadastrado';
 
-      const catsHTML = catsOrdenadas.map(([cat, info]) => {
-        const cor = corDa(cat);
-        const pct = (info.total / maxCat) * 100;
-        const pctCartao = totalCartao > 0 ? ((info.total / totalCartao) * 100).toFixed(0) : 0;
-        const subsOrdenadas = Object.entries(info.subs).sort((a, b) => b[1].total - a[1].total);
-        const subId = `subs-${catId}-${cat.replace(/[^a-zA-Z0-9]/g, '_')}`;
-        const lancId = `lanc-${catId}-${cat.replace(/[^a-zA-Z0-9]/g, '_')}`;
-        const lancAberto = lancsFaturaAbertos.has(lancId);
+      const totalCartao = itens.reduce((s, g) => s + (g.valor || 0), 0);
+      const totalDiego = itens.filter(g => g.usuario === 'Diego').reduce((s, g) => s + (g.valor || 0), 0);
+      const totalEliane = itens.filter(g => g.usuario === 'Eliane').reduce((s, g) => s + (g.valor || 0), 0);
 
-        const subsHTML = subsOrdenadas.map(([sub, subInfo]) => `
-          <div class="cf-linha-sub">
-            <span class="nome-sub">↳ ${sub}</span>
-            <span class="valor-sub">${formatarMoeda(subInfo.total)}</span>
-          </div>
-        `).join('');
-
-        const lancsOrdenados = [...info.lancamentos].sort((a, b) => (a.data || '').localeCompare(b.data || ''));
-        const lancsHTML = lancsOrdenados.map(g => {
-          const ehParcela = !!(g.parcelaTotal && g.parcelaTotal > 1);
-          const badgeParcela = ehParcela
-            ? `<span class="badge-parcela-mini">${g.parcelaAtual}/${g.parcelaTotal}</span>`
-            : '';
-          const valorTotalCompra = ehParcela
-            ? `<span class="total-compra">Total: ${formatarMoeda(g.valorTotalCompra || g.valor * g.parcelaTotal)}</span>`
-            : '';
-          const sub = g.subcategoria ? ` · ${escaparHTML(g.subcategoria)}` : '';
-          const obs = g.observacao ? ` · ${escaparHTML(g.observacao)}` : '';
-          return `
-            <div class="cf-lanc-item">
-              <div class="cf-li-info">
-                <div class="cf-li-empresa">
-                  ${escaparHTML(g.descricao)} ${badgeParcela}
-                </div>
-                <div class="cf-li-meta">
-                  ${formatarData(g.data)} · ${escaparHTML(g.usuario)}${sub}${obs}
-                </div>
-              </div>
-              <div class="cf-li-valor">
-                ${formatarMoeda(g.valor)}
-                ${valorTotalCompra}
-              </div>
-            </div>
-          `;
-        }).join('');
-
+      const linhasHTML = itens.map(g => {
+        const ehParcela = !!(g.parcelaTotal && g.parcelaTotal > 1);
+        const parcelaTag = ehParcela
+          ? `<span class="fl-parcela">${g.parcelaAtual}/${g.parcelaTotal}</span>`
+          : '';
         return `
-          <div class="cf-linha-cat">
-            <div class="cf-linha-cat-topo">
-              <span class="dot-cat" style="background:${cor};"></span>
-              <span class="nome-cat">${cat}</span>
-              <span class="valor-cat">${formatarMoeda(info.total)}</span>
+          <div class="fatura-linha">
+            <div class="fl-data">${formatarData(g.data)}</div>
+            <div class="fl-desc">
+              ${escaparHTML(g.descricao)}${parcelaTag}
+              <span class="fl-quem">${escaparHTML(g.usuario)}${g.observacao ? ' · ' + escaparHTML(g.observacao) : ''}</span>
             </div>
-            <div class="cf-barra-bg"><div class="cf-barra-fill" style="width:${pct}%; background:${cor};"></div></div>
-            ${subsOrdenadas.length > 0 ? `
-              <button class="cf-btn-subs" onclick="toggleSubsFatura('${subId}')">
-                ▸ Ver ${subsOrdenadas.length} subcategoria(s) · ${pctCartao}% do cartão
-              </button>
-              <div class="cf-subs" id="${subId}">${subsHTML}</div>
-            ` : ''}
-            <button class="cf-btn-subs" onclick="toggleLancsFatura('${lancId}')">
-              ${lancAberto ? '▾' : '▸'} Ver ${lancsOrdenados.length} lançamento(s)
-            </button>
-            <div class="cf-lancamentos ${lancAberto ? 'aberto' : ''}" id="${lancId}">${lancsHTML}</div>
+            <div class="fl-valor">${formatarMoeda(g.valor)}</div>
           </div>
         `;
       }).join('');
 
       return `
-        <div class="cartao-fatura">
-          <div class="cf-header">
-            <div class="cf-info">
-              <div class="cf-nome">💳 ${escaparHTML(nomeCartao)} ${badgeStatus(mesISO)}</div>
-              <div class="cf-datas">${infoDatas}</div>
+        <div class="fatura-cabecalho">
+          <div class="fc-topo">
+            <div>
+              <div class="fc-cartao">💳 ${escaparHTML(nomeCartao)}</div>
+              <div class="fc-datas">${infoDatas}</div>
             </div>
-            <div class="cf-total">${formatarMoeda(totalCartao)}</div>
+            <div style="text-align:right;">
+              <div class="fc-total-label">Vencimento</div>
+              <div class="fc-datas" style="font-size:0.95em; font-weight:700; opacity:1;">${nomeMesLongo(mesISO)}</div>
+            </div>
           </div>
-          <button class="cf-btn-subs" style="padding-left:0; margin-bottom:6px;" onclick="toggleFatura('${catId}')">
-            ${aberta ? '▾' : '▸'} Detalhes por categoria
-          </button>
-          <div class="cf-categorias" id="${catId}" style="display:${aberta ? 'block' : 'none'};">${catsHTML}</div>
+          <div class="fc-total-label">Total da fatura</div>
+          <div class="fc-total">${formatarMoeda(totalCartao)}</div>
+        </div>
+
+        <div class="fatura-subtotais">
+          <div class="st-item">👨 Diego <strong>${formatarMoeda(totalDiego)}</strong></div>
+          <div class="st-item">👩 Eliane <strong>${formatarMoeda(totalEliane)}</strong></div>
+          <div class="st-item">📄 ${itens.length} lançamento${itens.length > 1 ? 's' : ''}</div>
+        </div>
+
+        <div class="fatura-tabela">
+          <div class="fatura-tabela-header">
+            <div>Data</div>
+            <div>Descrição</div>
+            <div class="col-valor">Valor</div>
+          </div>
+          ${linhasHTML}
+          <div class="fatura-total-rodape">
+            <div class="col-total-label">Total</div>
+            <div class="col-total-valor">${formatarMoeda(totalCartao)}</div>
+          </div>
         </div>
       `;
     }).join('');
-
-    if (vistaFatura === 'extrato') renderizarExtrato();
-  }
-
-  function toggleFatura(id) {
-    if (faturasAbertas.has(id)) faturasAbertas.delete(id);
-    else faturasAbertas.add(id);
-    renderizarFaturas();
-  }
-
-  function toggleSubsFatura(subId) {
-    const el = document.getElementById(subId);
-    if (!el) return;
-    el.classList.toggle('aberto');
-    const btn = el.previousElementSibling;
-    if (el.classList.contains('aberto')) btn.textContent = btn.textContent.replace('▸', '▾');
-    else btn.textContent = btn.textContent.replace('▾', '▸');
-  }
-
-  function toggleLancsFatura(lancId) {
-    if (lancsFaturaAbertos.has(lancId)) lancsFaturaAbertos.delete(lancId);
-    else lancsFaturaAbertos.add(lancId);
-    renderizarFaturas();
   }
 
   // ============ CONFIG CATEGORIAS ============
