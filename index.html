@@ -1726,7 +1726,7 @@
       <div class="secao">
         <div class="secao-titulo"><span class="num">3</span> Quanto</div>
         <div class="campo valor-destaque" id="boxValorDestaque" style="margin-bottom:0;">
-          <input type="number" id="valor" step="0.01" min="0" inputmode="decimal" placeholder="R$ 0,00" oninput="atualizarPreviewParcelas(); atualizarInfoCombustivel()">
+          <input type="number" id="valor" step="0.01" min="0" inputmode="decimal" placeholder="R$ 0,00" oninput="atualizarPreviewParcelas(); atualizarInfoCombustivel(); atualizarPreviewReembolso()">
         </div>
       </div>
 
@@ -1819,10 +1819,10 @@
 
       <div class="parcelas-box" id="boxParcelas">
         <label>Data da compra</label>
-        <input type="date" id="dataCompraCredito" onchange="atualizarPreviewParcelas()">
+        <input type="date" id="dataCompraCredito" onchange="atualizarPreviewParcelas(); atualizarPreviewReembolso()">
         <div class="sub-campo">
           <label>Cartão</label>
-          <select id="cartaoSelecionado" onchange="atualizarPreviewParcelas()"></select>
+          <select id="cartaoSelecionado" onchange="atualizarPreviewParcelas(); atualizarPreviewReembolso()"></select>
         </div>
         <div class="sub-campo" id="boxParcelasNumero">
           <label>Número de parcelas</label>
@@ -1850,7 +1850,7 @@
         <div class="secao-titulo"><span class="num">6</span> Quando</div>
         <div class="campo">
           <label>Data</label>
-          <input type="date" id="data" onchange="verificarKmEAtualizarInfo()">
+          <input type="date" id="data" onchange="verificarKmEAtualizarInfo(); atualizarPreviewReembolso()">
         </div>
       </div>
 
@@ -2755,7 +2755,7 @@
     return `<span class="avatar-mini ${extraClass || ''}" style="background:${corAvatar(nome)};">${iniciais(nome)}</span>`;
   }
 
-  // ============ VALOR EFETIVO (reembolso abate) ============
+  // ============ VALOR EFETIVO ============
   function ehReembolso(g) { return !!(g && (g.ehReembolso === true || g.tipoLancamento === 'reembolso')); }
   function valorEfetivo(g) {
     if (g._parcelado) return ehReembolso(g) ? -g._valorTotal : g._valorTotal;
@@ -2764,11 +2764,6 @@
   function valorAbsolutoDe(g) {
     if (g._parcelado) return g._valorTotal;
     return Number(g.valor || 0);
-  }
-  function formatarValorExibicao(g) {
-    const abs = valorAbsolutoDe(g);
-    if (ehReembolso(g)) return `+${formatarMoeda(abs)}`;
-    return formatarMoeda(abs);
   }
 
   function trocarAba(nome) {
@@ -2824,25 +2819,23 @@
     document.getElementById('avisoReembolso').style.display = ehReemb ? 'block' : 'none';
     document.getElementById('campoVincularOrigem').style.display = ehReemb ? 'block' : 'none';
     document.getElementById('boxValorDestaque').classList.toggle('reembolso', ehReemb);
-
-    // Botão
     const btn = document.getElementById('btnAdicionar');
     btn.classList.toggle('btn-reembolso', ehReemb);
     btn.textContent = ehReemb ? '✓ Adicionar Reembolso' : '✓ Adicionar Gasto';
-
-    // Esconde campos de veículo no reembolso
     if (ehReemb) {
       document.getElementById('camposVeiculo').style.display = 'none';
     } else {
       verificarCamposVeiculo();
     }
-    // Reembolso não parcela
     if (ehReemb) {
       document.getElementById('boxParcelasNumero').style.display = 'none';
     } else {
       document.getElementById('boxParcelasNumero').style.display = 'block';
     }
-    if (ehReemb) renderizarListaOrigens();
+    if (ehReemb) {
+      renderizarListaOrigens();
+      atualizarPreviewReembolso();
+    }
   }
 
   function selecionarUsuario(nome) {
@@ -2872,6 +2865,7 @@
     }
     verificarCamposVeiculo();
     atualizarPreviewParcelas();
+    atualizarPreviewReembolso();
   }
 
   // ============ VEÍCULO / COMBUSTÍVEL ============
@@ -2913,18 +2907,10 @@
   function atualizarVisualToggleTanque() {
     const t = document.getElementById('toggleTanque');
     const c = document.getElementById('checkTanque');
-    if (tanqueCheioLanc) {
-      t.classList.add('ativo');
-      c.textContent = '✓';
-    } else {
-      t.classList.remove('ativo');
-      c.textContent = '';
-    }
+    if (tanqueCheioLanc) { t.classList.add('ativo'); c.textContent = '✓'; }
+    else { t.classList.remove('ativo'); c.textContent = ''; }
   }
-  function toggleTanqueCheio() {
-    tanqueCheioLanc = !tanqueCheioLanc;
-    atualizarVisualToggleTanque();
-  }
+  function toggleTanqueCheio() { tanqueCheioLanc = !tanqueCheioLanc; atualizarVisualToggleTanque(); }
   function toggleTanqueCheioEdit() {
     tanqueCheioEdit = !tanqueCheioEdit;
     const t = document.getElementById('editToggleTanque');
@@ -2935,12 +2921,8 @@
 
   function ultimoAbastecimentoVeiculo(nomeVeiculo, ignorarId) {
     const lista = gastos.filter(g =>
-      g.categoria === 'Transporte' &&
-      g.subcategoria === 'Combustível' &&
-      g.veiculo === nomeVeiculo &&
-      g.km && g.litros &&
-      g.id !== ignorarId &&
-      !ehReembolso(g)
+      g.categoria === 'Transporte' && g.subcategoria === 'Combustível' &&
+      g.veiculo === nomeVeiculo && g.km && g.litros && g.id !== ignorarId && !ehReembolso(g)
     );
     if (lista.length === 0) return null;
     lista.sort((a, b) => (a.data || '').localeCompare(b.data || '') || (Number(a.km) - Number(b.km)));
@@ -2958,14 +2940,10 @@
     if (ultimo) {
       const kmAnterior = Number(ultimo.km);
       if (km < kmAnterior) {
-        avisoEl.innerHTML = `⚠️ <strong>KM menor que o último abastecimento</strong><br>
-          Último registro: ${kmAnterior.toLocaleString('pt-BR')} km em ${formatarData(ultimo.data)}.<br>
-          Verifique se digitou certo.`;
+        avisoEl.innerHTML = `⚠️ <strong>KM menor que o último abastecimento</strong><br>Último: ${kmAnterior.toLocaleString('pt-BR')} km em ${formatarData(ultimo.data)}.`;
         avisoEl.style.display = 'block';
       } else if (data && ultimo.data && data < ultimo.data) {
-        avisoEl.innerHTML = `⚠️ <strong>Data anterior ao último abastecimento</strong><br>
-          Último registro: ${formatarData(ultimo.data)} em ${kmAnterior.toLocaleString('pt-BR')} km.<br>
-          Verifique a data.`;
+        avisoEl.innerHTML = `⚠️ <strong>Data anterior ao último abastecimento</strong><br>Último: ${formatarData(ultimo.data)} em ${kmAnterior.toLocaleString('pt-BR')} km.`;
         avisoEl.style.display = 'block';
       }
     }
@@ -2991,7 +2969,6 @@
           if (litrosSomados > 0) {
             const consumo = kmRodados / litrosSomados;
             html += `<br>⛽ <strong>Consumo estimado:</strong> ${consumo.toFixed(2)} km/L`;
-            if (consumo < 5 || consumo > 25) html += ` <span style="color:var(--warning);">(verifique os dados)</span>`;
           }
         } else if (!tanqueCheioLanc) {
           html += `<br><span style="color:var(--text-3); font-size:0.9em;">💡 Marque "Completei o tanque" para o cálculo preciso</span>`;
@@ -3006,23 +2983,17 @@
 
   function calcularLitrosEntreCheios(veiculo, kmInicio, kmFim) {
     const entre = gastos.filter(g =>
-      g.categoria === 'Transporte' &&
-      g.subcategoria === 'Combustível' &&
-      g.veiculo === veiculo &&
-      g.km && g.litros &&
-      !ehReembolso(g) &&
-      Number(g.km) > Number(kmInicio) &&
-      Number(g.km) <= Number(kmFim)
+      g.categoria === 'Transporte' && g.subcategoria === 'Combustível' &&
+      g.veiculo === veiculo && g.km && g.litros && !ehReembolso(g) &&
+      Number(g.km) > Number(kmInicio) && Number(g.km) <= Number(kmFim)
     );
     return entre.reduce((s, g) => s + Number(g.litros || 0), 0);
   }
 
   function popularSelectCartoes() {
     const sel = document.getElementById('cartaoSelecionado');
-    if (cartoes.length === 0) {
-      sel.innerHTML = '<option value="">⚠️ Cadastre um cartão em Ajustes</option>';
-      return;
-    }
+    if (!sel) return;
+    if (cartoes.length === 0) { sel.innerHTML = '<option value="">⚠️ Cadastre um cartão em Ajustes</option>'; return; }
     const atual = sel.value;
     sel.innerHTML = cartoes.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
     if (atual && acharCartao(atual)) sel.value = atual;
@@ -3033,16 +3004,14 @@
     if (!c) return dataCompraISO.substring(0, 7);
     const [ano, mes, dia] = dataCompraISO.split('-').map(Number);
     let mesFechamento;
-    if (dia <= c.fechamento) {
-      mesFechamento = { ano, mes };
-    } else {
+    if (dia <= c.fechamento) mesFechamento = { ano, mes };
+    else {
       const m = new Date(ano, mes, 1);
       mesFechamento = { ano: m.getFullYear(), mes: m.getMonth() + 1 };
     }
     let mesVenc;
-    if (c.vencimento > c.fechamento) {
-      mesVenc = { ...mesFechamento };
-    } else {
+    if (c.vencimento > c.fechamento) mesVenc = { ...mesFechamento };
+    else {
       const m = new Date(mesFechamento.ano, mesFechamento.mes, 1);
       mesVenc = { ano: m.getFullYear(), mes: m.getMonth() + 1 };
     }
@@ -3068,15 +3037,13 @@
     const preview = document.getElementById('previewParcelas');
     if (!preview) return;
     const formaPag = document.getElementById('formaPagamento').value;
-    if (formaPag !== 'Cartão Crédito') return;
+    if (formaPag !== 'Cartão Crédito' || tipoLancamento === 'reembolso') { preview.innerHTML = ''; return; }
     const valor = parseFloat(document.getElementById('valor').value) || 0;
-    const n = tipoLancamento === 'reembolso' ? 1 : (parseInt(document.getElementById('parcelas').value) || 1);
+    const n = parseInt(document.getElementById('parcelas').value) || 1;
     const dataCompra = document.getElementById('dataCompraCredito').value;
     const cartaoNome = document.getElementById('cartaoSelecionado').value;
     if (valor <= 0 || !dataCompra) { preview.innerHTML = '<em>Preencha valor e data da compra.</em>'; return; }
-    if (!cartaoNome || !acharCartao(cartaoNome)) {
-      preview.innerHTML = '<em>⚠️ Cadastre um cartão em Ajustes → Cartões.</em>'; return;
-    }
+    if (!cartaoNome || !acharCartao(cartaoNome)) { preview.innerHTML = '<em>⚠️ Cadastre um cartão em Ajustes.</em>'; return; }
     const mesFaturaInicio = calcularMesFatura(dataCompra, cartaoNome);
     const [anoBase, mesBase] = mesFaturaInicio.split('-').map(Number);
     const valorParcela = valor / n;
@@ -3093,12 +3060,9 @@
     } else {
       html = `<strong>${n}x de R$ ${valorParcela.toFixed(2).replace('.', ',')}</strong><br>
               Total: R$ ${valor.toFixed(2).replace('.', ',')}<br>
-              <span style="color:var(--text-2);">Faturas (vencimento): ${meses.join(' • ')}</span>`;
+              <span style="color:var(--text-2);">Faturas: ${meses.join(' • ')}</span>`;
     }
-    html += `<div class="dica-fatura">
-      💳 <strong>${cartaoNome}</strong> · fecha dia ${c.fechamento} · vence dia ${c.vencimento}<br>
-      Compra em <strong>${formatarData(dataCompra)}</strong> → 1ª parcela vence em <strong>${meses[0]}</strong>
-    </div>`;
+    html += `<div class="dica-fatura">💳 <strong>${cartaoNome}</strong> · fecha dia ${c.fechamento} · vence dia ${c.vencimento}</div>`;
     preview.innerHTML = html;
   }
 
@@ -3107,7 +3071,6 @@
     const wrap = document.getElementById('listaOrigens');
     if (!wrap) return;
     const termo = (document.getElementById('buscaOrigem').value || '').trim().toLowerCase();
-    // Só gastos (não reembolsos), mais recentes primeiro
     let candidatos = gastos.filter(g => !ehReembolso(g) && Number(g.valor) > 0);
     if (termo) {
       candidatos = candidatos.filter(g =>
@@ -3122,15 +3085,18 @@
       wrap.innerHTML = '<div class="vazio" style="padding:20px 0; font-size:0.85em;">Nenhum gasto encontrado</div>';
       return;
     }
-    wrap.innerHTML = top.map(g => `
-      <div class="origem-item ${origemIdSelecionado === g.id ? 'selecionada' : ''}" onclick="selecionarOrigem('${g.id}')">
-        <div class="oi-info">
-          <div class="oi-titulo">${escaparHTML(g.descricao)}</div>
-          <div class="oi-meta">${formatarData(g.data)} · ${escaparHTML(g.usuario)} · ${escaparHTML(g.categoria)}${g.observacao ? ' · ' + escaparHTML(g.observacao) : ''}</div>
+    wrap.innerHTML = top.map(g => {
+      const infoFat = (g.formaPagamento === 'Cartão Crédito' && g.cartao) ? ` · 💳 ${g.cartao}` : '';
+      return `
+        <div class="origem-item ${origemIdSelecionado === g.id ? 'selecionada' : ''}" onclick="selecionarOrigem('${g.id}')">
+          <div class="oi-info">
+            <div class="oi-titulo">${escaparHTML(g.descricao)}</div>
+            <div class="oi-meta">${formatarData(g.data)} · ${escaparHTML(g.usuario)} · ${escaparHTML(g.categoria)}${infoFat}${g.observacao ? ' · ' + escaparHTML(g.observacao) : ''}</div>
+          </div>
+          <div class="oi-valor">${formatarMoeda(g.valor)}</div>
         </div>
-        <div class="oi-valor">${formatarMoeda(g.valor)}</div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 
   function selecionarOrigem(id) {
@@ -3145,6 +3111,7 @@
         ${escaparHTML(g.descricao)}<br>
         <span style="font-size:0.9em;">${formatarData(g.data)} · ${formatarMoeda(g.valor)} · ${escaparHTML(g.usuario)}</span>`;
     }
+    atualizarPreviewReembolso();
     renderizarListaOrigens();
   }
 
@@ -3152,7 +3119,54 @@
     origemIdSelecionado = '';
     document.getElementById('origemIdSelecionado').value = '';
     document.getElementById('vinculoOrigemSelecionado').style.display = 'none';
+    atualizarPreviewReembolso();
     renderizarListaOrigens();
+  }
+
+  // ============ PREVIEW REEMBOLSO (mostra em qual fatura cai) ============
+  function atualizarPreviewReembolso() {
+    const aviso = document.getElementById('avisoReembolso');
+    if (!aviso) return;
+    if (tipoLancamento !== 'reembolso') return;
+
+    const origem = origemIdSelecionado ? gastos.find(x => x.id === origemIdSelecionado) : null;
+    const formaPag = document.getElementById('formaPagamento').value;
+    const ehCredito = formaPag === 'Cartão Crédito';
+    const cartaoNome = ehCredito ? (document.getElementById('cartaoSelecionado').value || '') : '';
+
+    // Se está vinculado a um gasto no crédito, herda o cartão do gasto
+    let cartaoFinal = '';
+    let ehCreditoFinal = false;
+    let dataRef = '';
+    let mostraFatura = false;
+
+    if (origem && origem.formaPagamento === 'Cartão Crédito' && origem.cartao) {
+      cartaoFinal = origem.cartao;
+      ehCreditoFinal = true;
+      dataRef = origem.data;
+      mostraFatura = true;
+    } else if (ehCredito && cartaoNome && acharCartao(cartaoNome)) {
+      cartaoFinal = cartaoNome;
+      ehCreditoFinal = true;
+      dataRef = document.getElementById('dataCompraCredito').value || document.getElementById('data').value;
+      mostraFatura = true;
+    }
+
+    if (mostraFatura && cartaoFinal && dataRef) {
+      const mesFat = calcularMesFatura(dataRef, cartaoFinal);
+      const nomeFat = nomeMesLongo(mesFat);
+      aviso.innerHTML = `💵 <strong>Lançando um reembolso no cartão</strong><br>
+        Cartão: <strong>${escaparHTML(cartaoFinal)}</strong><br>
+        Vai cair na fatura de <strong>${nomeFat}</strong>${origem ? `, vinculado ao gasto <strong>${escaparHTML(origem.descricao)}</strong>` : ''}.<br>
+        O valor será <strong>abatido</strong> do total da fatura.`;
+    } else if (origem) {
+      aviso.innerHTML = `💵 <strong>Lançando um reembolso</strong><br>
+        Vinculado a <strong>${escaparHTML(origem.descricao)}</strong>.<br>
+        Como o gasto original não foi no crédito, o reembolso será abatido do total do mês (não entra em fatura).`;
+    } else {
+      aviso.innerHTML = `💵 <strong>Lançando um reembolso</strong><br>
+        O valor será <strong>abatido</strong> do total do mês. Se quiser que ele entre na fatura do cartão, vincule a um gasto pago no crédito.`;
+    }
   }
 
   // ============ FIREBASE ============
@@ -3165,10 +3179,7 @@
       ouvirDadosCasa();
       ouvirGastos();
       ouvirEventos();
-    } catch (e) {
-      console.error(e);
-      atualizarStatus('offline', 'Erro');
-    }
+    } catch (e) { console.error(e); atualizarStatus('offline', 'Erro'); }
   }
 
   function refDocCasa() { return db.collection('casas').doc(CASA_ID); }
@@ -3183,16 +3194,13 @@
     if (!dados.cartoes) update.cartoes = CARTOES_PADRAO;
     if (!dados.pessoas) update.pessoas = PESSOAS_PADRAO;
     if (!dados.veiculos) update.veiculos = VEICULOS_PADRAO;
-    if (Object.keys(update).length > 0) {
-      await refDocCasa().set(update, { merge: true });
-    }
+    if (Object.keys(update).length > 0) await refDocCasa().set(update, { merge: true });
   }
 
   function ouvirDadosCasa() {
     refDocCasa().onSnapshot(async doc => {
       if (!doc.exists || !doc.data().categorias || !doc.data().cartoes) {
-        await garantirDadosIniciais();
-        return;
+        await garantirDadosIniciais(); return;
       }
       const data = doc.data();
       categorias = migrarParaArray(data.categorias, CATEGORIAS_PADRAO);
@@ -3219,32 +3227,20 @@
 
   function migrarParaArray(obj, padrao) {
     if (Array.isArray(obj)) return obj;
-    const arr = [];
-    const vistas = new Set();
+    const arr = []; const vistas = new Set();
     padrao.forEach(p => {
-      if (obj[p.nome]) {
-        arr.push({ nome: p.nome, cor: obj[p.nome].cor, subs: obj[p.nome].subs || [] });
-        vistas.add(p.nome);
-      }
+      if (obj[p.nome]) { arr.push({ nome: p.nome, cor: obj[p.nome].cor, subs: obj[p.nome].subs || [] }); vistas.add(p.nome); }
     });
-    Object.keys(obj).forEach(nome => {
-      if (!vistas.has(nome)) arr.push({ nome, cor: obj[nome].cor, subs: obj[nome].subs || [] });
-    });
+    Object.keys(obj).forEach(nome => { if (!vistas.has(nome)) arr.push({ nome, cor: obj[nome].cor, subs: obj[nome].subs || [] }); });
     return arr;
   }
   function migrarCartoesParaArray(obj, padrao) {
     if (Array.isArray(obj)) return obj;
-    const arr = [];
-    const vistas = new Set();
+    const arr = []; const vistas = new Set();
     padrao.forEach(p => {
-      if (obj[p.nome]) {
-        arr.push({ nome: p.nome, fechamento: obj[p.nome].fechamento, vencimento: obj[p.nome].vencimento });
-        vistas.add(p.nome);
-      }
+      if (obj[p.nome]) { arr.push({ nome: p.nome, fechamento: obj[p.nome].fechamento, vencimento: obj[p.nome].vencimento }); vistas.add(p.nome); }
     });
-    Object.keys(obj).forEach(nome => {
-      if (!vistas.has(nome)) arr.push({ nome, fechamento: obj[nome].fechamento, vencimento: obj[nome].vencimento });
-    });
+    Object.keys(obj).forEach(nome => { if (!vistas.has(nome)) arr.push({ nome, fechamento: obj[nome].fechamento, vencimento: obj[nome].vencimento }); });
     return arr;
   }
   function migrarPessoasParaArray(obj, padrao) {
@@ -3256,11 +3252,8 @@
       });
     }
     if (!obj) return padrao;
-    const arr = [];
-    const vistas = new Set();
-    padrao.forEach(p => {
-      if (obj[p.nome]) { arr.push({ nome: p.nome }); vistas.add(p.nome); }
-    });
+    const arr = []; const vistas = new Set();
+    padrao.forEach(p => { if (obj[p.nome]) { arr.push({ nome: p.nome }); vistas.add(p.nome); } });
     Object.keys(obj).forEach(nome => {
       if (!vistas.has(nome)) {
         if (nome === 'Filho') arr.push({ nome: 'João Guilherme' });
@@ -3273,14 +3266,9 @@
   function migrarVeiculosParaArray(obj, padrao) {
     if (Array.isArray(obj)) return obj;
     if (!obj) return padrao;
-    const arr = [];
-    const vistas = new Set();
-    padrao.forEach(p => {
-      if (obj[p.nome]) { arr.push({ nome: p.nome, placa: obj[p.nome].placa || '' }); vistas.add(p.nome); }
-    });
-    Object.keys(obj).forEach(nome => {
-      if (!vistas.has(nome)) arr.push({ nome, placa: obj[nome].placa || '' });
-    });
+    const arr = []; const vistas = new Set();
+    padrao.forEach(p => { if (obj[p.nome]) { arr.push({ nome: p.nome, placa: obj[p.nome].placa || '' }); vistas.add(p.nome); } });
+    Object.keys(obj).forEach(nome => { if (!vistas.has(nome)) arr.push({ nome, placa: obj[nome].placa || '' }); });
     return arr.length ? arr : padrao;
   }
 
@@ -3301,10 +3289,7 @@
   }
   function ouvirEventos() {
     colecaoEventos().orderBy('data', 'asc').onSnapshot(
-      snapshot => {
-        eventos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        renderizarAgenda();
-      },
+      snapshot => { eventos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); renderizarAgenda(); },
       erro => console.error('Erro eventos:', erro)
     );
   }
@@ -3329,49 +3314,37 @@
           ${v.placa ? `<div class="placa-veiculo">🔖 ${escaparHTML(v.placa)}</div>` : ''}
         </div>
         <div class="acoes-veiculo">
-          <button class="btn-edit-veiculo" onclick="abrirEditarVeiculo(${idx})" title="Editar">✏️</button>
-          <button class="btn-excluir-veiculo" onclick="removerVeiculo(${idx})" title="Excluir">🗑️</button>
+          <button class="btn-edit-veiculo" onclick="abrirEditarVeiculo(${idx})">✏️</button>
+          <button class="btn-excluir-veiculo" onclick="removerVeiculo(${idx})">🗑️</button>
         </div>
       </div>
     `).join('');
   }
   function abrirEditarVeiculo(idx) {
-    const v = veiculos[idx];
-    if (!v) return;
+    const v = veiculos[idx]; if (!v) return;
     document.getElementById('editVeiculoIdx').value = idx;
     document.getElementById('editVeiculoNome').value = v.nome;
     document.getElementById('editVeiculoPlaca').value = v.placa || '';
     document.getElementById('modalEditarVeiculo').classList.add('visivel');
     setTimeout(() => document.getElementById('editVeiculoNome').focus(), 250);
   }
-  function fecharEditarVeiculo() {
-    document.getElementById('modalEditarVeiculo').classList.remove('visivel');
-  }
+  function fecharEditarVeiculo() { document.getElementById('modalEditarVeiculo').classList.remove('visivel'); }
   async function salvarEdicaoVeiculo() {
     const idx = parseInt(document.getElementById('editVeiculoIdx').value);
     const nome = document.getElementById('editVeiculoNome').value.trim();
     const placa = document.getElementById('editVeiculoPlaca').value.trim().toUpperCase();
     if (!nome) { alert('Nome não pode ficar vazio.'); return; }
-    const duplicado = veiculos.find((x, i) => i !== idx && x.nome === nome);
-    if (duplicado) { alert('Já existe outro veículo com esse nome.'); return; }
+    if (veiculos.find((x, i) => i !== idx && x.nome === nome)) { alert('Já existe outro veículo com esse nome.'); return; }
     veiculos[idx] = { nome, placa };
-    await salvarVeiculos();
-    popularSelectVeiculos();
-    fecharEditarVeiculo();
+    await salvarVeiculos(); popularSelectVeiculos(); fecharEditarVeiculo();
   }
   async function excluirVeiculoDoModal() {
     const idx = parseInt(document.getElementById('editVeiculoIdx').value);
-    const v = veiculos[idx];
-    if (!v) return;
+    const v = veiculos[idx]; if (!v) return;
     const usos = gastos.filter(g => g.veiculo === v.nome).length;
-    const msg = usos > 0
-      ? `O veículo "${v.nome}" tem ${usos} abastecimento(s) registrados. Remover mesmo assim?`
-      : `Remover "${v.nome}"?`;
+    const msg = usos > 0 ? `O veículo "${v.nome}" tem ${usos} abastecimento(s). Remover mesmo assim?` : `Remover "${v.nome}"?`;
     if (!confirm(msg)) return;
-    veiculos.splice(idx, 1);
-    await salvarVeiculos();
-    popularSelectVeiculos();
-    fecharEditarVeiculo();
+    veiculos.splice(idx, 1); await salvarVeiculos(); popularSelectVeiculos(); fecharEditarVeiculo();
   }
   async function criarVeiculo() {
     const nome = document.getElementById('novoVeiculoNome').value.trim();
@@ -3381,99 +3354,60 @@
     veiculos.push({ nome, placa });
     document.getElementById('novoVeiculoNome').value = '';
     document.getElementById('novoVeiculoPlaca').value = '';
-    await salvarVeiculos();
-    popularSelectVeiculos();
+    await salvarVeiculos(); popularSelectVeiculos();
   }
   async function removerVeiculo(idx) {
     const v = veiculos[idx];
     const usos = gastos.filter(g => g.veiculo === v.nome).length;
-    const msg = usos > 0
-      ? `O veículo "${v.nome}" tem ${usos} abastecimento(s). Remover?`
-      : `Remover "${v.nome}"?`;
+    const msg = usos > 0 ? `O veículo "${v.nome}" tem ${usos} abastecimento(s). Remover?` : `Remover "${v.nome}"?`;
     if (!confirm(msg)) return;
-    veiculos.splice(idx, 1);
-    await salvarVeiculos();
-    popularSelectVeiculos();
+    veiculos.splice(idx, 1); await salvarVeiculos(); popularSelectVeiculos();
   }
   async function salvarVeiculos() {
     if (!firebaseOK) return;
-    try {
-      await refDocCasa().set({ veiculos }, { merge: true });
-      renderizarVeiculos();
-    } catch (e) { alert('Erro ao salvar veículos: ' + e.message); }
+    try { await refDocCasa().set({ veiculos }, { merge: true }); renderizarVeiculos(); }
+    catch (e) { alert('Erro ao salvar veículos: ' + e.message); }
   }
 
   // ============ CONSUMO ============
   function calcularConsumoVeiculo(nomeVeiculo, filtroMes, modoMes) {
     let lista = gastos.filter(g =>
-      g.categoria === 'Transporte' &&
-      g.subcategoria === 'Combustível' &&
-      g.veiculo === nomeVeiculo &&
-      g.km && g.litros && Number(g.litros) > 0 &&
-      !ehReembolso(g)
+      g.categoria === 'Transporte' && g.subcategoria === 'Combustível' &&
+      g.veiculo === nomeVeiculo && g.km && g.litros && Number(g.litros) > 0 && !ehReembolso(g)
     );
-    if (lista.length < 2) {
-      return { media: 0, medicoes: [], kmTotal: 0, litrosTotal: 0, melhor: 0, pior: 0, temDados: false, poucosDados: true };
-    }
+    if (lista.length < 2) return { media: 0, medicoes: [], kmTotal: 0, litrosTotal: 0, melhor: 0, pior: 0, temDados: false, poucosDados: true };
     lista.sort((a, b) => (a.data || '').localeCompare(b.data || '') || (Number(a.km) - Number(b.km)));
     const cheios = lista.filter(a => a.tanqueCheio === true);
-    if (cheios.length < 2) {
-      return { media: 0, medicoes: [], kmTotal: 0, litrosTotal: 0, melhor: 0, pior: 0, temDados: false, poucosCheios: true, totalAbast: lista.length, totalCheios: cheios.length };
-    }
+    if (cheios.length < 2) return { media: 0, medicoes: [], kmTotal: 0, litrosTotal: 0, melhor: 0, pior: 0, temDados: false, poucosCheios: true, totalAbast: lista.length, totalCheios: cheios.length };
     const medicoes = [];
     for (let i = 1; i < cheios.length; i++) {
-      const anterior = cheios[i - 1];
-      const atual = cheios[i];
+      const anterior = cheios[i - 1], atual = cheios[i];
       const kmRodados = Number(atual.km) - Number(anterior.km);
       if (kmRodados <= 0) continue;
-      const litrosNoIntervalo = lista
-        .filter(a => Number(a.km) > Number(anterior.km) && Number(a.km) <= Number(atual.km))
-        .reduce((soma, a) => soma + Number(a.litros || 0), 0);
+      const litrosNoIntervalo = lista.filter(a => Number(a.km) > Number(anterior.km) && Number(a.km) <= Number(atual.km)).reduce((soma, a) => soma + Number(a.litros || 0), 0);
       if (litrosNoIntervalo > 0) {
         const consumo = kmRodados / litrosNoIntervalo;
         if (consumo >= 3 && consumo <= 30) {
-          medicoes.push({
-            km: kmRodados, litros: litrosNoIntervalo, consumo,
-            dataInicio: anterior.data, dataFim: atual.data,
-            kmInicio: Number(anterior.km), kmFim: Number(atual.km)
-          });
+          medicoes.push({ km: kmRodados, litros: litrosNoIntervalo, consumo, dataInicio: anterior.data, dataFim: atual.data, kmInicio: Number(anterior.km), kmFim: Number(atual.km) });
         }
       }
     }
-    if (medicoes.length === 0) {
-      return { media: 0, medicoes: [], kmTotal: 0, litrosTotal: 0, melhor: 0, pior: 0, temDados: false, semTrechos: true };
-    }
+    if (medicoes.length === 0) return { media: 0, medicoes: [], kmTotal: 0, litrosTotal: 0, melhor: 0, pior: 0, temDados: false, semTrechos: true };
     let medicoesFiltradas = medicoes;
-    if (filtroMes) {
-      medicoesFiltradas = medicoes.filter(m => (m.dataFim || '').substring(0, 7) === filtroMes);
-    }
-    if (medicoesFiltradas.length === 0) {
-      return { media: 0, medicoes: [], kmTotal: 0, litrosTotal: 0, melhor: 0, pior: 0, temDados: false, semTrechos: true, totalMedicoes: medicoes.length };
-    }
+    if (filtroMes) medicoesFiltradas = medicoes.filter(m => (m.dataFim || '').substring(0, 7) === filtroMes);
+    if (medicoesFiltradas.length === 0) return { media: 0, medicoes: [], kmTotal: 0, litrosTotal: 0, melhor: 0, pior: 0, temDados: false, semTrechos: true, totalMedicoes: medicoes.length };
     const kmTotal = medicoesFiltradas.reduce((s, m) => s + m.km, 0);
     const litrosTotal = medicoesFiltradas.reduce((s, m) => s + m.litros, 0);
     const media = kmTotal / litrosTotal;
     const consumos = medicoesFiltradas.map(m => m.consumo);
-    const melhor = Math.max(...consumos);
-    const pior = Math.min(...consumos);
-    return {
-      media, medicoes: medicoesFiltradas, todasMedicoes: medicoes,
-      kmTotal, litrosTotal, melhor, pior, temDados: true,
-      totalAbast: lista.length, totalCheios: cheios.length, totalMedicoes: medicoes.length
-    };
+    return { media, medicoes: medicoesFiltradas, todasMedicoes: medicoes, kmTotal, litrosTotal, melhor: Math.max(...consumos), pior: Math.min(...consumos), temDados: true, totalAbast: lista.length, totalCheios: cheios.length, totalMedicoes: medicoes.length };
   }
 
   function renderizarConsumoVeiculos() {
     const wrap = document.getElementById('consumoVeiculos');
     if (!wrap) return;
-    const qualquerAbastecimento = gastos.some(g =>
-      g.categoria === 'Transporte' && g.subcategoria === 'Combustível' &&
-      g.veiculo && g.km && g.litros && !ehReembolso(g)
-    );
-    if (!qualquerAbastecimento) {
-      wrap.innerHTML = '<div class="consumo-vazio">Nenhum abastecimento registrado ainda.<br>Registre em Transporte → Combustível informando veículo, KM e litros.</div>';
-      return;
-    }
+    const qualquerAbastecimento = gastos.some(g => g.categoria === 'Transporte' && g.subcategoria === 'Combustível' && g.veiculo && g.km && g.litros && !ehReembolso(g));
+    if (!qualquerAbastecimento) { wrap.innerHTML = '<div class="consumo-vazio">Nenhum abastecimento registrado ainda.</div>'; return; }
     const mesRef = document.getElementById('mesReferencia')?.value;
     let html = '';
     let algumVeiculoComDados = false;
@@ -3486,45 +3420,17 @@
           ${conteudoInterno}
         </div>
       `;
-      if (r.poucosDados) {
-        html += veiculoCard(`<div class="consumo-vazio" style="padding:16px 0 0; font-size:0.82em;">Poucos registros (${r.totalAbast || 0}).<br>Precisa de pelo menos 2 abastecimentos com KM e litros.</div>`);
-        return;
-      }
-      if (r.poucosCheios) {
-        html += veiculoCard(`
-          <div class="consumo-aviso">
-            ⚠️ <strong>Precisa de pelo menos 2 abastecimentos com "tanque cheio"</strong><br>
-            Já registrou ${r.totalCheios} cheio(s) de ${r.totalAbast} abastecimento(s).<br>
-            Marque "Completei o tanque" nos próximos para calcular.
-          </div>
-        `);
-        return;
-      }
-      if (!r.temDados) {
-        html += veiculoCard(`<div class="consumo-vazio" style="padding:16px 0 0; font-size:0.82em;">Ainda sem trechos válidos para calcular.</div>`);
-        return;
-      }
+      if (r.poucosDados) { html += veiculoCard(`<div class="consumo-vazio" style="padding:16px 0 0; font-size:0.82em;">Poucos registros. Precisa de pelo menos 2 abastecimentos com KM e litros.</div>`); return; }
+      if (r.poucosCheios) { html += veiculoCard(`<div class="consumo-aviso">⚠️ Precisa de pelo menos 2 abastecimentos com "tanque cheio". Já registrou ${r.totalCheios}.</div>`); return; }
+      if (!r.temDados) { html += veiculoCard(`<div class="consumo-vazio" style="padding:16px 0 0; font-size:0.82em;">Ainda sem trechos válidos.</div>`); return; }
       algumVeiculoComDados = true;
       const ultimosTrechos = r.todasMedicoes.slice(-3).reverse();
       const trechosHTML = ultimosTrechos.map(m => {
         const classeConsumo = m.consumo >= r.media * 1.05 ? 'bom' : (m.consumo <= r.media * 0.95 ? 'ruim' : '');
-        return `
-          <div class="trecho-item">
-            <div class="trecho-periodo">
-              ${formatarData(m.dataInicio)} → ${formatarData(m.dataFim)}
-              <small>${m.km.toLocaleString('pt-BR')} km · ${m.litros.toFixed(1)} L</small>
-            </div>
-            <div class="trecho-consumo ${classeConsumo}">${m.consumo.toFixed(2)} <span style="font-size:0.75em; font-weight:600;">km/L</span></div>
-          </div>
-        `;
+        return `<div class="trecho-item"><div class="trecho-periodo">${formatarData(m.dataInicio)} → ${formatarData(m.dataFim)}<small>${m.km.toLocaleString('pt-BR')} km · ${m.litros.toFixed(1)} L</small></div><div class="trecho-consumo ${classeConsumo}">${m.consumo.toFixed(2)} <span style="font-size:0.75em; font-weight:600;">km/L</span></div></div>`;
       }).join('');
       const consumoDoMes = mesRef ? calcularConsumoVeiculo(v.nome, mesRef, null) : null;
-      const infoMes = (consumoDoMes && consumoDoMes.temDados) ? `
-        <div style="background:var(--primary-soft); border-left:3px solid var(--primary); padding:10px 12px; border-radius:8px; margin-top:12px; font-size:0.82em; color:var(--primary); line-height:1.5;">
-          📅 <strong>No mês selecionado:</strong> ${consumoDoMes.media.toFixed(2)} km/L
-          <span style="color:var(--text-3);">(${consumoDoMes.medicoes.length} trecho${consumoDoMes.medicoes.length > 1 ? 's' : ''} · ${consumoDoMes.kmTotal.toLocaleString('pt-BR')} km)</span>
-        </div>
-      ` : '';
+      const infoMes = (consumoDoMes && consumoDoMes.temDados) ? `<div style="background:var(--primary-soft); border-left:3px solid var(--primary); padding:10px 12px; border-radius:8px; margin-top:12px; font-size:0.82em; color:var(--primary); line-height:1.5;">📅 <strong>No mês:</strong> ${consumoDoMes.media.toFixed(2)} km/L</div>` : '';
       html += veiculoCard(`
         <div class="consumo-stats">
           <div class="consumo-stat"><div class="lbl">Média geral</div><div class="vlr">${r.media.toFixed(2)}<small> km/L</small></div></div>
@@ -3536,35 +3442,22 @@
           <div class="consumo-stat"><div class="lbl">Pior</div><div class="vlr" style="color:var(--danger);">${r.pior.toFixed(2)}<small> km/L</small></div></div>
         </div>
         ${infoMes}
-        ${ultimosTrechos.length > 0 ? `
-          <div class="trecho-historico">
-            <div class="trecho-titulo">📈 Últimos trechos</div>
-            ${trechosHTML}
-          </div>
-        ` : ''}
+        ${ultimosTrechos.length > 0 ? `<div class="trecho-historico"><div class="trecho-titulo">📈 Últimos trechos</div>${trechosHTML}</div>` : ''}
       `);
     });
-    if (!algumVeiculoComDados && veiculos.length === 0) {
-      html = '<div class="consumo-vazio">Cadastre um veículo em Ajustes → Veículos.</div>';
-    }
+    if (!algumVeiculoComDados && veiculos.length === 0) html = '<div class="consumo-vazio">Cadastre um veículo em Ajustes → Veículos.</div>';
     wrap.innerHTML = html;
   }
 
-  // ============ GRÁFICO PREÇO DO LITRO ============
+  // ============ GRÁFICO PREÇO ============
   function renderizarGraficoPrecoLitro() {
     const wrap = document.getElementById('graficoPrecoLitro');
     if (!wrap) return;
     const abastecimentos = gastos.filter(g =>
-      g.categoria === 'Transporte' &&
-      g.subcategoria === 'Combustível' &&
-      g.litros && Number(g.litros) > 0 &&
-      g.valor && Number(g.valor) > 0 &&
-      g.data && !ehReembolso(g)
+      g.categoria === 'Transporte' && g.subcategoria === 'Combustível' &&
+      g.litros && Number(g.litros) > 0 && g.valor && Number(g.valor) > 0 && g.data && !ehReembolso(g)
     );
-    if (abastecimentos.length === 0) {
-      wrap.innerHTML = '<div class="consumo-vazio">Nenhum abastecimento registrado ainda.</div>';
-      return;
-    }
+    if (abastecimentos.length === 0) { wrap.innerHTML = '<div class="consumo-vazio">Nenhum abastecimento registrado.</div>'; return; }
     const porMes = {};
     abastecimentos.forEach(g => {
       const mes = g.data.substring(0, 7);
@@ -3574,24 +3467,19 @@
       porMes[mes].qtd++;
     });
     const meses = Object.keys(porMes).sort();
-    const dados = meses.map(m => {
-      const d = porMes[m];
-      return { mes: m, precoMedio: d.valor / d.litros, litros: d.litros, valor: d.valor, qtd: d.qtd };
-    });
-    if (dados.length === 0) { wrap.innerHTML = '<div class="consumo-vazio">Nenhum dado disponível.</div>'; return; }
+    const dados = meses.map(m => { const d = porMes[m]; return { mes: m, precoMedio: d.valor / d.litros, litros: d.litros, valor: d.valor, qtd: d.qtd }; });
+    if (dados.length === 0) { wrap.innerHTML = '<div class="consumo-vazio">Sem dados.</div>'; return; }
     const dadosExibir = dados.slice(-12);
     const litrosTotal = dadosExibir.reduce((s, d) => s + d.litros, 0);
     const valorTotal = dadosExibir.reduce((s, d) => s + d.valor, 0);
     const mediaGeral = valorTotal / litrosTotal;
     const precos = dadosExibir.map(d => d.precoMedio);
-    const maxPreco = Math.max(...precos);
-    const minPreco = Math.min(...precos);
+    const maxPreco = Math.max(...precos), minPreco = Math.min(...precos);
     const mesMax = dadosExibir.find(d => d.precoMedio === maxPreco);
     const mesMin = dadosExibir.find(d => d.precoMedio === minPreco);
     let variacao = 0;
     if (dadosExibir.length >= 2) {
-      const primeiro = dadosExibir[0].precoMedio;
-      const ultimo = dadosExibir[dadosExibir.length - 1].precoMedio;
+      const primeiro = dadosExibir[0].precoMedio, ultimo = dadosExibir[dadosExibir.length - 1].precoMedio;
       variacao = ((ultimo - primeiro) / primeiro) * 100;
     }
     const maxBarra = maxPreco * 1.15;
@@ -3602,42 +3490,24 @@
       else if (d.precoMedio > mediaGeral * 1.03) classeBarra = 'maior';
       const [ano, mes] = d.mes.split('-');
       const nomeMes = MESES_ABREV[Number(mes) - 1];
-      return `
-        <div class="barra-preco-col">
-          <div class="barra-preco-valor-topo">${d.precoMedio.toFixed(2)}</div>
-          <div class="barra-preco-container">
-            <div class="barra-preco-fill ${classeBarra}" style="height:${alturaPct}%;" title="${nomeMes} ${ano}: R$ ${d.precoMedio.toFixed(2)}/L em ${d.qtd} abastecimento(s)"></div>
-          </div>
-          <div class="barra-preco-label-mes">${nomeMes}<small>${ano.substring(2)}</small></div>
-        </div>
-      `;
+      return `<div class="barra-preco-col"><div class="barra-preco-valor-topo">${d.precoMedio.toFixed(2)}</div><div class="barra-preco-container"><div class="barra-preco-fill ${classeBarra}" style="height:${alturaPct}%;"></div></div><div class="barra-preco-label-mes">${nomeMes}<small>${ano.substring(2)}</small></div></div>`;
     }).join('');
     const variacaoHTML = dadosExibir.length >= 2 ? (() => {
       const diff = dadosExibir[dadosExibir.length - 1].precoMedio - dadosExibir[0].precoMedio;
       const sinal = diff > 0 ? '+' : '';
       const classe = diff > 0 ? 'variacao-up' : (diff < 0 ? 'variacao-down' : '');
-      return `
-        <div class="grafico-preco-resumo">
-          <div class="item"><div class="lbl">Média geral</div><div class="vlr">R$ ${mediaGeral.toFixed(2)}<small>/L</small></div></div>
-          <div class="item ${classe}"><div class="lbl">Variação</div><div class="vlr">${sinal}R$ ${diff.toFixed(2)}<small> ${sinal}${variacao.toFixed(1)}%</small></div></div>
-          <div class="item"><div class="lbl">Total período</div><div class="vlr">${litrosTotal.toFixed(0)}<small> L</small></div></div>
-        </div>
-      `;
+      return `<div class="grafico-preco-resumo">
+        <div class="item"><div class="lbl">Média geral</div><div class="vlr">R$ ${mediaGeral.toFixed(2)}<small>/L</small></div></div>
+        <div class="item ${classe}"><div class="lbl">Variação</div><div class="vlr">${sinal}R$ ${diff.toFixed(2)}<small> ${sinal}${variacao.toFixed(1)}%</small></div></div>
+        <div class="item"><div class="lbl">Total período</div><div class="vlr">${litrosTotal.toFixed(0)}<small> L</small></div></div>
+      </div>`;
     })() : '';
-    const extremosHTML = `
-      <div class="grafico-preco-resumo" style="margin-top:10px;">
-        <div class="item variacao-down"><div class="lbl">Mais barato</div><div class="vlr">R$ ${minPreco.toFixed(2)}<small>/L</small></div><div style="font-size:0.7em; color:var(--text-3); margin-top:3px;">${mesMin ? MESES_ABREV[Number(mesMin.mes.split('-')[1]) - 1] + '/' + mesMin.mes.substring(2, 4) : '—'}</div></div>
-        <div class="item"><div class="lbl">Meses</div><div class="vlr">${dadosExibir.length}</div></div>
-        <div class="item variacao-up"><div class="lbl">Mais caro</div><div class="vlr">R$ ${maxPreco.toFixed(2)}<small>/L</small></div><div style="font-size:0.7em; color:var(--text-3); margin-top:3px;">${mesMax ? MESES_ABREV[Number(mesMax.mes.split('-')[1]) - 1] + '/' + mesMax.mes.substring(2, 4) : '—'}</div></div>
-      </div>
-    `;
-    wrap.innerHTML = `
-      <div class="grafico-preco-wrap">${barrasHTML}</div>
-      <div class="grafico-preco-linha-base"><span>🔵 Na média (R$ ${mediaGeral.toFixed(2)}/L)</span><span>🟢 Abaixo</span><span>🔴 Acima</span></div>
-      ${variacaoHTML}
-      ${extremosHTML}
-      <div style="font-size:0.72em; color:var(--text-muted); margin-top:14px; text-align:center; font-style:italic;">Preço médio = total pago ÷ total de litros no mês</div>
-    `;
+    const extremosHTML = `<div class="grafico-preco-resumo" style="margin-top:10px;">
+      <div class="item variacao-down"><div class="lbl">Mais barato</div><div class="vlr">R$ ${minPreco.toFixed(2)}<small>/L</small></div></div>
+      <div class="item"><div class="lbl">Meses</div><div class="vlr">${dadosExibir.length}</div></div>
+      <div class="item variacao-up"><div class="lbl">Mais caro</div><div class="vlr">R$ ${maxPreco.toFixed(2)}<small>/L</small></div></div>
+    </div>`;
+    wrap.innerHTML = `<div class="grafico-preco-wrap">${barrasHTML}</div><div class="grafico-preco-linha-base"><span>🔵 Na média (R$ ${mediaGeral.toFixed(2)}/L)</span><span>🟢 Abaixo</span><span>🔴 Acima</span></div>${variacaoHTML}${extremosHTML}`;
   }
 
   // ============ PESSOAS ============
@@ -3650,48 +3520,37 @@
         <div class="avatar-pessoa" style="background:${corAvatar(p.nome)};">${iniciais(p.nome)}</div>
         <div class="nome-pessoa">${escaparHTML(p.nome)}</div>
         <div class="acoes-pessoa">
-          <button class="btn-edit-pessoa" onclick="abrirEditarPessoa(${idx})" title="Editar">✏️</button>
-          <button class="btn-excluir-pessoa" onclick="removerPessoa(${idx})" title="Excluir">🗑️</button>
+          <button class="btn-edit-pessoa" onclick="abrirEditarPessoa(${idx})">✏️</button>
+          <button class="btn-excluir-pessoa" onclick="removerPessoa(${idx})">🗑️</button>
         </div>
       </div>
     `).join('');
   }
   function abrirEditarPessoa(idx) {
-    const p = pessoas[idx];
-    if (!p) return;
+    const p = pessoas[idx]; if (!p) return;
     document.getElementById('editPessoaIdx').value = idx;
     document.getElementById('editPessoaNome').value = p.nome;
     document.getElementById('modalEditarPessoa').classList.add('visivel');
     setTimeout(() => document.getElementById('editPessoaNome').focus(), 250);
   }
-  function fecharEditarPessoa() {
-    document.getElementById('modalEditarPessoa').classList.remove('visivel');
-  }
+  function fecharEditarPessoa() { document.getElementById('modalEditarPessoa').classList.remove('visivel'); }
   async function salvarEdicaoPessoa() {
     const idx = parseInt(document.getElementById('editPessoaIdx').value);
     const nome = document.getElementById('editPessoaNome').value.trim();
     if (!nome) { alert('Nome não pode ficar vazio.'); return; }
-    const duplicado = pessoas.find((x, i) => i !== idx && x.nome === nome);
-    if (duplicado) { alert('Já existe outra pessoa com esse nome.'); return; }
+    if (pessoas.find((x, i) => i !== idx && x.nome === nome)) { alert('Já existe.'); return; }
     pessoas[idx] = { nome };
-    await salvarPessoas();
-    popularPessoasSelect();
-    renderizarAgendaFiltros();
-    fecharEditarPessoa();
+    await salvarPessoas(); popularPessoasSelect(); renderizarAgendaFiltros(); fecharEditarPessoa();
   }
   async function excluirPessoaDoModal() {
     const idx = parseInt(document.getElementById('editPessoaIdx').value);
-    const p = pessoas[idx];
-    if (!p) return;
+    const p = pessoas[idx]; if (!p) return;
     const usos = eventos.filter(e => e.pessoa === p.nome).length;
-    const msg = usos > 0 ? `"${p.nome}" tem ${usos} compromisso(s) na agenda. Remover mesmo assim?` : `Remover "${p.nome}"?`;
+    const msg = usos > 0 ? `"${p.nome}" tem ${usos} compromisso(s). Remover?` : `Remover "${p.nome}"?`;
     if (!confirm(msg)) return;
     if (filtroPessoaAgenda === p.nome) filtroPessoaAgenda = '';
     pessoas.splice(idx, 1);
-    await salvarPessoas();
-    popularPessoasSelect();
-    renderizarAgendaFiltros();
-    fecharEditarPessoa();
+    await salvarPessoas(); popularPessoasSelect(); renderizarAgendaFiltros(); fecharEditarPessoa();
   }
   async function criarPessoa() {
     const nome = document.getElementById('novaPessoaNome').value.trim();
@@ -3699,61 +3558,44 @@
     if (acharPessoa(nome)) { alert('Essa pessoa já existe.'); return; }
     pessoas.push({ nome });
     document.getElementById('novaPessoaNome').value = '';
-    await salvarPessoas();
-    popularPessoasSelect();
-    renderizarAgendaFiltros();
+    await salvarPessoas(); popularPessoasSelect(); renderizarAgendaFiltros();
   }
   async function removerPessoa(idx) {
     const p = pessoas[idx];
     const usos = eventos.filter(e => e.pessoa === p.nome).length;
-    const msg = usos > 0 ? `"${p.nome}" tem ${usos} compromisso(s) na agenda. Remover mesmo assim?` : `Remover "${p.nome}"?`;
+    const msg = usos > 0 ? `"${p.nome}" tem ${usos} compromisso(s). Remover?` : `Remover "${p.nome}"?`;
     if (!confirm(msg)) return;
     if (filtroPessoaAgenda === p.nome) filtroPessoaAgenda = '';
     pessoas.splice(idx, 1);
-    await salvarPessoas();
-    popularPessoasSelect();
-    renderizarAgendaFiltros();
+    await salvarPessoas(); popularPessoasSelect(); renderizarAgendaFiltros();
   }
   async function salvarPessoas() {
     if (!firebaseOK) return;
-    try {
-      await refDocCasa().set({ pessoas }, { merge: true });
-      renderizarPessoas();
-    } catch (e) { alert('Erro ao salvar pessoas: ' + e.message); }
+    try { await refDocCasa().set({ pessoas }, { merge: true }); renderizarPessoas(); }
+    catch (e) { alert('Erro: ' + e.message); }
   }
 
   // ============ AGENDA ============
   function dataHojeISO() { return dataLocalISO(new Date()); }
-  function horaAgora() {
-    const h = new Date();
-    return `${String(h.getHours()).padStart(2, '0')}:${String(h.getMinutes()).padStart(2, '0')}`;
-  }
+  function horaAgora() { const h = new Date(); return `${String(h.getHours()).padStart(2, '0')}:${String(h.getMinutes()).padStart(2, '0')}`; }
   function eventoPassado(e) {
     const hoje = dataHojeISO();
     if (e.data < hoje) return true;
-    if (e.data === hoje) {
-      if (!e.hora) return false;
-      return e.hora < horaAgora();
-    }
+    if (e.data === hoje) { if (!e.hora) return false; return e.hora < horaAgora(); }
     return false;
   }
   function formatarDataLonga(iso) {
     const [a, m, d] = iso.split('-').map(Number);
     const dt = new Date(a, m - 1, d);
     const hoje = dataHojeISO();
-    const amanha = new Date();
-    amanha.setDate(amanha.getDate() + 1);
+    const amanha = new Date(); amanha.setDate(amanha.getDate() + 1);
     const amanhaISO = dataLocalISO(amanha);
     if (iso === hoje) return 'Hoje';
     if (iso === amanhaISO) return 'Amanhã';
     const dias = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
-    const diaSemana = dias[dt.getDay()];
-    return `${dt.getDate()}/${String(dt.getMonth() + 1).padStart(2, '0')} - ${diaSemana}`;
+    return `${dt.getDate()}/${String(dt.getMonth() + 1).padStart(2, '0')} - ${dias[dt.getDay()]}`;
   }
-  function formatarDataCurta(iso) {
-    const [a, m, d] = iso.split('-');
-    return `${d}/${m}/${a.substring(2)}`;
-  }
+  function formatarDataCurta(iso) { const [a, m, d] = iso.split('-'); return `${d}/${m}/${a.substring(2)}`; }
   function nomeDiaSemanaAbrev(iso) {
     const [a, m, d] = iso.split('-').map(Number);
     const dt = new Date(a, m - 1, d);
@@ -3770,19 +3612,11 @@
     const proximos = eventos.filter(e => !eventoPassado(e));
     const contPorPessoa = {};
     proximos.forEach(e => { contPorPessoa[e.pessoa] = (contPorPessoa[e.pessoa] || 0) + 1; });
-    let html = `
-      <button class="chip-pessoa ${!filtroPessoaAgenda ? 'ativa' : ''}" onclick="setFiltroPessoaAgenda('')">
-        <span>👥</span> Todos
-      </button>
-    `;
+    let html = `<button class="chip-pessoa ${!filtroPessoaAgenda ? 'ativa' : ''}" onclick="setFiltroPessoaAgenda('')"><span>👥</span> Todos</button>`;
     pessoas.forEach(p => {
       const count = contPorPessoa[p.nome] || 0;
       if (count === 0 && filtroPessoaAgenda !== p.nome) return;
-      html += `
-        <button class="chip-pessoa ${filtroPessoaAgenda === p.nome ? 'ativa' : ''}" onclick="setFiltroPessoaAgenda('${p.nome.replace(/'/g, "\\'")}')">
-          ${avatarHTML(p.nome)} ${escaparHTML(p.nome)}
-        </button>
-      `;
+      html += `<button class="chip-pessoa ${filtroPessoaAgenda === p.nome ? 'ativa' : ''}" onclick="setFiltroPessoaAgenda('${p.nome.replace(/'/g, "\\'")}')">${avatarHTML(p.nome)} ${escaparHTML(p.nome)}</button>`;
     });
     wrap.innerHTML = html;
   }
@@ -3801,19 +3635,11 @@
   }
   function trocarVisaoAgenda(v) {
     visaoAgenda = v;
-    document.querySelectorAll('.agenda-visao-chips button').forEach(b => {
-      b.classList.toggle('ativa', b.dataset.visao === v);
-    });
-    document.querySelectorAll('#painel-agenda .sub-painel').forEach(p => {
-      p.classList.toggle('ativo', p.id === 'visao-' + v);
-    });
+    document.querySelectorAll('.agenda-visao-chips button').forEach(b => b.classList.toggle('ativa', b.dataset.visao === v));
+    document.querySelectorAll('#painel-agenda .sub-painel').forEach(p => p.classList.toggle('ativo', p.id === 'visao-' + v));
     renderizarAgenda();
   }
-  function irParaHoje() {
-    semanaOffset = 0;
-    renderizarAgenda();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  function irParaHoje() { semanaOffset = 0; renderizarAgenda(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
   function mudarSemana(delta) { semanaOffset += delta; renderizarSemana(); }
 
   function renderizarAgenda() {
@@ -3825,54 +3651,27 @@
 
   function renderizarCardHoje() {
     const hoje = dataHojeISO();
-    const eventosHoje = eventosFiltrados()
-      .filter(e => e.data === hoje && !eventoPassado(e))
-      .sort((a, b) => (a.hora || '').localeCompare(b.hora || ''));
+    const eventosHoje = eventosFiltrados().filter(e => e.data === hoje && !eventoPassado(e)).sort((a, b) => (a.hora || '').localeCompare(b.hora || ''));
     const num = eventosHoje.length;
     const elProximo = document.getElementById('proximoEvento');
     document.getElementById('numEventosHoje').textContent = num;
-
     if (num > 0) {
       document.getElementById('descEventosHoje').textContent = num === 1 ? '1 compromisso' : `${num} compromissos`;
       const prox = eventosHoje[0];
       const tipo = TIPOS_EVENTO.find(t => t.valor === prox.tipo) || TIPOS_EVENTO[6];
-      elProximo.innerHTML = `
-        <div class="rotulo-prox">⏰ Próximo de hoje</div>
-        <div class="linha-prox">
-          <div class="quando-prox">${prox.hora || '--:--'}<span class="dia-curto">Hoje</span></div>
-          <div class="info-prox">
-            <div class="titulo-prox">${escaparHTML(prox.titulo)}</div>
-            <div class="meta-prox">${avatarHTML(prox.pessoa)} ${escaparHTML(prox.pessoa)} · ${tipo.emoji} ${prox.tipo}</div>
-          </div>
-        </div>
-      `;
+      elProximo.innerHTML = `<div class="rotulo-prox">⏰ Próximo de hoje</div><div class="linha-prox"><div class="quando-prox">${prox.hora || '--:--'}<span class="dia-curto">Hoje</span></div><div class="info-prox"><div class="titulo-prox">${escaparHTML(prox.titulo)}</div><div class="meta-prox">${avatarHTML(prox.pessoa)} ${escaparHTML(prox.pessoa)} · ${tipo.emoji} ${prox.tipo}</div></div></div>`;
       elProximo.style.display = 'block';
       return;
     }
-
     document.getElementById('descEventosHoje').textContent = 'Nenhum compromisso hoje 🎉';
-    const proximoGeral = eventosFiltrados()
-      .filter(e => !eventoPassado(e))
-      .sort((a, b) => a.data.localeCompare(b.data) || (a.hora || '').localeCompare(b.hora || ''))[0];
+    const proximoGeral = eventosFiltrados().filter(e => !eventoPassado(e)).sort((a, b) => a.data.localeCompare(b.data) || (a.hora || '').localeCompare(b.hora || ''))[0];
     if (!proximoGeral) { elProximo.style.display = 'none'; return; }
     const tipo = TIPOS_EVENTO.find(t => t.valor === proximoGeral.tipo) || TIPOS_EVENTO[6];
     const dt = new Date(proximoGeral.data + 'T00:00:00');
-    const amanha = new Date();
-    amanha.setDate(amanha.getDate() + 1);
+    const amanha = new Date(); amanha.setDate(amanha.getDate() + 1);
     const amanhaISO = dataLocalISO(amanha);
-    const diaCurto = proximoGeral.data === amanhaISO
-      ? 'Amanhã'
-      : `${String(dt.getDate()).padStart(2, '0')}/${String(dt.getMonth() + 1).padStart(2, '0')}`;
-    elProximo.innerHTML = `
-      <div class="rotulo-prox">📅 Próximo compromisso</div>
-      <div class="linha-prox">
-        <div class="quando-prox">${proximoGeral.hora || '--:--'}<span class="dia-curto">${diaCurto}</span></div>
-        <div class="info-prox">
-          <div class="titulo-prox">${escaparHTML(proximoGeral.titulo)}</div>
-          <div class="meta-prox">${avatarHTML(proximoGeral.pessoa)} ${escaparHTML(proximoGeral.pessoa)} · ${tipo.emoji} ${proximoGeral.tipo}</div>
-        </div>
-      </div>
-    `;
+    const diaCurto = proximoGeral.data === amanhaISO ? 'Amanhã' : `${String(dt.getDate()).padStart(2, '0')}/${String(dt.getMonth() + 1).padStart(2, '0')}`;
+    elProximo.innerHTML = `<div class="rotulo-prox">📅 Próximo compromisso</div><div class="linha-prox"><div class="quando-prox">${proximoGeral.hora || '--:--'}<span class="dia-curto">${diaCurto}</span></div><div class="info-prox"><div class="titulo-prox">${escaparHTML(proximoGeral.titulo)}</div><div class="meta-prox">${avatarHTML(proximoGeral.pessoa)} ${escaparHTML(proximoGeral.pessoa)} · ${tipo.emoji} ${proximoGeral.tipo}</div></div></div>`;
     elProximo.style.display = 'block';
   }
 
@@ -3881,14 +3680,9 @@
     const hoje = dataHojeISO();
     const eventosVisiveis = eventosFiltrados().filter(e => e.data >= hoje);
     const porDia = {};
-    eventosVisiveis.forEach(e => {
-      if (!porDia[e.data]) porDia[e.data] = [];
-      porDia[e.data].push(e);
-    });
+    eventosVisiveis.forEach(e => { if (!porDia[e.data]) porDia[e.data] = []; porDia[e.data].push(e); });
     if (Object.keys(porDia).length === 0) {
-      const msg = filtroPessoaAgenda
-        ? `Nenhum compromisso para <strong>${escaparHTML(filtroPessoaAgenda)}</strong>.<br><br>Toque em "+ Novo compromisso" ou troque o filtro.`
-        : 'Nenhum compromisso agendado.<br><br>Toque em "+ Novo compromisso" para criar.';
+      const msg = filtroPessoaAgenda ? `Nenhum compromisso para <strong>${escaparHTML(filtroPessoaAgenda)}</strong>.` : 'Nenhum compromisso agendado.';
       wrap.innerHTML = `<div class="vazio">${msg}</div>`;
       return;
     }
@@ -3899,21 +3693,15 @@
       const aberto = diasAgendaAbertos.has(dia);
       const itensHTML = evts.map(e => renderizarItemEvento(e)).join('');
       const nomesUnicos = [...new Set(evts.map(e => e.pessoa))];
-      const resumoNomes = nomesUnicos.slice(0, 3).map(n => `${avatarHTML(n)} ${escaparHTML(n)}`).join(' · ') +
-        (nomesUnicos.length > 3 ? ` +${nomesUnicos.length - 3}` : '');
-      return `
-        <div class="agenda-dia-bloco ${aberto ? 'aberto' : ''} ${ehHoje ? 'destaque-hoje' : ''}">
-          <button class="agenda-dia-header" onclick="toggleDiaAgenda('${dia}')">
-            <div class="info-dia">
-              <span class="titulo-dia">${escaparHTML(formatarDataLonga(dia))}</span>
-              <span class="sub-dia">${resumoNomes}</span>
-            </div>
-            <span class="count-dia">${evts.length}</span>
-            <span class="seta-dia">▶</span>
-          </button>
-          <div class="agenda-dia-corpo">${itensHTML}</div>
-        </div>
-      `;
+      const resumoNomes = nomesUnicos.slice(0, 3).map(n => `${avatarHTML(n)} ${escaparHTML(n)}`).join(' · ') + (nomesUnicos.length > 3 ? ` +${nomesUnicos.length - 3}` : '');
+      return `<div class="agenda-dia-bloco ${aberto ? 'aberto' : ''} ${ehHoje ? 'destaque-hoje' : ''}">
+        <button class="agenda-dia-header" onclick="toggleDiaAgenda('${dia}')">
+          <div class="info-dia"><span class="titulo-dia">${escaparHTML(formatarDataLonga(dia))}</span><span class="sub-dia">${resumoNomes}</span></div>
+          <span class="count-dia">${evts.length}</span>
+          <span class="seta-dia">▶</span>
+        </button>
+        <div class="agenda-dia-corpo">${itensHTML}</div>
+      </div>`;
     }).join('');
   }
   function toggleDiaAgenda(dia) {
@@ -3931,58 +3719,34 @@
     if (e.remarcacoes && e.remarcacoes.length > 0) remarcadoTag = `<span class="tag-agenda tag-remarcado">🔁 Remarcado</span>`;
     let recorrenteTag = '';
     if (e.serieId) recorrenteTag = `<span class="tag-agenda tag-recorrente">🔄 Recorrente</span>`;
-    return `
-      <div class="agenda-item ${passado ? 'passado' : ''}" onclick="abrirDetalhesEvento('${e.id}')">
-        <div class="hora-col">
-          <div class="hora">${e.hora || '--:--'}</div>
-          <div class="dia-semana">${nomeDiaSemanaAbrev(e.data)}</div>
-        </div>
-        <div class="conteudo">
-          <div class="titulo-evt">${escaparHTML(e.titulo)}</div>
-          ${meta ? `<div class="meta-evt">${meta}</div>` : ''}
-          <div class="tags-evt">
-            <span class="tag-agenda tag-quem">${avatarHTML(e.pessoa)} ${escaparHTML(e.pessoa)}</span>
-            <span class="tag-agenda ${tipo.classe}">${tipo.emoji} ${e.tipo}</span>
-            ${recorrenteTag}
-            ${remarcadoTag}
-          </div>
-        </div>
-        <button class="btn-remover-evt" onclick="event.stopPropagation(); removerEvento('${e.id}')" title="Remover">✕</button>
+    return `<div class="agenda-item ${passado ? 'passado' : ''}" onclick="abrirDetalhesEvento('${e.id}')">
+      <div class="hora-col"><div class="hora">${e.hora || '--:--'}</div><div class="dia-semana">${nomeDiaSemanaAbrev(e.data)}</div></div>
+      <div class="conteudo">
+        <div class="titulo-evt">${escaparHTML(e.titulo)}</div>
+        ${meta ? `<div class="meta-evt">${meta}</div>` : ''}
+        <div class="tags-evt"><span class="tag-agenda tag-quem">${avatarHTML(e.pessoa)} ${escaparHTML(e.pessoa)}</span><span class="tag-agenda ${tipo.classe}">${tipo.emoji} ${e.tipo}</span>${recorrenteTag}${remarcadoTag}</div>
       </div>
-    `;
+      <button class="btn-remover-evt" onclick="event.stopPropagation(); removerEvento('${e.id}')">✕</button>
+    </div>`;
   }
   function renderizarSemana() {
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
+    const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
     const diaSemanaHoje = hoje.getDay();
     const inicioSemana = new Date(hoje);
     inicioSemana.setDate(hoje.getDate() - diaSemanaHoje + (semanaOffset * 7));
     const dias = [];
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(inicioSemana);
-      d.setDate(inicioSemana.getDate() + i);
-      dias.push(d);
-    }
-    const primeiro = dias[0];
-    const ultimo = dias[6];
-    const titulo = primeiro.getMonth() === ultimo.getMonth()
-      ? `${primeiro.getDate()} a ${ultimo.getDate()} de ${primeiro.toLocaleDateString('pt-BR', { month: 'long' })}`
-      : `${primeiro.getDate()}/${primeiro.getMonth() + 1} a ${ultimo.getDate()}/${ultimo.getMonth() + 1}`;
+    for (let i = 0; i < 7; i++) { const d = new Date(inicioSemana); d.setDate(inicioSemana.getDate() + i); dias.push(d); }
+    const primeiro = dias[0], ultimo = dias[6];
+    const titulo = primeiro.getMonth() === ultimo.getMonth() ? `${primeiro.getDate()} a ${ultimo.getDate()} de ${primeiro.toLocaleDateString('pt-BR', { month: 'long' })}` : `${primeiro.getDate()}/${primeiro.getMonth() + 1} a ${ultimo.getDate()}/${ultimo.getMonth() + 1}`;
     document.getElementById('tituloSemana').textContent = titulo;
     const hojeISO = dataHojeISO();
     const eventosVisiveis = eventosFiltrados();
-    const headerHTML = dias.map(d => {
+    document.getElementById('semanaHeader').innerHTML = dias.map(d => {
       const iso = dataLocalISO(d);
       const ehHoje = iso === hojeISO;
-      return `
-        <div class="semana-dia-header ${ehHoje ? 'hoje' : ''}">
-          ${nomeDiaSemanaAbrev(iso).substring(0, 3)}
-          <span class="num">${d.getDate()}</span>
-        </div>
-      `;
+      return `<div class="semana-dia-header ${ehHoje ? 'hoje' : ''}">${nomeDiaSemanaAbrev(iso).substring(0, 3)}<span class="num">${d.getDate()}</span></div>`;
     }).join('');
-    document.getElementById('semanaHeader').innerHTML = headerHTML;
-    const bodyHTML = dias.map(d => {
+    document.getElementById('semanaBody').innerHTML = dias.map(d => {
       const iso = dataLocalISO(d);
       const ehHoje = iso === hojeISO;
       const evts = eventosVisiveis.filter(e => e.data === iso).sort((a, b) => (a.hora || '').localeCompare(b.hora || ''));
@@ -3991,41 +3755,28 @@
         const temRec = e.serieId ? 'tem-recorrencia' : '';
         const temRem = (e.remarcacoes && e.remarcacoes.length > 0) ? 'tem-remarcacao' : '';
         const passado = eventoPassado(e) ? 'passado' : '';
-        return `
-          <div class="semana-evt ${classeTipo} ${temRec} ${temRem} ${passado}" onclick="abrirDetalhesEvento('${e.id}')" title="${escaparHTML(e.titulo)}">
-            ${e.hora ? e.hora + ' ' : ''}${escaparHTML(e.titulo).substring(0, 14)}
-          </div>
-        `;
+        return `<div class="semana-evt ${classeTipo} ${temRec} ${temRem} ${passado}" onclick="abrirDetalhesEvento('${e.id}')">${e.hora ? e.hora + ' ' : ''}${escaparHTML(e.titulo).substring(0, 14)}</div>`;
       }).join('');
       return `<div class="semana-dia ${ehHoje ? 'hoje' : ''}">${evtsHTML}</div>`;
     }).join('');
-    document.getElementById('semanaBody').innerHTML = bodyHTML;
   }
   function renderizarPorPessoa() {
     const wrap = document.getElementById('agendaListaPessoa');
     const hoje = dataHojeISO();
     const eventosVisiveis = eventosFiltrados().filter(e => e.data >= hoje);
     if (eventosVisiveis.length === 0) {
-      const msg = filtroPessoaAgenda
-        ? `Nenhum compromisso para <strong>${escaparHTML(filtroPessoaAgenda)}</strong>`
-        : 'Nenhum compromisso agendado';
+      const msg = filtroPessoaAgenda ? `Nenhum compromisso para <strong>${escaparHTML(filtroPessoaAgenda)}</strong>` : 'Nenhum compromisso agendado';
       wrap.innerHTML = `<div class="vazio">${msg}</div>`;
       return;
     }
     const porPessoa = {};
-    eventosVisiveis.forEach(e => {
-      if (!porPessoa[e.pessoa]) porPessoa[e.pessoa] = [];
-      porPessoa[e.pessoa].push(e);
-    });
+    eventosVisiveis.forEach(e => { if (!porPessoa[e.pessoa]) porPessoa[e.pessoa] = []; porPessoa[e.pessoa].push(e); });
     const nomes = Object.keys(porPessoa).sort((a, b) => porPessoa[b].length - porPessoa[a].length);
     wrap.innerHTML = nomes.map(nome => {
       const evts = porPessoa[nome].sort((a, b) => a.data.localeCompare(b.data));
       const pessoaAberta = pessoasAbertas.has(nome);
       const porDia = {};
-      evts.forEach(e => {
-        if (!porDia[e.data]) porDia[e.data] = [];
-        porDia[e.data].push(e);
-      });
+      evts.forEach(e => { if (!porDia[e.data]) porDia[e.data] = []; porDia[e.data].push(e); });
       const diasOrdenados = Object.keys(porDia).sort();
       const diasHTML = diasOrdenados.map(dia => {
         const evtsDia = porDia[dia].sort((a, b) => (a.hora || '').localeCompare(b.hora || ''));
@@ -4033,31 +3784,24 @@
         const diaAberto = diasAgendaAbertos.has(chaveDia);
         const ehHoje = dia === hoje;
         const itensHTML = evtsDia.map(e => renderizarItemEvento(e)).join('');
-        return `
-          <div class="agenda-dia-bloco ${diaAberto ? 'aberto' : ''} ${ehHoje ? 'destaque-hoje' : ''}" style="margin: 8px 12px; border-radius: 10px;">
-            <button class="agenda-dia-header" style="padding: 12px; font-size:0.82em;" onclick="event.stopPropagation(); toggleDiaAgendaPessoa('${chaveDia.replace(/'/g, "\\'")}')">
-              <div class="info-dia">
-                <span class="titulo-dia">${escaparHTML(formatarDataLonga(dia))}</span>
-                <span class="sub-dia">${evtsDia.length} compromisso${evtsDia.length > 1 ? 's' : ''}</span>
-              </div>
-              <span class="count-dia" style="font-size:0.72em;">${evtsDia.length}</span>
-              <span class="seta-dia">▶</span>
-            </button>
-            <div class="agenda-dia-corpo">${itensHTML}</div>
-          </div>
-        `;
-      }).join('');
-      return `
-        <div class="agenda-pessoa-bloco ${pessoaAberta ? 'aberto' : ''}">
-          <button class="agenda-pessoa-header" onclick="togglePessoaBloco('${nome.replace(/'/g, "\\'")}')">
-            ${avatarHTML(nome)}
-            <span class="nome-p">${escaparHTML(nome)}</span>
-            <span class="count-p">${evts.length}</span>
-            <span class="seta-p">▶</span>
+        return `<div class="agenda-dia-bloco ${diaAberto ? 'aberto' : ''} ${ehHoje ? 'destaque-hoje' : ''}" style="margin: 8px 12px; border-radius: 10px;">
+          <button class="agenda-dia-header" style="padding: 12px; font-size:0.82em;" onclick="event.stopPropagation(); toggleDiaAgendaPessoa('${chaveDia.replace(/'/g, "\\'")}')">
+            <div class="info-dia"><span class="titulo-dia">${escaparHTML(formatarDataLonga(dia))}</span><span class="sub-dia">${evtsDia.length} compromisso${evtsDia.length > 1 ? 's' : ''}</span></div>
+            <span class="count-dia" style="font-size:0.72em;">${evtsDia.length}</span>
+            <span class="seta-dia">▶</span>
           </button>
-          <div class="agenda-pessoa-corpo">${diasHTML}</div>
-        </div>
-      `;
+          <div class="agenda-dia-corpo">${itensHTML}</div>
+        </div>`;
+      }).join('');
+      return `<div class="agenda-pessoa-bloco ${pessoaAberta ? 'aberto' : ''}">
+        <button class="agenda-pessoa-header" onclick="togglePessoaBloco('${nome.replace(/'/g, "\\'")}')">
+          ${avatarHTML(nome)}
+          <span class="nome-p">${escaparHTML(nome)}</span>
+          <span class="count-p">${evts.length}</span>
+          <span class="seta-p">▶</span>
+        </button>
+        <div class="agenda-pessoa-corpo">${diasHTML}</div>
+      </div>`;
     }).join('');
   }
   function togglePessoaBloco(nome) {
@@ -4094,18 +3838,12 @@
       if (modoRemarcar) {
         titulo.textContent = '🔁 Remarcar compromisso';
         document.getElementById('avisoRemarcando').style.display = 'block';
-        document.getElementById('avisoRemarcandoTexto').innerHTML =
-          `Compromisso original: <strong>${formatarDataCurta(e.data)}${e.hora ? ' às ' + e.hora : ''}</strong><br>
-           Altere a data/hora abaixo para remarcar.`;
-      } else {
-        titulo.textContent = '✏️ Editar compromisso';
-      }
+        document.getElementById('avisoRemarcandoTexto').innerHTML = `Original: <strong>${formatarDataCurta(e.data)}${e.hora ? ' às ' + e.hora : ''}</strong><br>Altere abaixo.`;
+      } else titulo.textContent = '✏️ Editar compromisso';
       if (e.serieId) {
         const serie = eventos.filter(x => x.serieId === e.serieId);
         document.getElementById('avisoSerie').style.display = 'block';
-        document.getElementById('avisoSerieTexto').innerHTML =
-          `Este compromisso faz parte de uma série com <strong>${serie.length} ocorrências</strong>.<br>
-           Editar aqui altera <strong>apenas este evento</strong>.`;
+        document.getElementById('avisoSerieTexto').innerHTML = `Série com <strong>${serie.length} ocorrências</strong>. Editar aqui altera apenas este.`;
       }
       document.getElementById('evtId').value = e.id;
       document.getElementById('evtTitulo').value = e.titulo;
@@ -4135,15 +3873,11 @@
     const sel = document.getElementById('evtPessoa');
     sel.innerHTML = pessoas.map(p => `<option value="${p.nome}">${p.nome}</option>`).join('');
   }
-  function fecharFormEvento() {
-    document.getElementById('modalEvento').classList.remove('visivel');
-  }
+  function fecharFormEvento() { document.getElementById('modalEvento').classList.remove('visivel'); }
   function toggleDiaSemana(dia) {
     if (diasSemanaSelecionados.has(dia)) diasSemanaSelecionados.delete(dia);
     else diasSemanaSelecionados.add(dia);
-    document.querySelectorAll('.dia-semana-btn').forEach(btn => {
-      btn.classList.toggle('ativo', diasSemanaSelecionados.has(parseInt(btn.dataset.dia)));
-    });
+    document.querySelectorAll('.dia-semana-btn').forEach(btn => btn.classList.toggle('ativo', diasSemanaSelecionados.has(parseInt(btn.dataset.dia))));
   }
   function atualizarCamposRecorrencia() {
     const rec = document.getElementById('evtRecorrencia').value;
@@ -4171,16 +3905,10 @@
     const limite = contagem ? Math.min(contagem, MAX_OCORRENCIAS) : MAX_OCORRENCIAS;
     if (recorrencia === 'diaria') {
       let d = new Date(base);
-      while (datas.length < limite) {
-        const iso = dataLocalISO(d);
-        if (dataFim && iso > dataFim) break;
-        datas.push(iso);
-        d.setDate(d.getDate() + 1);
-      }
+      while (datas.length < limite) { const iso = dataLocalISO(d); if (dataFim && iso > dataFim) break; datas.push(iso); d.setDate(d.getDate() + 1); }
     } else if (recorrencia === 'semanal' || recorrencia === 'quinzenal') {
       const dias = diasSemana && diasSemana.length > 0 ? [...diasSemana].sort() : [base.getDay()];
-      let d = new Date(base);
-      let seguranca = 0;
+      let d = new Date(base); let seguranca = 0;
       while (datas.length < limite && seguranca < 3650) {
         seguranca++;
         const diaSemanaAtual = d.getDay();
@@ -4195,20 +3923,10 @@
       }
     } else if (recorrencia === 'mensal') {
       let d = new Date(base);
-      while (datas.length < limite) {
-        const iso = dataLocalISO(d);
-        if (dataFim && iso > dataFim) break;
-        datas.push(iso);
-        d.setMonth(d.getMonth() + 1);
-      }
+      while (datas.length < limite) { const iso = dataLocalISO(d); if (dataFim && iso > dataFim) break; datas.push(iso); d.setMonth(d.getMonth() + 1); }
     } else if (recorrencia === 'anual') {
       let d = new Date(base);
-      while (datas.length < limite) {
-        const iso = dataLocalISO(d);
-        if (dataFim && iso > dataFim) break;
-        datas.push(iso);
-        d.setFullYear(d.getFullYear() + 1);
-      }
+      while (datas.length < limite) { const iso = dataLocalISO(d); if (dataFim && iso > dataFim) break; datas.push(iso); d.setFullYear(d.getFullYear() + 1); }
     }
     return datas.sort();
   }
@@ -4228,79 +3946,48 @@
     const contagem = recFimTipo === 'contagem' ? parseInt(document.getElementById('evtContagem').value) : null;
     if (!titulo) { alert('Digite um título.'); return; }
     if (!data) { alert('Escolha uma data.'); return; }
-    if (!pessoa) { alert('Escolha para quem é o compromisso.'); return; }
-    if ((recorrencia === 'semanal' || recorrencia === 'quinzenal') && diasSemanaSelecionados.size === 0) {
-      alert('Selecione pelo menos um dia da semana.'); return;
-    }
+    if (!pessoa) { alert('Escolha para quem.'); return; }
+    if ((recorrencia === 'semanal' || recorrencia === 'quinzenal') && diasSemanaSelecionados.size === 0) { alert('Selecione pelo menos um dia da semana.'); return; }
     try {
       const dadosBase = { titulo, hora, pessoa, tipo, local, acompanhante, obs };
       if (id && !recorrencia) {
         const e = eventos.find(x => x.id === id);
         const dados = { ...dadosBase, data, atualizadoEm: firebase.firestore.FieldValue.serverTimestamp() };
         if (e && (e.data !== data || (e.hora || '') !== hora)) {
-          const remarcacao = {
-            deData: e.data, deHora: e.hora || '',
-            paraData: data, paraHora: hora || '',
-            quando: new Date().toISOString()
-          };
+          const remarcacao = { deData: e.data, deHora: e.hora || '', paraData: data, paraHora: hora || '', quando: new Date().toISOString() };
           dados.remarcacoes = e.remarcacoes ? [...e.remarcacoes, remarcacao] : [remarcacao];
         }
-        await colecaoEventos().doc(id).update(dados);
-        fecharFormEvento();
-        return;
+        await colecaoEventos().doc(id).update(dados); fecharFormEvento(); return;
       }
       if (recorrencia) {
         const datas = gerarDatasSerie(data, recorrencia, [...diasSemanaSelecionados], dataFim, contagem);
-        if (datas.length === 0) { alert('Nenhuma data gerada. Verifique a configuração.'); return; }
-        if (datas.length > 200) {
-          if (!confirm(`Isso vai criar ${datas.length} eventos. Continuar?`)) return;
-        }
+        if (datas.length === 0) { alert('Nenhuma data gerada.'); return; }
+        if (datas.length > 200 && !confirm(`Isso vai criar ${datas.length} eventos. Continuar?`)) return;
         const serieId = 's' + Date.now() + Math.random().toString(36).slice(2, 7);
         const batch = db.batch();
         datas.forEach(d => {
           const ref = colecaoEventos().doc();
-          batch.set(ref, {
-            ...dadosBase, data: d, serieId, recorrencia,
-            diasSemana: (recorrencia === 'semanal' || recorrencia === 'quinzenal') ? [...diasSemanaSelecionados] : null,
-            dataFim: dataFim || null,
-            criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-          });
+          batch.set(ref, { ...dadosBase, data: d, serieId, recorrencia, diasSemana: (recorrencia === 'semanal' || recorrencia === 'quinzenal') ? [...diasSemanaSelecionados] : null, dataFim: dataFim || null, criadoEm: firebase.firestore.FieldValue.serverTimestamp() });
         });
-        await batch.commit();
-        fecharFormEvento();
-        return;
+        await batch.commit(); fecharFormEvento(); return;
       }
       const dados = { ...dadosBase, data, criadoEm: firebase.firestore.FieldValue.serverTimestamp() };
-      await colecaoEventos().add(dados);
-      fecharFormEvento();
-    } catch (e) {
-      alert('Erro ao salvar: ' + e.message);
-    }
+      await colecaoEventos().add(dados); fecharFormEvento();
+    } catch (e) { alert('Erro ao salvar: ' + e.message); }
   }
 
   // ============ ESCOLHA SÉRIE ============
   function abrirEscolhaSerie(titulo, descricao, opcoes) {
     document.getElementById('escolhaSerieTitulo').textContent = titulo;
     document.getElementById('escolhaSerieDescricao').innerHTML = descricao;
-    const btns = [
-      document.getElementById('escolhaSerieBtn1'),
-      document.getElementById('escolhaSerieBtn2'),
-      document.getElementById('escolhaSerieBtn3')
-    ];
+    const btns = [document.getElementById('escolhaSerieBtn1'), document.getElementById('escolhaSerieBtn2'), document.getElementById('escolhaSerieBtn3')];
     btns.forEach((btn, i) => {
-      if (opcoes[i]) {
-        btn.style.display = 'block';
-        btn.textContent = opcoes[i].label;
-        btn.onclick = () => { fecharEscolhaSerie(); opcoes[i].acao(); };
-      } else {
-        btn.style.display = 'none';
-      }
+      if (opcoes[i]) { btn.style.display = 'block'; btn.textContent = opcoes[i].label; btn.onclick = () => { fecharEscolhaSerie(); opcoes[i].acao(); }; }
+      else btn.style.display = 'none';
     });
     document.getElementById('modalEscolhaSerie').classList.add('visivel');
   }
-  function fecharEscolhaSerie() {
-    document.getElementById('modalEscolhaSerie').classList.remove('visivel');
-  }
+  function fecharEscolhaSerie() { document.getElementById('modalEscolhaSerie').classList.remove('visivel'); }
 
   // ============ DETALHES EVENTO ============
   function abrirDetalhesEvento(id) {
@@ -4309,35 +3996,22 @@
     const tipo = TIPOS_EVENTO.find(t => t.valor === e.tipo) || TIPOS_EVENTO[6];
     const passado = eventoPassado(e);
     const linhas = [];
-    if (passado) {
-      linhas.push(`<div style="background:var(--surface-2); padding:12px 14px; border-radius:8px; margin-bottom:14px; font-size:0.82em; color:var(--text-3); border:1px solid var(--border);">⏱️ Compromisso passado</div>`);
-    }
-    linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Título</div>
-      <div style="font-size:1.15em; font-weight:700; margin-bottom:18px; letter-spacing:-0.01em;">${escaparHTML(e.titulo)}</div>`);
+    if (passado) linhas.push(`<div style="background:var(--surface-2); padding:12px 14px; border-radius:8px; margin-bottom:14px; font-size:0.82em; color:var(--text-3); border:1px solid var(--border);">⏱️ Compromisso passado</div>`);
+    linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Título</div><div style="font-size:1.15em; font-weight:700; margin-bottom:18px; letter-spacing:-0.01em;">${escaparHTML(e.titulo)}</div>`);
     const ultimaRemarc = (e.remarcacoes && e.remarcacoes.length > 0) ? e.remarcacoes[e.remarcacoes.length - 1] : null;
     let blocoData = `<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Quando</div>`;
     if (ultimaRemarc) {
-      blocoData += `
-        <div style="font-size:1em; margin-bottom:18px;">
-          <div style="text-decoration:line-through; color:var(--text-muted); font-size:0.9em;">📅 ${formatarDataCurta(ultimaRemarc.deData)}${ultimaRemarc.deHora ? ' às ' + ultimaRemarc.deHora : ''}</div>
-          <div style="color:var(--success); font-weight:700;">📅 ${formatarDataLonga(e.data)}${e.hora ? ' às ' + e.hora : ''}</div>
-        </div>`;
-    } else {
-      blocoData += `<div style="font-size:1em; margin-bottom:18px;">📅 ${formatarDataLonga(e.data)}${e.hora ? ' às ' + e.hora : ''}</div>`;
-    }
+      blocoData += `<div style="font-size:1em; margin-bottom:18px;"><div style="text-decoration:line-through; color:var(--text-muted); font-size:0.9em;">📅 ${formatarDataCurta(ultimaRemarc.deData)}${ultimaRemarc.deHora ? ' às ' + ultimaRemarc.deHora : ''}</div><div style="color:var(--success); font-weight:700;">📅 ${formatarDataLonga(e.data)}${e.hora ? ' às ' + e.hora : ''}</div></div>`;
+    } else blocoData += `<div style="font-size:1em; margin-bottom:18px;">📅 ${formatarDataLonga(e.data)}${e.hora ? ' às ' + e.hora : ''}</div>`;
     linhas.push(blocoData);
-    linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Para quem</div>
-      <div style="font-size:1em; margin-bottom:18px; display:flex; align-items:center; gap:8px;">${avatarHTML(e.pessoa)} ${escaparHTML(e.pessoa)}</div>`);
-    linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Tipo</div>
-      <div style="margin-bottom:18px;"><span class="tag-agenda ${tipo.classe}">${tipo.emoji} ${e.tipo}</span></div>`);
+    linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Para quem</div><div style="font-size:1em; margin-bottom:18px; display:flex; align-items:center; gap:8px;">${avatarHTML(e.pessoa)} ${escaparHTML(e.pessoa)}</div>`);
+    linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Tipo</div><div style="margin-bottom:18px;"><span class="tag-agenda ${tipo.classe}">${tipo.emoji} ${e.tipo}</span></div>`);
     if (e.local) linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Local</div><div style="font-size:1em; margin-bottom:18px;">📍 ${escaparHTML(e.local)}</div>`);
     if (e.acompanhante) linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Quem leva</div><div style="font-size:1em; margin-bottom:18px;">🚗 ${escaparHTML(e.acompanhante)}</div>`);
     if (e.obs) linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Observações</div><div style="font-size:0.95em; margin-bottom:18px; white-space:pre-wrap; color:var(--text-2);">${escaparHTML(e.obs)}</div>`);
     if (e.serieId) {
       const serie = eventos.filter(x => x.serieId === e.serieId);
-      linhas.push(`<div style="background:var(--accent-soft); border-left:4px solid var(--accent); padding:14px 16px; border-radius:8px; margin-bottom:16px; font-size:0.85em; color:#3730a3; line-height:1.55;">
-        🔄 <strong>Compromisso recorrente</strong><br>Esta é uma das <strong>${serie.length} ocorrências</strong> da série.
-      </div>`);
+      linhas.push(`<div style="background:var(--accent-soft); border-left:4px solid var(--accent); padding:14px 16px; border-radius:8px; margin-bottom:16px; font-size:0.85em; color:#3730a3; line-height:1.55;">🔄 <strong>Compromisso recorrente</strong><br>Uma das <strong>${serie.length} ocorrências</strong>.</div>`);
     }
     if (e.remarcacoes && e.remarcacoes.length > 0) {
       const histHTML = e.remarcacoes.slice().reverse().map(r => {
@@ -4345,16 +4019,9 @@
         const quandoStr = quando.toLocaleDateString('pt-BR') + ' às ' + quando.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
         const deStr = `${formatarDataCurta(r.deData)}${r.deHora ? ' às ' + r.deHora : ''}`;
         const paraStr = `${formatarDataCurta(r.paraData)}${r.paraHora ? ' às ' + r.paraHora : ''}`;
-        return `
-          <div class="remarcacao-item">
-            <div class="de-para">
-              <div class="linha"><span class="rotulo rotulo-de">DE</span><span class="valor-orig">${deStr}</span></div>
-              <div class="linha"><span class="rotulo rotulo-para">PARA</span><span class="valor-novo">${paraStr}</span></div>
-            </div>
-            <div class="quando-remarcou">🔁 Remarcado em ${quandoStr}</div>
-          </div>`;
+        return `<div class="remarcacao-item"><div class="de-para"><div class="linha"><span class="rotulo rotulo-de">DE</span><span class="valor-orig">${deStr}</span></div><div class="linha"><span class="rotulo rotulo-para">PARA</span><span class="valor-novo">${paraStr}</span></div></div><div class="quando-remarcou">🔁 Remarcado em ${quandoStr}</div></div>`;
       }).join('');
-      linhas.push(`<div class="box-remarcacoes"><div class="titulo-hist">🔁 Histórico de remarcações (${e.remarcacoes.length})</div>${histHTML}</div>`);
+      linhas.push(`<div class="box-remarcacoes"><div class="titulo-hist">🔁 Histórico (${e.remarcacoes.length})</div>${histHTML}</div>`);
     }
     document.getElementById('detalhesTitulo').textContent = '📌 Detalhes';
     document.getElementById('detalhesCorpo').innerHTML = linhas.join('') + `
@@ -4363,13 +4030,10 @@
         <button onclick="fecharDetalhes(); abrirFormEvento('${e.id}')" style="padding:15px;">✏️ Editar</button>
       </div>
       <button class="btn-excluir-modal" onclick="fecharDetalhes(); removerEvento('${e.id}')">🗑️ Excluir compromisso</button>
-      ${e.serieId ? '<p style="font-size:0.75em; color:var(--text-3); margin-top:10px; text-align:center; font-style:italic;">Este evento faz parte de uma série. Você poderá escolher o que excluir.</p>' : ''}
     `;
     document.getElementById('modalDetalhes').classList.add('visivel');
   }
-  function fecharDetalhes() {
-    document.getElementById('modalDetalhes').classList.remove('visivel');
-  }
+  function fecharDetalhes() { document.getElementById('modalDetalhes').classList.remove('visivel'); }
   async function removerEvento(id) {
     const e = eventos.find(x => x.id === id);
     if (!e) return;
@@ -4383,22 +4047,19 @@
     const proximos = serie.filter(x => x.data >= e.data);
     abrirEscolhaSerie(
       '🗑️ Excluir compromisso recorrente',
-      `Este compromisso faz parte de uma série com <strong>${serie.length} ocorrências</strong>.<br><br>O que você deseja excluir?`,
+      `Série com <strong>${serie.length} ocorrências</strong>. O que excluir?`,
       [
-        { label: `📌 Apenas este evento (${formatarDataCurta(e.data)})`,
-          acao: async () => { try { await colecaoEventos().doc(id).delete(); fecharDetalhes(); } catch (err) { alert('Erro: ' + err.message); } } },
-        { label: `➡️ Este e os próximos (${proximos.length} eventos)`,
-          acao: async () => {
-            if (!confirm(`Excluir ${proximos.length} evento(s) a partir de ${formatarDataCurta(e.data)}?`)) return;
-            try { const batch = db.batch(); proximos.forEach(x => batch.delete(colecaoEventos().doc(x.id))); await batch.commit(); fecharDetalhes(); }
-            catch (err) { alert('Erro: ' + err.message); }
-          } },
-        { label: `🗑️ Todos os eventos (${serie.length})`,
-          acao: async () => {
-            if (!confirm(`Excluir TODOS os ${serie.length} eventos desta série?`)) return;
-            try { const batch = db.batch(); serie.forEach(x => batch.delete(colecaoEventos().doc(x.id))); await batch.commit(); fecharDetalhes(); }
-            catch (err) { alert('Erro: ' + err.message); }
-          } }
+        { label: `📌 Apenas este (${formatarDataCurta(e.data)})`, acao: async () => { try { await colecaoEventos().doc(id).delete(); fecharDetalhes(); } catch (err) { alert('Erro: ' + err.message); } } },
+        { label: `➡️ Este e os próximos (${proximos.length})`, acao: async () => {
+          if (!confirm(`Excluir ${proximos.length} evento(s)?`)) return;
+          try { const batch = db.batch(); proximos.forEach(x => batch.delete(colecaoEventos().doc(x.id))); await batch.commit(); fecharDetalhes(); }
+          catch (err) { alert('Erro: ' + err.message); }
+        } },
+        { label: `🗑️ Todos (${serie.length})`, acao: async () => {
+          if (!confirm(`Excluir TODOS os ${serie.length}?`)) return;
+          try { const batch = db.batch(); serie.forEach(x => batch.delete(colecaoEventos().doc(x.id))); await batch.commit(); fecharDetalhes(); }
+          catch (err) { alert('Erro: ' + err.message); }
+        } }
       ]
     );
   }
@@ -4413,9 +4074,7 @@
       const chave = normalizarChave(g.descricao);
       if (!chave) return;
       if (g.parcelaTotal && g.parcelaAtual && g.parcelaAtual > 1) return;
-      if (!mapa[chave]) {
-        mapa[chave] = { nome: g.descricao.trim(), count: 0, catCount: {}, subCount: {}, pagCount: {}, cartaoCount: {}, valores: [], ultimoUso: g.data };
-      }
+      if (!mapa[chave]) mapa[chave] = { nome: g.descricao.trim(), count: 0, catCount: {}, subCount: {}, pagCount: {}, cartaoCount: {}, valores: [], ultimoUso: g.data };
       const e = mapa[chave];
       e.count++;
       e.catCount[g.categoria] = (e.catCount[g.categoria] || 0) + 1;
@@ -4444,13 +4103,10 @@
     return melhor;
   }
   function matchTexto(termo, texto) {
-    termo = termo.toLowerCase();
-    texto = texto.toLowerCase();
+    termo = termo.toLowerCase(); texto = texto.toLowerCase();
     if (texto.includes(termo)) return 1;
     let i = 0;
-    for (let j = 0; j < texto.length && i < termo.length; j++) {
-      if (texto[j] === termo[i]) i++;
-    }
+    for (let j = 0; j < texto.length && i < termo.length; j++) if (texto[j] === termo[i]) i++;
     if (i === termo.length) return 2;
     return 0;
   }
@@ -4486,15 +4142,7 @@
       if (e.subcategoria) tags.push(e.subcategoria);
       if (e.formaPagamento) tags.push(`${emojiPag(e.formaPagamento)} ${e.formaPagamento}`);
       if (e.cartao) tags.push(e.cartao);
-      return `
-        <div class="sugestao-item" onmousedown="event.preventDefault(); aplicarSugestao(${idx})">
-          <div class="s-info">
-            <div class="s-nome">${destacarTermo(e.nome, termo)}</div>
-            <div class="s-tags">${tags.join(' · ')}</div>
-          </div>
-          <div class="s-count">${e.count}x</div>
-        </div>
-      `;
+      return `<div class="sugestao-item" onmousedown="event.preventDefault(); aplicarSugestao(${idx})"><div class="s-info"><div class="s-nome">${destacarTermo(e.nome, termo)}</div><div class="s-tags">${tags.join(' · ')}</div></div><div class="s-count">${e.count}x</div></div>`;
     }).join('');
     box.classList.add('visivel');
   }
@@ -4502,17 +4150,10 @@
     const t = termo.trim();
     if (!t) return escaparHTML(nome);
     const idx = nome.toLowerCase().indexOf(t.toLowerCase());
-    if (idx >= 0) {
-      return escaparHTML(nome.substring(0, idx)) +
-             '<em>' + escaparHTML(nome.substring(idx, idx + t.length)) + '</em>' +
-             escaparHTML(nome.substring(idx + t.length));
-    }
+    if (idx >= 0) return escaparHTML(nome.substring(0, idx)) + '<em>' + escaparHTML(nome.substring(idx, idx + t.length)) + '</em>' + escaparHTML(nome.substring(idx + t.length));
     return escaparHTML(nome);
   }
-  function fecharSugestoes() {
-    document.getElementById('sugestoesBox').classList.remove('visivel');
-    sugestaoSelecionadaIdx = -1;
-  }
+  function fecharSugestoes() { document.getElementById('sugestoesBox').classList.remove('visivel'); sugestaoSelecionadaIdx = -1; }
   function navegarSugestoes(event) {
     const box = document.getElementById('sugestoesBox');
     if (!box.classList.contains('visivel')) return;
@@ -4530,10 +4171,7 @@
     if (!e) return;
     document.getElementById('descricao').value = e.nome;
     fecharSugestoes();
-    if (e.categoria && acharCategoria(e.categoria)) {
-      document.getElementById('categoria').value = e.categoria;
-      atualizarSubcategorias();
-    }
+    if (e.categoria && acharCategoria(e.categoria)) { document.getElementById('categoria').value = e.categoria; atualizarSubcategorias(); }
     if (e.subcategoria) {
       const sel = document.getElementById('subcategoria');
       const opt = Array.from(sel.options).find(o => o.value === e.subcategoria);
@@ -4558,10 +4196,7 @@
   }
   function renderizarAtalhos() {
     const wrap = document.getElementById('atalhosChips');
-    const todos = Object.values(estabelecimentosCache)
-      .filter(e => e.categoria && e.count >= 2)
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 6);
+    const todos = Object.values(estabelecimentosCache).filter(e => e.categoria && e.count >= 2).sort((a, b) => b.count - a.count).slice(0, 6);
     if (todos.length === 0) { wrap.innerHTML = ''; return; }
     wrap.innerHTML = todos.map(e => {
       const chave = normalizarChave(e.nome).replace(/'/g, "\\'");
@@ -4586,24 +4221,21 @@
     const selCat = document.getElementById('categoria');
     const selFiltro = document.getElementById('filtroCategoria');
     selCat.innerHTML = categorias.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
-    selFiltro.innerHTML = '<option value="">Todas</option>' +
-      categorias.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
+    selFiltro.innerHTML = '<option value="">Todas</option>' + categorias.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
     atualizarSubcategorias();
   }
   function popularFiltroCartoes() {
     const sel = document.getElementById('filtroCartao');
     if (!sel) return;
     const atual = sel.value;
-    sel.innerHTML = '<option value="">Todos</option>' +
-      cartoes.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
+    sel.innerHTML = '<option value="">Todos</option>' + cartoes.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
     if (atual && acharCartao(atual)) sel.value = atual;
   }
   function popularFiltroCartoesLanc() {
     const sel = document.getElementById('filtroLancCartao');
     if (!sel) return;
     const atual = sel.value;
-    sel.innerHTML = '<option value="">Todos</option>' +
-      cartoes.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
+    sel.innerHTML = '<option value="">Todos</option>' + cartoes.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
     if (atual && acharCartao(atual)) sel.value = atual;
   }
   function atualizarFiltroCartao() {
@@ -4632,8 +4264,7 @@
     document.getElementById('filtroPagamento').value = '';
     document.getElementById('filtroCartao').value = '';
     document.getElementById('modoFiltroMes').value = 'compra';
-    const ft = document.getElementById('filtroTipo');
-    if (ft) ft.value = '';
+    const ft = document.getElementById('filtroTipo'); if (ft) ft.value = '';
     atualizarFiltroCartao();
     renderizar();
   }
@@ -4641,14 +4272,12 @@
     document.getElementById('filtroLancUsuario').value = '';
     document.getElementById('filtroLancPagamento').value = '';
     document.getElementById('filtroLancCartao').value = '';
-    const ft = document.getElementById('filtroLancTipo');
-    if (ft) ft.value = '';
+    const ft = document.getElementById('filtroLancTipo'); if (ft) ft.value = '';
     document.getElementById('modoLancMes').value = 'compra';
     modoLancMes = 'compra';
     atualizarFiltroCartaoLanc();
     renderizarLancamentos();
   }
-
   function filtrosAtivos() {
     return {
       tipo: document.getElementById('filtroTipo')?.value || '',
@@ -4700,16 +4329,8 @@
         const ordenado = [...grupo].sort((a, b) => (a.parcelaAtual || 1) - (b.parcelaAtual || 1));
         const primeira = ordenado[0];
         const total = grupo.reduce((s, x) => s + x.valor, 0);
-        resultado.push({
-          ...primeira, _parcelado: true,
-          _valorParcela: primeira.valor,
-          _valorTotal: total,
-          _numParcelas: g.parcelaTotal,
-          _todasParcelas: ordenado
-        });
-      } else {
-        resultado.push(g);
-      }
+        resultado.push({ ...primeira, _parcelado: true, _valorParcela: primeira.valor, _valorTotal: total, _numParcelas: g.parcelaTotal, _todasParcelas: ordenado });
+      } else resultado.push(g);
     });
     return resultado;
   }
@@ -4718,10 +4339,7 @@
     const btnLimpar = document.getElementById('btnLimparFiltros');
     const resumo = document.getElementById('resumoFiltros');
     const badges = ['badgeFiltroAtivo', 'badgeResumo', 'badgePagamento', 'badgeCategoria', 'badgeConsumo'];
-    badges.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.style.display = ativo ? 'inline-block' : 'none';
-    });
+    badges.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = ativo ? 'inline-block' : 'none'; });
     if (ativo) {
       btnLimpar.classList.add('ativo');
       const f = filtrosAtivos();
@@ -4768,7 +4386,6 @@
       resumo.style.display = 'none';
     }
   }
-
   function renderizar() {
     atualizarIndicadoresFiltro();
     const lista = gastosFiltrados();
@@ -4781,10 +4398,7 @@
   }
 
   // ============ LANÇAMENTOS ============
-  function mesAtualISO() {
-    const h = new Date();
-    return `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, '0')}`;
-  }
+  function mesAtualISO() { const h = new Date(); return `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, '0')}`; }
   function mudarMesLancamentos(delta) {
     if (!mesLancamentos) mesLancamentos = mesAtualISO();
     const [ano, mes] = mesLancamentos.split('-').map(Number);
@@ -4816,9 +4430,7 @@
     if (t === 'gasto') lista = lista.filter(g => !ehReembolso(g));
     return lista;
   }
-
   function ordenarExtrato(lista) {
-    // Ordena como extrato: por data (desc) e depois por timestamp de criação (desc, o mais novo por cima)
     return [...lista].sort((a, b) => {
       const da = a.data || '';
       const db = b.data || '';
@@ -4829,7 +4441,6 @@
       return (b.id || '').localeCompare(a.id || '');
     });
   }
-
   function renderizarLancamentos() {
     if (!mesLancamentos) mesLancamentos = mesAtualISO();
     atualizarIndicadoresFiltroLanc();
@@ -4837,43 +4448,30 @@
     const dataRef = new Date(ano, mes - 1, 1);
     const mesNome = dataRef.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
     document.getElementById('lancMesTitulo').textContent = mesNome.charAt(0).toUpperCase() + mesNome.slice(1);
-
     const atual = mesAtualISO();
     const btnProx = document.getElementById('btnProxMes');
     btnProx.disabled = mesLancamentos >= atual;
-
     const doMes = lancamentosDoMesAtual();
     const colapsado = colapsarParcelas(doMes);
     const total = colapsado.reduce((s, g) => s + valorEfetivo(g), 0);
     const totalDiego = colapsado.filter(g => g.usuario === 'Diego').reduce((s, g) => s + valorEfetivo(g), 0);
     const totalEliane = colapsado.filter(g => g.usuario === 'Eliane').reduce((s, g) => s + valorEfetivo(g), 0);
     const totalReembolsos = colapsado.filter(g => ehReembolso(g)).reduce((s, g) => s + valorAbsolutoDe(g), 0);
-
     document.getElementById('lancTotalMes').textContent = formatarMoeda(total);
     document.getElementById('lancTotalDiego').textContent = formatarMoeda(totalDiego);
     document.getElementById('lancTotalEliane').textContent = formatarMoeda(totalEliane);
     document.getElementById('lancTotalReembolsos').textContent = formatarMoeda(totalReembolsos);
     document.getElementById('lancQtd').textContent = colapsado.length;
-
     const tituloResumo = document.getElementById('lancResumoTitulo');
-    tituloResumo.textContent = modoLancMes === 'fatura'
-      ? 'Total da fatura (vencimentos)'
-      : 'Total do mês (compras)';
-
+    tituloResumo.textContent = modoLancMes === 'fatura' ? 'Total da fatura (vencimentos)' : 'Total do mês (compras)';
     const wrap = document.getElementById('lancLista');
     if (colapsado.length === 0) {
       wrap.innerHTML = `<div class="card"><div class="lanc-vazio">Nenhum lançamento em ${mesNome}</div></div>`;
       return;
     }
-
     const porDia = {};
-    colapsado.forEach(g => {
-      const dia = g.data;
-      if (!porDia[dia]) porDia[dia] = [];
-      porDia[dia].push(g);
-    });
+    colapsado.forEach(g => { if (!porDia[g.data]) porDia[g.data] = []; porDia[g.data].push(g); });
     const diasOrdenados = Object.keys(porDia).sort((a, b) => b.localeCompare(a));
-
     wrap.innerHTML = diasOrdenados.map(dia => {
       const itens = ordenarExtrato(porDia[dia]);
       const totalDia = itens.reduce((s, g) => s + valorEfetivo(g), 0);
@@ -4882,30 +4480,22 @@
       const ehHoje = dia === dataHojeISO();
       const deveAbrir = aberto || ehHoje;
       const itensHTML = itens.map(g => renderizarItemGastoLanc(g)).join('');
-      return `
-        <div class="lanc-dia-bloco ${deveAbrir ? 'aberto' : ''}">
-          <button class="lanc-dia-header" onclick="toggleDiaLanc('${chave}')">
-            <div class="info-dia">
-              <span class="titulo-dia">${escaparHTML(formatarDataLonga(dia))}</span>
-              <span class="sub-dia">${itens.length} lançamento${itens.length > 1 ? 's' : ''}</span>
-            </div>
-            <span class="total-dia">${formatarMoeda(totalDia)}</span>
-            <span class="seta-dia">▶</span>
-          </button>
-          <div class="lanc-dia-corpo">${itensHTML}</div>
-        </div>
-      `;
+      return `<div class="lanc-dia-bloco ${deveAbrir ? 'aberto' : ''}">
+        <button class="lanc-dia-header" onclick="toggleDiaLanc('${chave}')">
+          <div class="info-dia"><span class="titulo-dia">${escaparHTML(formatarDataLonga(dia))}</span><span class="sub-dia">${itens.length} lançamento${itens.length > 1 ? 's' : ''}</span></div>
+          <span class="total-dia">${formatarMoeda(totalDia)}</span>
+          <span class="seta-dia">▶</span>
+        </button>
+        <div class="lanc-dia-corpo">${itensHTML}</div>
+      </div>`;
     }).join('');
-
     ativarSwipeGastos();
   }
-
   function toggleDiaLanc(chave) {
     if (diasLancAbertos.has(chave)) diasLancAbertos.delete(chave);
     else diasLancAbertos.add(chave);
     renderizarLancamentos();
   }
-
   function renderizarItemGastoLanc(g) {
     const cor = corDa(g.categoria);
     const reemb = ehReembolso(g);
@@ -4915,9 +4505,7 @@
     if (g._parcelado) {
       parcelaTag = `<span class="tag-parcela">${g._numParcelas}x ${formatarMoeda(g._valorParcela)}</span>`;
       valorHTML = formatarMoeda(g._valorTotal);
-    } else {
-      valorHTML = reemb ? `+${formatarMoeda(g.valor)}` : formatarMoeda(g.valor);
-    }
+    } else valorHTML = reemb ? `+${formatarMoeda(g.valor)}` : formatarMoeda(g.valor);
     const cartaoTag = (g.formaPagamento === 'Cartão Crédito' && g.cartao) ? `<span class="tag-fatura">${escaparHTML(g.cartao)}</span>` : '';
     const obsLinha = g.observacao ? `<div class="detalhe-nome">${escaparHTML(g.observacao)}</div>` : '';
     const veiculoTag = g.veiculo ? `<span class="tag-sub">🚗 ${escaparHTML(g.veiculo)}</span>` : '';
@@ -4930,7 +4518,6 @@
       const og = gastos.find(x => x.id === g.origemId);
       if (og) origemTag = `<span class="tag-origem">🔗 Ref: ${escaparHTML(og.descricao).substring(0, 20)}</span>`;
     }
-    // Se este é um gasto que tem reembolso vinculado, mostrar tag também
     let temReembolsoTag = '';
     if (!reemb) {
       const reembs = gastos.filter(x => ehReembolso(x) && x.origemId === g.id);
@@ -4939,49 +4526,24 @@
         temReembolsoTag = `<span class="tag-reembolso">💵 Reembolsado ${formatarMoeda(tot)}</span>`;
       }
     }
-    return `
-      <div class="gasto-swipe-container">
-        <div class="gasto-swipe-actions acao-excluir">
-          <button class="gasto-swipe-btn excluir" onclick="event.stopPropagation(); removerGasto('${g.id}')">
-            <span class="icone-swipe">🗑️</span> Excluir
-          </button>
-        </div>
-        <div class="gasto-swipe-actions acao-editar">
-          <button class="gasto-swipe-btn editar" onclick="event.stopPropagation(); abrirEditarGasto('${g.id}')">
-            <span class="icone-swipe">✏️</span> Editar
-          </button>
-        </div>
-        <div class="gasto-swipe-item ${reemb ? 'reembolso' : ''}" data-id="${g.id}" onclick="abrirDetalhesGasto('${g.id}')">
-          <div class="info-principal">
-            <div class="desc-linha">
-              <span class="local-nome">${escaparHTML(g.descricao)}</span>
-              ${obsLinha}
-            </div>
-            <div class="meta-linha">
-              <span>${formatarData(g.data)}</span>
-              <span class="sep">·</span>
-              <span>${escaparHTML(g.usuario)}</span>
-            </div>
-            <div class="tags-linha">
-              <span class="tag" style="background:${cor};">${g.categoria}</span>
-              ${subTag}
-              ${cartaoTag}
-              ${veiculoTag}
-              ${kmTag}
-              ${litrosTag}
-              ${cheioTag}
-              ${reembolsoTag}
-              ${origemTag}
-              ${temReembolsoTag}
-            </div>
+    return `<div class="gasto-swipe-container">
+      <div class="gasto-swipe-actions acao-excluir"><button class="gasto-swipe-btn excluir" onclick="event.stopPropagation(); removerGasto('${g.id}')"><span class="icone-swipe">🗑️</span> Excluir</button></div>
+      <div class="gasto-swipe-actions acao-editar"><button class="gasto-swipe-btn editar" onclick="event.stopPropagation(); abrirEditarGasto('${g.id}')"><span class="icone-swipe">✏️</span> Editar</button></div>
+      <div class="gasto-swipe-item ${reemb ? 'reembolso' : ''}" data-id="${g.id}" onclick="abrirDetalhesGasto('${g.id}')">
+        <div class="info-principal">
+          <div class="desc-linha"><span class="local-nome">${escaparHTML(g.descricao)}</span>${obsLinha}</div>
+          <div class="meta-linha"><span>${formatarData(g.data)}</span><span class="sep">·</span><span>${escaparHTML(g.usuario)}</span></div>
+          <div class="tags-linha">
+            <span class="tag" style="background:${cor};">${g.categoria}</span>
+            ${subTag}${cartaoTag}${veiculoTag}${kmTag}${litrosTag}${cheioTag}${reembolsoTag}${origemTag}${temReembolsoTag}
           </div>
-          <div class="valor-linha">
-            <div class="valor-num ${reemb ? 'reembolso' : ''}">${valorHTML}</div>
-            ${g._parcelado ? `<div style="font-size:0.7em; color:var(--text-muted); font-weight:600;">${parcelaTag.replace(/<[^>]+>/g, '')}</div>` : ''}
-          </div>
+        </div>
+        <div class="valor-linha">
+          <div class="valor-num ${reemb ? 'reembolso' : ''}">${valorHTML}</div>
+          ${g._parcelado ? `<div style="font-size:0.7em; color:var(--text-muted); font-weight:600;">${parcelaTag.replace(/<[^>]+>/g, '')}</div>` : ''}
         </div>
       </div>
-    `;
+    </div>`;
   }
 
   // ============ ÚLTIMO LANÇAMENTO ============
@@ -4995,52 +4557,35 @@
     const wrap = document.getElementById('ultimosLancamentos');
     if (!wrap) return;
     const ordenados = [...gastos].sort((a, b) => {
-      const ta = timestampDe(a);
-      const tb = timestampDe(b);
+      const ta = timestampDe(a), tb = timestampDe(b);
       if (tb !== ta) return tb - ta;
       return (b.data || '').localeCompare(a.data || '');
     });
     const ultimos = colapsarParcelas(ordenados).slice(0, 1);
-    if (ultimos.length === 0) {
-      wrap.innerHTML = '<div class="vazio">Nenhum gasto lançado ainda</div>';
-      return;
-    }
+    if (ultimos.length === 0) { wrap.innerHTML = '<div class="vazio">Nenhum gasto lançado ainda</div>'; return; }
     wrap.innerHTML = ultimos.map(g => {
       const cor = corDa(g.categoria);
       const reemb = ehReembolso(g);
       const cartaoInfo = g.cartao ? ` · ${g.cartao}` : '';
       const faturaInfo = (g.formaPagamento === 'Cartão Crédito' && g.mesFatura) ? ` · Fatura ${nomeMes(g.mesFatura)}` : '';
       let valorHTML, parcelaTag = '';
-      if (g._parcelado) {
-        parcelaTag = `<span class="tag-parcela">${g._numParcelas}x ${formatarMoeda(g._valorParcela)}</span>`;
-        valorHTML = formatarMoeda(g._valorTotal);
-      } else {
-        valorHTML = reemb ? `+${formatarMoeda(g.valor)}` : formatarMoeda(g.valor);
-      }
+      if (g._parcelado) { parcelaTag = `<span class="tag-parcela">${g._numParcelas}x ${formatarMoeda(g._valorParcela)}</span>`; valorHTML = formatarMoeda(g._valorTotal); }
+      else valorHTML = reemb ? `+${formatarMoeda(g.valor)}` : formatarMoeda(g.valor);
       const obsLinha = g.observacao ? `<div style="font-size:0.75em; color:var(--text-3); margin-top:3px; font-style:italic;">${escaparHTML(g.observacao)}</div>` : '';
       const veiculoInfo = g.veiculo ? ` · 🚗 ${g.veiculo}` : '';
       const kmInfo = g.km ? ` · ${Number(g.km).toLocaleString('pt-BR')} km` : '';
       const litrosInfo = g.litros ? ` · ⛽ ${Number(g.litros).toFixed(1)} L` : '';
       const reembolsoTag = reemb ? ` <span class="tag-reembolso">💵 REEMBOLSO</span>` : '';
-      return `
-        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0;">
-          <div style="flex:1; min-width:0;">
-            <div style="font-weight:700; font-size:0.95em; letter-spacing:-0.01em;">
-              ${escaparHTML(g.descricao)} ${parcelaTag} ${reembolsoTag}
-            </div>
-            ${obsLinha}
-            <div style="font-size:0.76em; color:var(--text-3); margin-top:4px;">
-              ${formatarData(g.data)} · ${g.usuario}${cartaoInfo}${faturaInfo}${veiculoInfo}${kmInfo}${litrosInfo} · <span style="color:${cor}; font-weight:600;">${g.categoria}</span>
-            </div>
-          </div>
-          <div style="font-weight:700; color:${reemb ? 'var(--success)' : 'var(--text)'}; font-size:1em; margin-left:10px; white-space:nowrap; letter-spacing:-0.01em;">
-            ${valorHTML}
-          </div>
+      return `<div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0;">
+        <div style="flex:1; min-width:0;">
+          <div style="font-weight:700; font-size:0.95em; letter-spacing:-0.01em;">${escaparHTML(g.descricao)} ${parcelaTag} ${reembolsoTag}</div>
+          ${obsLinha}
+          <div style="font-size:0.76em; color:var(--text-3); margin-top:4px;">${formatarData(g.data)} · ${g.usuario}${cartaoInfo}${faturaInfo}${veiculoInfo}${kmInfo}${litrosInfo} · <span style="color:${cor}; font-weight:600;">${g.categoria}</span></div>
         </div>
-      `;
+        <div style="font-weight:700; color:${reemb ? 'var(--success)' : 'var(--text)'}; font-size:1em; margin-left:10px; white-space:nowrap; letter-spacing:-0.01em;">${valorHTML}</div>
+      </div>`;
     }).join('');
   }
-
   function renderizarResumo(lista) {
     const mes = document.getElementById('mesReferencia').value;
     if (!mes) return;
@@ -5071,22 +4616,12 @@
       porPag[p] = (porPag[p] || 0) + valorEfetivo(g);
     });
     const wrap = document.getElementById('porPagamento');
-    if (Object.keys(porPag).length === 0) {
-      wrap.innerHTML = '<div class="vazio">Nenhum gasto registrado</div>';
-      return;
-    }
+    if (Object.keys(porPag).length === 0) { wrap.innerHTML = '<div class="vazio">Nenhum gasto registrado</div>'; return; }
     wrap.innerHTML = FORMAS_PAGAMENTO.map(f => {
       const v = porPag[f.valor] || 0;
       if (v === 0) return '';
       const pct = total > 0 ? Math.abs(((v / total) * 100)).toFixed(0) : 0;
-      return `
-        <div class="linha-pag">
-          <span class="emoji-pag">${f.emoji}</span>
-          <span class="nome-pag">${f.valor}</span>
-          <span style="font-size:0.72em; color:var(--text-muted); margin-right:8px; font-weight:700;">${pct}%</span>
-          <span class="valor-pag" style="color:${v < 0 ? 'var(--success)' : 'var(--text)'};">${formatarMoeda(v)}</span>
-        </div>
-      `;
+      return `<div class="linha-pag"><span class="emoji-pag">${f.emoji}</span><span class="nome-pag">${f.valor}</span><span style="font-size:0.72em; color:var(--text-muted); margin-right:8px; font-weight:700;">${pct}%</span><span class="valor-pag" style="color:${v < 0 ? 'var(--success)' : 'var(--text)'};">${formatarMoeda(v)}</span></div>`;
     }).join('') || '<div class="vazio">Nenhum gasto registrado</div>';
   }
   function renderizarGrafico(lista) {
@@ -5100,10 +4635,7 @@
       porCat[g.categoria].subs[sub] = (porCat[g.categoria].subs[sub] || 0) + valorEfetivoG;
     });
     const grafico = document.getElementById('graficoCategorias');
-    if (Object.keys(porCat).length === 0) {
-      grafico.innerHTML = '<div class="vazio">Nenhum gasto registrado</div>';
-      return;
-    }
+    if (Object.keys(porCat).length === 0) { grafico.innerHTML = '<div class="vazio">Nenhum gasto registrado</div>'; return; }
     const max = Math.max(...Object.values(porCat).map(c => Math.abs(c.total)));
     const catsOrdenadas = Object.entries(porCat).sort((a, b) => Math.abs(b[1].total) - Math.abs(a[1].total));
     grafico.innerHTML = catsOrdenadas.map(([cat, info], idx) => {
@@ -5114,25 +4646,17 @@
       const maxSub = Math.max(...Object.values(info.subs).map(v => Math.abs(v)));
       const subsHTML = subsOrdenadas.map(([sub, val]) => {
         const pctSub = (Math.abs(val) / maxSub) * 100;
-        return `
-          <div class="linha-sub">
-            <div class="nome-sub">${sub}</div>
-            <div class="barra-bg-sub"><div class="barra-fill-sub" style="width:${pctSub}%; background:${cor}; opacity:0.7;"></div></div>
-            <div class="valor-sub" style="color:${val < 0 ? 'var(--success)' : 'var(--text-2)'};">${formatarMoeda(val)}</div>
-          </div>
-        `;
+        return `<div class="linha-sub"><div class="nome-sub">${sub}</div><div class="barra-bg-sub"><div class="barra-fill-sub" style="width:${pctSub}%; background:${cor}; opacity:0.7;"></div></div><div class="valor-sub" style="color:${val < 0 ? 'var(--success)' : 'var(--text-2)'};">${formatarMoeda(val)}</div></div>`;
       }).join('');
-      return `
-        <div class="grupo-categoria">
-          <div class="linha-cat">
-            <div class="nome" style="color:${cor};">${cat}</div>
-            <div class="barra-bg"><div class="barra-fill" style="width:${pct}%; background:${cor};">${pctTotal}%</div></div>
-            <div class="valor" style="color:${info.total < 0 ? 'var(--success)' : 'var(--text)'};">${formatarMoeda(info.total)}</div>
-          </div>
-          <button class="toggle-sub" onclick="toggleSubs(${idx})">▸ Subcategorias (${subsOrdenadas.length})</button>
-          <div class="subs" id="subs-${idx}">${subsHTML}</div>
+      return `<div class="grupo-categoria">
+        <div class="linha-cat">
+          <div class="nome" style="color:${cor};">${cat}</div>
+          <div class="barra-bg"><div class="barra-fill" style="width:${pct}%; background:${cor};">${pctTotal}%</div></div>
+          <div class="valor" style="color:${info.total < 0 ? 'var(--success)' : 'var(--text)'};">${formatarMoeda(info.total)}</div>
         </div>
-      `;
+        <button class="toggle-sub" onclick="toggleSubs(${idx})">▸ Subcategorias (${subsOrdenadas.length})</button>
+        <div class="subs" id="subs-${idx}">${subsHTML}</div>
+      </div>`;
     }).join('');
   }
   function toggleSubs(idx) {
@@ -5140,9 +4664,7 @@
     if (!el) return;
     el.classList.toggle('aberto');
     const btn = el.previousElementSibling;
-    btn.textContent = el.classList.contains('aberto')
-      ? btn.textContent.replace('▸', '▾')
-      : btn.textContent.replace('▾', '▸');
+    btn.textContent = el.classList.contains('aberto') ? btn.textContent.replace('▸', '▾') : btn.textContent.replace('▾', '▸');
   }
 
   // ============ SWIPE ============
@@ -5161,11 +4683,7 @@
   }
   function onSwipeStart(e) {
     const touch = e.touches[0];
-    swipeState = {
-      item: e.currentTarget,
-      startX: touch.clientX, startY: touch.clientY,
-      diffX: 0, diffY: 0, lockedDirection: null
-    };
+    swipeState = { item: e.currentTarget, startX: touch.clientX, startY: touch.clientY, diffX: 0, diffY: 0, lockedDirection: null };
   }
   function onSwipeMove(e) {
     if (!swipeState) return;
@@ -5199,9 +4717,7 @@
   document.addEventListener('click', (e) => {
     if (e.target.closest('.gasto-swipe-item')) return;
     document.querySelectorAll('.gasto-swipe-item').forEach(item => {
-      if (item.style.transform && item.style.transform !== 'translateX(0)' && item.style.transform !== '') {
-        item.style.transform = 'translateX(0)';
-      }
+      if (item.style.transform && item.style.transform !== 'translateX(0)' && item.style.transform !== '') item.style.transform = 'translateX(0)';
     });
   });
   function onSwipeStartMouse(e) {
@@ -5243,84 +4759,38 @@
     const cor = corDa(g.categoria);
     const pag = FORMAS_PAGAMENTO.find(f => f.valor === g.formaPagamento);
     const reemb = ehReembolso(g);
-    const todasParcelas = (g.grupoId && g.parcelaTotal && g.parcelaTotal > 1)
-      ? gastos.filter(x => x.grupoId === g.grupoId).sort((a, b) => (a.parcelaAtual || 1) - (b.parcelaAtual || 1))
-      : [];
+    const todasParcelas = (g.grupoId && g.parcelaTotal && g.parcelaTotal > 1) ? gastos.filter(x => x.grupoId === g.grupoId).sort((a, b) => (a.parcelaAtual || 1) - (b.parcelaAtual || 1)) : [];
     const ehParcelado = todasParcelas.length > 1;
     const valorTotal = ehParcelado ? todasParcelas.reduce((s, x) => s + x.valor, 0) : g.valor;
     const linhas = [];
-    if (reemb) {
-      linhas.push(`<div class="aviso-reembolso-form">
-        💵 <strong>Este é um reembolso</strong><br>
-        O valor é <strong>abatido</strong> do total do mês.
-      </div>`);
-    }
-    linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Local</div>
-      <div style="font-size:1.15em; font-weight:700; margin-bottom:18px; letter-spacing:-0.01em;">${escaparHTML(g.descricao)}</div>`);
-    if (g.observacao) {
-      linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Detalhes</div>
-        <div style="font-size:1em; margin-bottom:18px; color:var(--text-2);">${escaparHTML(g.observacao)}</div>`);
-    }
+    if (reemb) linhas.push(`<div class="aviso-reembolso-form">💵 <strong>Este é um reembolso</strong><br>O valor é <strong>abatido</strong> do total do mês.</div>`);
+    linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Local</div><div style="font-size:1.15em; font-weight:700; margin-bottom:18px; letter-spacing:-0.01em;">${escaparHTML(g.descricao)}</div>`);
+    if (g.observacao) linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Detalhes</div><div style="font-size:1em; margin-bottom:18px; color:var(--text-2);">${escaparHTML(g.observacao)}</div>`);
     if (ehParcelado) {
-      linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Valor total da compra</div>
-        <div style="font-size:1.5em; font-weight:800; color:var(--text); margin-bottom:4px; letter-spacing:-0.02em;">${formatarMoeda(valorTotal)}</div>
-        <div style="font-size:0.85em; color:var(--text-3); margin-bottom:18px;">${g.parcelaTotal}x de aproximadamente ${formatarMoeda(valorTotal / g.parcelaTotal)}</div>`);
+      linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Valor total da compra</div><div style="font-size:1.5em; font-weight:800; color:var(--text); margin-bottom:4px; letter-spacing:-0.02em;">${formatarMoeda(valorTotal)}</div><div style="font-size:0.85em; color:var(--text-3); margin-bottom:18px;">${g.parcelaTotal}x de aproximadamente ${formatarMoeda(valorTotal / g.parcelaTotal)}</div>`);
     } else {
-      linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Valor</div>
-        <div style="font-size:1.6em; font-weight:800; color:${reemb ? 'var(--success)' : 'var(--text)'}; margin-bottom:18px; letter-spacing:-0.02em;">${reemb ? '+' : ''}${formatarMoeda(g.valor)}</div>`);
+      linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Valor</div><div style="font-size:1.6em; font-weight:800; color:${reemb ? 'var(--success)' : 'var(--text)'}; margin-bottom:18px; letter-spacing:-0.02em;">${reemb ? '+' : ''}${formatarMoeda(g.valor)}</div>`);
     }
-    linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Quando</div>
-      <div style="font-size:1em; margin-bottom:18px;">📅 ${formatarData(g.data)}/${g.data.substring(0,4)} · ${escaparHTML(g.usuario)}</div>`);
-    linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Categoria</div>
-      <div style="margin-bottom:18px;"><span class="tag" style="background:${cor};">${g.categoria}</span>${g.subcategoria ? `<span class="tag-sub">${escaparHTML(g.subcategoria)}</span>` : ''}</div>`);
-    linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Forma de pagamento</div>
-      <div style="font-size:1em; margin-bottom:18px;">${pag ? `${pag.emoji} ${pag.valor}` : '💵 Dinheiro/PIX'}${g.cartao ? ` · <strong>${escaparHTML(g.cartao)}</strong>` : ''}</div>`);
-    if (g.formaPagamento === 'Cartão Crédito' && g.mesFatura) {
-      linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Vencimento da fatura</div>
-        <div style="font-size:1em; margin-bottom:18px;">📅 ${nomeMesLongo(g.mesFatura)}</div>`);
-    }
-    if (g.veiculo) {
-      linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Veículo</div>
-        <div style="font-size:1em; margin-bottom:18px;">🚗 ${escaparHTML(g.veiculo)}</div>`);
-    }
-    if (g.km) {
-      linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">KM no abastecimento</div>
-        <div style="font-size:1em; margin-bottom:18px;">📍 ${Number(g.km).toLocaleString('pt-BR')} km</div>`);
-    }
-    if (g.litros) {
-      linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Litros abastecidos</div>
-        <div style="font-size:1em; margin-bottom:18px;">⛽ ${Number(g.litros).toFixed(2)} L${g.valor ? `<span style="color:var(--text-3); font-size:0.9em;"> · R$ ${(Number(g.valor) / Number(g.litros)).toFixed(2)}/L</span>` : ''}</div>`);
-    }
-    if (g.tanqueCheio) {
-      linhas.push(`<div style="background:var(--success-soft); border-left:3px solid var(--success); padding:10px 12px; border-radius:6px; font-size:0.82em; color:#065f46; margin-bottom:18px;">
-        ✓ <strong>Tanque completo</strong> — referência para cálculo de consumo.
-      </div>`);
-    }
-    // Vínculo de origem
+    linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Quando</div><div style="font-size:1em; margin-bottom:18px;">📅 ${formatarData(g.data)}/${g.data.substring(0,4)} · ${escaparHTML(g.usuario)}</div>`);
+    linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Categoria</div><div style="margin-bottom:18px;"><span class="tag" style="background:${cor};">${g.categoria}</span>${g.subcategoria ? `<span class="tag-sub">${escaparHTML(g.subcategoria)}</span>` : ''}</div>`);
+    linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Forma de pagamento</div><div style="font-size:1em; margin-bottom:18px;">${pag ? `${pag.emoji} ${pag.valor}` : '💵 Dinheiro/PIX'}${g.cartao ? ` · <strong>${escaparHTML(g.cartao)}</strong>` : ''}</div>`);
+    if (g.formaPagamento === 'Cartão Crédito' && g.mesFatura) linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Vencimento da fatura</div><div style="font-size:1em; margin-bottom:18px;">📅 ${nomeMesLongo(g.mesFatura)}</div>`);
+    if (g.veiculo) linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Veículo</div><div style="font-size:1em; margin-bottom:18px;">🚗 ${escaparHTML(g.veiculo)}</div>`);
+    if (g.km) linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">KM</div><div style="font-size:1em; margin-bottom:18px;">📍 ${Number(g.km).toLocaleString('pt-BR')} km</div>`);
+    if (g.litros) linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Litros</div><div style="font-size:1em; margin-bottom:18px;">⛽ ${Number(g.litros).toFixed(2)} L${g.valor ? `<span style="color:var(--text-3); font-size:0.9em;"> · R$ ${(Number(g.valor) / Number(g.litros)).toFixed(2)}/L</span>` : ''}</div>`);
+    if (g.tanqueCheio) linhas.push(`<div style="background:var(--success-soft); border-left:3px solid var(--success); padding:10px 12px; border-radius:6px; font-size:0.82em; color:#065f46; margin-bottom:18px;">✓ <strong>Tanque completo</strong></div>`);
     if (reemb && g.origemId) {
       const og = gastos.find(x => x.id === g.origemId);
-      if (og) {
-        linhas.push(`<div class="vinculo-origem">
-          🔗 <strong>Reembolso vinculado ao gasto:</strong><br>
-          ${escaparHTML(og.descricao)}<br>
-          <span style="font-size:0.9em;">${formatarData(og.data)} · ${formatarMoeda(og.valor)} · ${escaparHTML(og.usuario)}</span>
-        </div>`);
-      }
+      if (og) linhas.push(`<div class="vinculo-origem">🔗 <strong>Reembolso vinculado ao gasto:</strong><br>${escaparHTML(og.descricao)}<br><span style="font-size:0.9em;">${formatarData(og.data)} · ${formatarMoeda(og.valor)} · ${escaparHTML(og.usuario)}</span></div>`);
     }
-    // Se este gasto tem reembolsos vinculados
     if (!reemb) {
       const reembs = gastos.filter(x => ehReembolso(x) && x.origemId === g.id);
       if (reembs.length > 0) {
         const tot = reembs.reduce((s, x) => s + Number(x.valor || 0), 0);
-        linhas.push(`<div class="vinculo-origem">
-          💵 <strong>Este gasto foi reembolsado</strong><br>
-          Total devolvido: <strong>${formatarMoeda(tot)}</strong> (${reembs.length} reembolso${reembs.length > 1 ? 's' : ''})
-        </div>`);
+        linhas.push(`<div class="vinculo-origem">💵 <strong>Este gasto foi reembolsado</strong><br>Total devolvido: <strong>${formatarMoeda(tot)}</strong> (${reembs.length} reembolso${reembs.length > 1 ? 's' : ''})</div>`);
       }
     }
-    document.getElementById('detalhesGastoTitulo').textContent = reemb
-      ? '💵 Detalhes do reembolso'
-      : (ehParcelado ? '📌 Detalhes (compra parcelada)' : '📌 Detalhes do lançamento');
+    document.getElementById('detalhesGastoTitulo').textContent = reemb ? '💵 Detalhes do reembolso' : (ehParcelado ? '📌 Detalhes (compra parcelada)' : '📌 Detalhes do lançamento');
     document.getElementById('detalhesGastoCorpo').innerHTML = linhas.join('') + `
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:22px;">
         <button onclick="fecharDetalhesGasto(); abrirEditarGasto('${g.id}')" style="padding:15px; background:var(--warning);">✏️ Editar</button>
@@ -5330,9 +4800,7 @@
     `;
     document.getElementById('modalDetalhesGasto').classList.add('visivel');
   }
-  function fecharDetalhesGasto() {
-    document.getElementById('modalDetalhesGasto').classList.remove('visivel');
-  }
+  function fecharDetalhesGasto() { document.getElementById('modalDetalhesGasto').classList.remove('visivel'); }
 
   function abrirEditarGasto(id) {
     const g = gastos.find(x => x.id === id);
@@ -5350,12 +4818,10 @@
       const todas = gastos.filter(x => x.grupoId === g.grupoId);
       const totalAtual = todas.reduce((s, x) => s + x.valor, 0);
       avisoEl.style.display = 'block';
-      document.getElementById('avisoEdicaoParcelaTexto').innerHTML =
-        `Esta é a parcela <strong>${g.parcelaAtual}/${g.parcelaTotal}</strong>. As alterações serão aplicadas a <strong>todas as ${g.parcelaTotal} parcelas</strong>.<br><br>
-         Valor total da compra hoje: <strong>${formatarMoeda(totalAtual)}</strong>`;
+      document.getElementById('avisoEdicaoParcelaTexto').innerHTML = `Esta é a parcela <strong>${g.parcelaAtual}/${g.parcelaTotal}</strong>. Alterações aplicadas a <strong>todas</strong>.<br>Total: <strong>${formatarMoeda(totalAtual)}</strong>`;
       document.getElementById('editGastoValor').value = totalAtual.toFixed(2);
       dicaEl.style.display = 'block';
-      dicaEl.textContent = 'Informe o valor TOTAL da compra (não o valor da parcela).';
+      dicaEl.textContent = 'Informe o valor TOTAL da compra.';
     } else {
       avisoEl.style.display = 'none';
       document.getElementById('editGastoValor').value = g.valor;
@@ -5368,14 +4834,12 @@
     document.getElementById('editGastoData').value = g.data;
     document.getElementById('editGastoObservacao').value = g.observacao || '';
     const selCat = document.getElementById('editGastoCategoria');
-    selCat.innerHTML = categorias.map(c =>
-      `<option value="${c.nome}" ${c.nome === g.categoria ? 'selected' : ''}>${c.nome}</option>`
-    ).join('');
+    selCat.innerHTML = categorias.map(c => `<option value="${c.nome}" ${c.nome === g.categoria ? 'selected' : ''}>${c.nome}</option>`).join('');
     atualizarSubcategoriasEdicao();
     const selSub = document.getElementById('editGastoSubcategoria');
     selSub.value = g.subcategoria || '';
     const selCartao = document.getElementById('editGastoCartao');
-    if (cartoes.length === 0) selCartao.innerHTML = '<option value="">⚠️ Cadastre um cartão em Ajustes</option>';
+    if (cartoes.length === 0) selCartao.innerHTML = '<option value="">⚠️ Cadastre um cartão</option>';
     else {
       const cartaoAtual = String(g.cartao || cartoes[0].nome);
       selCartao.innerHTML = cartoes.map(c => {
@@ -5385,11 +4849,9 @@
     }
     document.getElementById('editGastoParcelas').value = String(g.parcelaTotal || 1);
     const selVeiculoEdit = document.getElementById('editGastoVeiculo');
-    if (veiculos.length === 0) selVeiculoEdit.innerHTML = '<option value="">⚠️ Cadastre um veículo em Ajustes</option>';
+    if (veiculos.length === 0) selVeiculoEdit.innerHTML = '<option value="">⚠️ Cadastre um veículo</option>';
     else {
-      selVeiculoEdit.innerHTML = veiculos.map(v =>
-        `<option value="${v.nome}" ${v.nome === g.veiculo ? 'selected' : ''}>${v.nome}${v.placa ? ' - ' + v.placa : ''}</option>`
-      ).join('');
+      selVeiculoEdit.innerHTML = veiculos.map(v => `<option value="${v.nome}" ${v.nome === g.veiculo ? 'selected' : ''}>${v.nome}${v.placa ? ' - ' + v.placa : ''}</option>`).join('');
     }
     document.getElementById('editGastoKm').value = g.km || '';
     document.getElementById('editGastoLitros').value = g.litros || '';
@@ -5404,7 +4866,6 @@
     document.getElementById('modalEditarGasto').classList.add('visivel');
     setTimeout(() => document.getElementById('editGastoValor').focus(), 250);
   }
-
   function verificarCamposVeiculoEdicao() {
     const cat = document.getElementById('editGastoCategoria').value;
     const sub = document.getElementById('editGastoSubcategoria').value;
@@ -5432,7 +4893,7 @@
     const dataCompra = String(document.getElementById('editGastoData').value || '');
     const cartaoNome = String(document.getElementById('editGastoCartao').value || '');
     if (valor <= 0 || !dataCompra) { preview.innerHTML = '<em>Preencha valor e data.</em>'; return; }
-    if (!cartaoNome || !acharCartao(cartaoNome)) { preview.innerHTML = '<em>⚠️ Selecione um cartão cadastrado.</em>'; return; }
+    if (!cartaoNome || !acharCartao(cartaoNome)) { preview.innerHTML = '<em>⚠️ Selecione um cartão.</em>'; return; }
     const mesInicio = calcularMesFatura(dataCompra, cartaoNome);
     const [anoBase, mesBase] = mesInicio.split('-').map(Number);
     const valorParcela = valor / n;
@@ -5442,14 +4903,8 @@
       meses.push(m.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }).replace('.', ''));
     }
     const c = acharCartao(cartaoNome);
-    if (n === 1) {
-      preview.innerHTML = `<strong>${formatarMoeda(valor)}</strong> à vista · fatura vence em <strong>${meses[0]}</strong><br>
-        <span style="font-size:0.9em;">💳 ${cartaoNome} · fecha dia ${c.fechamento} · vence dia ${c.vencimento}</span>`;
-    } else {
-      preview.innerHTML = `<strong>${n}x de ${formatarMoeda(valorParcela)}</strong> · Total ${formatarMoeda(valor)}<br>
-        <span style="font-size:0.9em;">Faturas: ${meses.join(' • ')}</span><br>
-        <span style="font-size:0.9em;">💳 ${cartaoNome} · fecha dia ${c.fechamento} · vence dia ${c.vencimento}</span>`;
-    }
+    if (n === 1) preview.innerHTML = `<strong>${formatarMoeda(valor)}</strong> à vista · fatura vence em <strong>${meses[0]}</strong><br><span style="font-size:0.9em;">💳 ${cartaoNome} · fecha dia ${c.fechamento} · vence dia ${c.vencimento}</span>`;
+    else preview.innerHTML = `<strong>${n}x de ${formatarMoeda(valorParcela)}</strong> · Total ${formatarMoeda(valor)}<br><span style="font-size:0.9em;">Faturas: ${meses.join(' • ')}</span><br><span style="font-size:0.9em;">💳 ${cartaoNome} · fecha dia ${c.fechamento} · vence dia ${c.vencimento}</span>`;
   }
   function atualizarSubcategoriasEdicao() {
     const cat = document.getElementById('editGastoCategoria').value;
@@ -5459,9 +4914,7 @@
     sel.innerHTML = subs.map(s => `<option value="${s}">${s}</option>`).join('');
     verificarCamposVeiculoEdicao();
   }
-  function fecharEditarGasto() {
-    document.getElementById('modalEditarGasto').classList.remove('visivel');
-  }
+  function fecharEditarGasto() { document.getElementById('modalEditarGasto').classList.remove('visivel'); }
   function dividirEmParcelas(valorTotal, n) {
     const valorParcela = Number((valorTotal / n).toFixed(2));
     const parcelas = [];
@@ -5498,33 +4951,38 @@
     if (!valor || valor <= 0) { alert('Informe um valor válido.'); return; }
     if (!descricao) { alert('Informe um local/descrição.'); return; }
     if (!data) { alert('Informe uma data.'); return; }
-    if (!ehReembEdit && formaPagamento === 'Cartão Crédito' && (!cartaoNovo || !acharCartao(cartaoNovo))) {
-      alert('Selecione um cartão cadastrado.'); return;
-    }
-    if (ehCombustivel && (!veiculo || !km || !litros)) {
-      alert('Para abastecimento, informe o veículo, KM e litros.'); return;
-    }
+    if (!ehReembEdit && formaPagamento === 'Cartão Crédito' && (!cartaoNovo || !acharCartao(cartaoNovo))) { alert('Selecione um cartão.'); return; }
+    if (ehCombustivel && (!veiculo || !km || !litros)) { alert('Para abastecimento, informe veículo, KM e litros.'); return; }
 
     try {
-      const dadosVeiculo = ehCombustivel
-        ? { veiculo, km, litros, tanqueCheio }
-        : { veiculo: null, km: null, litros: null, tanqueCheio: null };
-      const dadosReembolso = {
-        ehReembolso: ehReembEdit ? true : null,
-        tipoLancamento: ehReembEdit ? 'reembolso' : null,
-        origemId: ehReembEdit && origemId ? origemId : null
-      };
+      const dadosVeiculo = ehCombustivel ? { veiculo, km, litros, tanqueCheio } : { veiculo: null, km: null, litros: null, tanqueCheio: null };
+      const dadosReembolso = { ehReembolso: ehReembEdit ? true : null, tipoLancamento: ehReembEdit ? 'reembolso' : null, origemId: ehReembEdit && origemId ? origemId : null };
 
-      // Se é reembolso, remove grupo de parcelas e força 1 parcela
+      // Se for reembolso, remove parcelamento e força 1 lançamento
       if (ehReembEdit) {
+        // Se vinculado a um gasto no crédito, herda cartão e mês da fatura
+        let cartaoFinal = formaPagamento === 'Cartão Crédito' ? cartaoNovo : null;
+        let formaPagFinal = formaPagamento;
+        let mesFaturaFinal = data.substring(0, 7);
+        if (origemId) {
+          const origem = gastos.find(x => x.id === origemId);
+          if (origem && origem.formaPagamento === 'Cartão Crédito' && origem.cartao) {
+            cartaoFinal = origem.cartao;
+            formaPagFinal = 'Cartão Crédito';
+            mesFaturaFinal = calcularMesFatura(data, cartaoFinal);
+          }
+        } else if (formaPagamento === 'Cartão Crédito' && cartaoNovo && acharCartao(cartaoNovo)) {
+          mesFaturaFinal = calcularMesFatura(data, cartaoNovo);
+        }
+
         if (grupoId) {
           const parcelas = gastos.filter(x => x.grupoId === grupoId);
           const batch = db.batch();
           parcelas.forEach(p => batch.delete(colecaoGastos().doc(p.id)));
           const novoRef = colecaoGastos().doc(id || undefined);
           batch.set(novoRef, {
-            usuario, data, mesFatura: data.substring(0, 7), descricao, categoria, subcategoria, observacao,
-            formaPagamento, cartao: formaPagamento === 'Cartão Crédito' ? cartaoNovo : null, valor,
+            usuario, data, mesFatura: mesFaturaFinal, descricao, categoria, subcategoria, observacao,
+            formaPagamento: formaPagFinal, cartao: cartaoFinal, valor,
             parcelaAtual: null, parcelaTotal: null, valorTotalCompra: null, grupoId: null,
             ...dadosVeiculo, ...dadosReembolso,
             criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
@@ -5535,9 +4993,9 @@
           return;
         }
         const update = {
-          valor, descricao, categoria, subcategoria, usuario, formaPagamento, data, observacao,
-          mesFatura: data.substring(0, 7),
-          cartao: formaPagamento === 'Cartão Crédito' ? cartaoNovo : null,
+          valor, descricao, categoria, subcategoria, usuario,
+          formaPagamento: formaPagFinal, data, observacao,
+          mesFatura: mesFaturaFinal, cartao: cartaoFinal,
           ...dadosVeiculo, ...dadosReembolso,
           atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
         };
@@ -5546,7 +5004,7 @@
         return;
       }
 
-      // Gasto normal (código original)
+      // Gasto normal
       if (grupoId) {
         const parcelas = gastos.filter(x => x.grupoId === grupoId);
         if (parcelas.length > 0) {
@@ -5575,9 +5033,7 @@
           } else {
             parcelas.forEach(p => batch.delete(colecaoGastos().doc(p.id)));
             const novoRef = colecaoGastos().doc();
-            const novoMesFatura = formaPagamento === 'Cartão Crédito'
-              ? calcularMesFatura(data, cartaoNovo)
-              : data.substring(0, 7);
+            const novoMesFatura = formaPagamento === 'Cartão Crédito' ? calcularMesFatura(data, cartaoNovo) : data.substring(0, 7);
             batch.set(novoRef, {
               usuario, data, mesFatura: novoMesFatura, descricao, categoria, subcategoria, observacao,
               formaPagamento,
@@ -5632,19 +5088,14 @@
       if (formaPagamento === 'Cartão Crédito') update.mesFatura = calcularMesFatura(data, cartaoNovo);
       await colecaoGastos().doc(id).update(update);
       fecharEditarGasto();
-    } catch (e) {
-      console.error(e);
-      alert('Erro ao salvar: ' + e.message);
-    }
+    } catch (e) { console.error(e); alert('Erro ao salvar: ' + e.message); }
   }
 
   function escaparHTML(s) {
-    return String(s).replace(/[&<>"']/g, c => ({
-      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-    }[c]));
+    return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
   }
 
-  // ============ ADICIONAR GASTO ============
+  // ============ ADICIONAR ============
   async function adicionarGasto() {
     if (!firebaseOK) { alert('Firebase não está configurado.'); return; }
     const btn = document.getElementById('btnAdicionar');
@@ -5657,9 +5108,7 @@
     const formaPagamento = String(document.getElementById('formaPagamento').value || '');
     const ehCredito = formaPagamento === 'Cartão Crédito';
     const observacao = String(document.getElementById('observacao').value || '').trim();
-    const data = ehCredito
-      ? String(document.getElementById('dataCompraCredito').value || '')
-      : String(document.getElementById('data').value || '');
+    const data = ehCredito ? String(document.getElementById('dataCompraCredito').value || '') : String(document.getElementById('data').value || '');
     const numParcelas = (!ehReemb && ehCredito) ? parseInt(String(document.getElementById('parcelas').value || '1')) || 1 : 1;
     const cartaoNome = ehCredito ? String(document.getElementById('cartaoSelecionado').value || '') : null;
 
@@ -5669,16 +5118,12 @@
     const litros = ehCombustivel ? (document.getElementById('litros').value ? Number(document.getElementById('litros').value) : null) : null;
     const tanqueCheio = ehCombustivel ? tanqueCheioLanc : null;
 
-    if (!data || !descricao || isNaN(valorDigitado) || valorDigitado <= 0) {
-      alert('Preencha valor, local e data!'); return;
-    }
-    if (ehCredito && (!cartaoNome || !acharCartao(cartaoNome))) {
-      alert('Selecione um cartão de crédito cadastrado!'); return;
-    }
+    if (!data || !descricao || isNaN(valorDigitado) || valorDigitado <= 0) { alert('Preencha valor, local e data!'); return; }
+    if (ehCredito && (!cartaoNome || !acharCartao(cartaoNome))) { alert('Selecione um cartão!'); return; }
     if (ehCombustivel) {
       if (!veiculo) { alert('Selecione um veículo.'); return; }
       if (!km) { alert('Informe o KM atual.'); return; }
-      if (!litros) { alert('Informe os litros abastecidos.'); return; }
+      if (!litros) { alert('Informe os litros.'); return; }
     }
 
     btn.disabled = true;
@@ -5688,13 +5133,10 @@
       const grupoId = 'g' + Date.now() + Math.random().toString(36).slice(2, 7);
       const lancamentos = [];
       const dadosVeiculo = ehCombustivel ? { veiculo, km, litros, tanqueCheio } : { veiculo: null, km: null, litros: null, tanqueCheio: null };
-      const dadosReembolso = {
-        ehReembolso: ehReemb ? true : null,
-        tipoLancamento: ehReemb ? 'reembolso' : null,
-        origemId: ehReemb && origemIdSelecionado ? origemIdSelecionado : null
-      };
+      const dadosReembolso = { ehReembolso: ehReemb ? true : null, tipoLancamento: ehReemb ? 'reembolso' : null, origemId: ehReemb && origemIdSelecionado ? origemIdSelecionado : null };
 
       if (ehCredito && !ehReemb) {
+        // Gasto parcelado normal
         const mesFaturaInicio = calcularMesFatura(data, cartaoNome);
         const [anoBase, mesBase] = mesFaturaInicio.split('-').map(Number);
         const valoresParcelas = dividirEmParcelas(valorDigitado, numParcelas);
@@ -5713,10 +5155,31 @@
           });
         }
       } else {
+        // Lançamento único (gasto normal ou reembolso)
+        let cartaoFinal = ehCredito ? cartaoNome : null;
+        let formaPagFinal = formaPagamento;
+        let mesFaturaFinal = data.substring(0, 7);
+
+        // Se é reembolso e está vinculado a um gasto no crédito, herda cartão + mês fatura do gasto original
+        if (ehReemb && origemIdSelecionado) {
+          const origem = gastos.find(x => x.id === origemIdSelecionado);
+          if (origem && origem.formaPagamento === 'Cartão Crédito' && origem.cartao) {
+            cartaoFinal = origem.cartao;
+            formaPagFinal = 'Cartão Crédito';
+            mesFaturaFinal = calcularMesFatura(data, cartaoFinal);
+          }
+        } else if (ehReemb && ehCredito && cartaoNome && acharCartao(cartaoNome)) {
+          // Reembolso lançado diretamente como crédito
+          cartaoFinal = cartaoNome;
+          formaPagFinal = 'Cartão Crédito';
+          mesFaturaFinal = calcularMesFatura(data, cartaoFinal);
+        }
+
         lancamentos.push({
-          usuario, data, mesFatura: data.substring(0, 7),
-          descricao, categoria, subcategoria, observacao,
-          formaPagamento, cartao: ehCredito ? cartaoNome : null, valor: valorDigitado,
+          usuario, data, mesFatura: mesFaturaFinal, descricao, categoria, subcategoria, observacao,
+          formaPagamento: formaPagFinal,
+          cartao: cartaoFinal,
+          valor: valorDigitado,
           parcelaAtual: null, parcelaTotal: null, valorTotalCompra: null,
           grupoId,
           ...dadosVeiculo, ...dadosReembolso,
@@ -5724,10 +5187,7 @@
         });
       }
       const batch = db.batch();
-      lancamentos.forEach(l => {
-        const ref = colecaoGastos().doc();
-        batch.set(ref, l);
-      });
+      lancamentos.forEach(l => { const ref = colecaoGastos().doc(); batch.set(ref, l); });
       await batch.commit();
       // Reset
       document.getElementById('valor').value = '';
@@ -5753,12 +5213,8 @@
       removerVinculoOrigem();
       document.getElementById('buscaOrigem').value = '';
       document.getElementById('valor').focus();
-      btn.textContent = ehReemb
-        ? '✓ Reembolso adicionado!'
-        : (numParcelas > 1 ? `✓ ${numParcelas} parcelas criadas!` : '✓ Adicionado!');
-      setTimeout(() => {
-        btn.textContent = ehReemb ? '✓ Adicionar Reembolso' : '✓ Adicionar Gasto';
-      }, 1400);
+      btn.textContent = ehReemb ? '✓ Reembolso adicionado!' : (numParcelas > 1 ? `✓ ${numParcelas} parcelas criadas!` : '✓ Adicionado!');
+      setTimeout(() => { btn.textContent = ehReemb ? '✓ Adicionar Reembolso' : '✓ Adicionar Gasto'; }, 1400);
     } catch (e) {
       console.error(e);
       alert('Erro ao salvar: ' + e.message);
@@ -5770,45 +5226,28 @@
     const g = gastos.find(x => x.id === id);
     if (!g) return;
     if (g.grupoId && g.parcelaTotal) {
-      const op = confirm(
-        `Este lançamento é a parcela ${g.parcelaAtual}/${g.parcelaTotal} de "${g.descricao}".\n\n` +
-        `OK = remover TODAS as parcelas\nCancelar = remover apenas esta parcela`
-      );
+      const op = confirm(`Parcela ${g.parcelaAtual}/${g.parcelaTotal} de "${g.descricao}".\n\nOK = remover TODAS\nCancelar = apenas esta`);
       try {
         if (op) {
           const paraRemover = gastos.filter(x => x.grupoId === g.grupoId);
           const batch = db.batch();
           paraRemover.forEach(x => batch.delete(colecaoGastos().doc(x.id)));
           await batch.commit();
-        } else {
-          await colecaoGastos().doc(id).delete();
-        }
+        } else await colecaoGastos().doc(id).delete();
       } catch (e) { alert('Erro: ' + e.message); }
       return;
     }
-    let msg = 'Remover este lançamento?';
-    if (ehReembolso(g)) msg = 'Remover este reembolso?';
+    let msg = ehReembolso(g) ? 'Remover este reembolso?' : 'Remover este lançamento?';
     if (!confirm(msg)) return;
     try { await colecaoGastos().doc(id).delete(); }
     catch (e) { alert('Erro: ' + e.message); }
   }
 
   // ============ HELPERS ============
-  function formatarMoeda(v) {
-    return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-  }
-  function formatarData(iso) {
-    const [a, m, d] = iso.split('-');
-    return `${d}/${m}`;
-  }
-  function corDa(cat) {
-    const c = acharCategoria(cat);
-    return c ? c.cor : '#6b7280';
-  }
-  function emojiPag(pag) {
-    const f = FORMAS_PAGAMENTO.find(x => x.valor === pag);
-    return f ? f.emoji : '💵';
-  }
+  function formatarMoeda(v) { return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+  function formatarData(iso) { const [a, m, d] = iso.split('-'); return `${d}/${m}`; }
+  function corDa(cat) { const c = acharCategoria(cat); return c ? c.cor : '#6b7280'; }
+  function emojiPag(pag) { const f = FORMAS_PAGAMENTO.find(x => x.valor === pag); return f ? f.emoji : '💵'; }
   function nomeMes(mesISO) {
     const [a, m] = mesISO.split('-').map(Number);
     const d = new Date(a, m - 1, 1);
@@ -5830,10 +5269,16 @@
   function renderizarFaturas() {
     const mesISO = String(document.getElementById('mesFatura').value || '');
     if (!mesISO) return;
-    const doMes = gastos.filter(g =>
-      g.formaPagamento === 'Cartão Crédito' &&
-      g.mesFatura === mesISO
-    );
+
+    // Inclui lançamentos no crédito E reembolsos vinculados a gastos no crédito
+    const doMes = gastos.filter(g => {
+      if (g.mesFatura !== mesISO) return false;
+      if (g.formaPagamento === 'Cartão Crédito') return true;
+      // Reembolso que herdou cartão do gasto original
+      if (ehReembolso(g) && g.cartao) return true;
+      return false;
+    });
+
     const wrap = document.getElementById('faturasLista');
     if (doMes.length === 0) {
       wrap.innerHTML = `<div class="fatura-vazio">Nenhum lançamento na fatura de ${nomeMesLongo(mesISO)}</div>`;
@@ -5848,7 +5293,6 @@
     const nomesCartoes = Object.keys(porCartao).sort();
     wrap.innerHTML = nomesCartoes.map(nomeCartao => {
       const itens = porCartao[nomeCartao];
-      // Ordena como extrato: por data decrescente e depois criação decrescente
       itens.sort((a, b) => {
         const da = a.data || '', db = b.data || '';
         if (da !== db) return db.localeCompare(da);
@@ -5866,20 +5310,13 @@
         const ehParcela = !!(g.parcelaTotal && g.parcelaTotal > 1);
         const parcelaTag = ehParcela ? `<span class="fl-parcela">${g.parcelaAtual}/${g.parcelaTotal}</span>` : '';
         const reemb = ehReembolso(g);
-        return `
-          <div class="fatura-linha ${reemb ? 'reembolso' : ''}" onclick="abrirDetalhesGasto('${g.id}')">
-            <div class="fl-data">${formatarData(g.data)}</div>
-            <div class="fl-desc">
-              ${reemb ? '💵 ' : ''}${escaparHTML(g.descricao)}${parcelaTag}
-              <span class="fl-quem">${escaparHTML(g.usuario)}${g.observacao ? ' · ' + escaparHTML(g.observacao) : ''}</span>
-            </div>
-            <div class="fl-valor">${reemb ? '+' : ''}${formatarMoeda(g.valor)}</div>
-          </div>
-        `;
+        return `<div class="fatura-linha ${reemb ? 'reembolso' : ''}" onclick="abrirDetalhesGasto('${g.id}')">
+          <div class="fl-data">${formatarData(g.data)}</div>
+          <div class="fl-desc">${reemb ? '💵 ' : ''}${escaparHTML(g.descricao)}${parcelaTag}<span class="fl-quem">${escaparHTML(g.usuario)}${g.observacao ? ' · ' + escaparHTML(g.observacao) : ''}</span></div>
+          <div class="fl-valor">${reemb ? '+' : ''}${formatarMoeda(g.valor)}</div>
+        </div>`;
       }).join('');
-      const subtotalReembHtml = totalReembolsos > 0
-        ? `<div class="st-item reembolso">💵 Reembolsos <strong>+${formatarMoeda(totalReembolsos)}</strong></div>`
-        : '';
+      const subtotalReembHtml = totalReembolsos > 0 ? `<div class="st-item reembolso">💵 Reembolsos <strong>+${formatarMoeda(totalReembolsos)}</strong></div>` : '';
       return `
         <div class="fatura-cabecalho ${aberto ? 'aberto' : ''}" onclick="toggleFaturaCartao('${chaveAberta.replace(/'/g, "\\'")}')">
           <div class="fc-topo">
@@ -5894,10 +5331,7 @@
           </div>
           <div class="fc-total-label">Total da fatura</div>
           <div class="fc-total">${formatarMoeda(totalCartao)}</div>
-          <div class="fc-toggle">
-            <span class="seta-fc">▶</span>
-            <span>${aberto ? 'Toque para fechar' : 'Toque para ver os ' + itens.length + ' lançamentos'}</span>
-          </div>
+          <div class="fc-toggle"><span class="seta-fc">▶</span><span>${aberto ? 'Toque para fechar' : 'Toque para ver os ' + itens.length + ' lançamentos'}</span></div>
         </div>
         <div class="fatura-tabela ${aberto ? 'visivel' : ''}">
           <div class="fatura-subtotais">
@@ -5906,18 +5340,10 @@
             ${subtotalReembHtml}
             <div class="st-item">📄 ${itens.length} lançamento${itens.length > 1 ? 's' : ''}</div>
           </div>
-          <div class="fatura-tabela-header">
-            <div>Data</div>
-            <div>Descrição</div>
-            <div class="col-valor">Valor</div>
-          </div>
+          <div class="fatura-tabela-header"><div>Data</div><div>Descrição</div><div class="col-valor">Valor</div></div>
           ${linhasHTML}
-          <div class="fatura-total-rodape">
-            <div class="col-total-label">Total</div>
-            <div class="col-total-valor">${formatarMoeda(totalCartao)}</div>
-          </div>
-        </div>
-      `;
+          <div class="fatura-total-rodape"><div class="col-total-label">Total</div><div class="col-total-valor">${formatarMoeda(totalCartao)}</div></div>
+        </div>`;
     }).join('');
   }
   function toggleFaturaCartao(chave) {
@@ -5929,52 +5355,35 @@
   // ============ CONFIG CATEGORIAS ============
   function renderizarConfig() {
     const container = document.getElementById('configLista');
-    if (categorias.length === 0) { container.innerHTML = '<div class="vazio">Nenhuma categoria cadastrada</div>'; return; }
+    if (categorias.length === 0) { container.innerHTML = '<div class="vazio">Nenhuma categoria</div>'; return; }
     container.innerHTML = categorias.map((cat, idx) => {
       const aberta = catAbertas.has(cat.nome);
-      const subsHTML = (cat.subs || []).map((sub, i) => `
-        <span class="sub-chip">
-          ${escaparHTML(sub)}
-          <button onclick="event.stopPropagation(); removerSub(${idx}, ${i})">✕</button>
-        </span>
-      `).join('') || '<em style="color:var(--text-muted); font-size:0.85em;">Sem subcategorias</em>';
-      return `
-        <div class="cat-accordion ${aberta ? 'aberto' : ''}" id="acc-${idx}">
-          <button class="cat-header" onclick="toggleAccordion(${idx})">
-            <span class="cor-bolinha" style="background:${cat.cor};"></span>
-            <span class="nome-cat-txt">${escaparHTML(cat.nome)}</span>
-            <span class="contador-sub">${(cat.subs || []).length}</span>
-            <span class="seta">▶</span>
-          </button>
-          <div class="cat-corpo">
-            <div class="linha-edicao">
-              <div class="campo-nome">
-                <label>Nome</label>
-                <input type="text" value="${escaparHTML(cat.nome)}" onchange="renomearCategoria(${idx}, this.value)">
-              </div>
-              <div class="campo-cor">
-                <label>Cor</label>
-                <input type="color" value="${cat.cor}" onchange="mudarCor(${idx}, this.value)">
-              </div>
-            </div>
-            <label style="margin-top:8px;">Subcategorias</label>
-            <div class="subs-lista">${subsHTML}</div>
-            <div class="add-sub-form">
-              <input type="text" id="novaSub-${idx}" placeholder="Nova subcategoria..."
-                onkeypress="if(event.key==='Enter') adicionarSub(${idx})">
-              <button onclick="adicionarSub(${idx})">+ Add</button>
-            </div>
-            <div class="acoes-cat">
-              <button class="btn-excluir-cat" onclick="removerCategoria(${idx})">🗑️ Excluir categoria</button>
-            </div>
+      const subsHTML = (cat.subs || []).map((sub, i) => `<span class="sub-chip">${escaparHTML(sub)}<button onclick="event.stopPropagation(); removerSub(${idx}, ${i})">✕</button></span>`).join('') || '<em style="color:var(--text-muted); font-size:0.85em;">Sem subcategorias</em>';
+      return `<div class="cat-accordion ${aberta ? 'aberto' : ''}" id="acc-${idx}">
+        <button class="cat-header" onclick="toggleAccordion(${idx})">
+          <span class="cor-bolinha" style="background:${cat.cor};"></span>
+          <span class="nome-cat-txt">${escaparHTML(cat.nome)}</span>
+          <span class="contador-sub">${(cat.subs || []).length}</span>
+          <span class="seta">▶</span>
+        </button>
+        <div class="cat-corpo">
+          <div class="linha-edicao">
+            <div class="campo-nome"><label>Nome</label><input type="text" value="${escaparHTML(cat.nome)}" onchange="renomearCategoria(${idx}, this.value)"></div>
+            <div class="campo-cor"><label>Cor</label><input type="color" value="${cat.cor}" onchange="mudarCor(${idx}, this.value)"></div>
           </div>
+          <label style="margin-top:8px;">Subcategorias</label>
+          <div class="subs-lista">${subsHTML}</div>
+          <div class="add-sub-form">
+            <input type="text" id="novaSub-${idx}" placeholder="Nova subcategoria..." onkeypress="if(event.key==='Enter') adicionarSub(${idx})">
+            <button onclick="adicionarSub(${idx})">+ Add</button>
+          </div>
+          <div class="acoes-cat"><button class="btn-excluir-cat" onclick="removerCategoria(${idx})">🗑️ Excluir categoria</button></div>
         </div>
-      `;
+      </div>`;
     }).join('');
   }
   function toggleAccordion(idx) {
-    const cat = categorias[idx];
-    if (!cat) return;
+    const cat = categorias[idx]; if (!cat) return;
     const acc = document.getElementById('acc-' + idx);
     if (catAbertas.has(cat.nome)) { catAbertas.delete(cat.nome); acc.classList.remove('aberto'); }
     else { catAbertas.add(cat.nome); acc.classList.add('aberto'); }
@@ -5990,48 +5399,35 @@
   }
   async function renomearCategoria(idx, novoNome) {
     novoNome = novoNome.trim();
-    const cat = categorias[idx];
-    if (!cat) return;
+    const cat = categorias[idx]; if (!cat) return;
     if (!novoNome || novoNome === cat.nome) { renderizarConfig(); return; }
     if (acharCategoria(novoNome)) { alert('Já existe.'); renderizarConfig(); return; }
     if (catAbertas.has(cat.nome)) { catAbertas.delete(cat.nome); catAbertas.add(novoNome); }
     cat.nome = novoNome;
     await salvarCategorias();
   }
-  async function mudarCor(idx, cor) {
-    if (!categorias[idx]) return;
-    categorias[idx].cor = cor;
-    await salvarCategorias();
-  }
+  async function mudarCor(idx, cor) { if (!categorias[idx]) return; categorias[idx].cor = cor; await salvarCategorias(); }
   async function adicionarSub(idx) {
     const input = document.getElementById('novaSub-' + idx);
     const nome = input.value.trim();
     if (!nome) return;
-    const cat = categorias[idx];
-    if (!cat) return;
+    const cat = categorias[idx]; if (!cat) return;
     if (!cat.subs) cat.subs = [];
     if (cat.subs.includes(nome)) { alert('Já existe.'); return; }
-    cat.subs.push(nome);
-    input.value = '';
-    await salvarCategorias();
+    cat.subs.push(nome); input.value = ''; await salvarCategorias();
   }
   async function removerSub(idxCat, idxSub) {
-    const cat = categorias[idxCat];
-    if (!cat) return;
+    const cat = categorias[idxCat]; if (!cat) return;
     const sub = cat.subs[idxSub];
     if (!confirm(`Remover "${sub}"?`)) return;
-    cat.subs.splice(idxSub, 1);
-    await salvarCategorias();
+    cat.subs.splice(idxSub, 1); await salvarCategorias();
   }
   async function removerCategoria(idx) {
-    const cat = categorias[idx];
-    if (!cat) return;
+    const cat = categorias[idx]; if (!cat) return;
     const qtd = gastos.filter(g => g.categoria === cat.nome).length;
     const msg = qtd > 0 ? `"${cat.nome}" tem ${qtd} lançamento(s). Remover?` : `Remover "${cat.nome}"?`;
     if (!confirm(msg)) return;
-    catAbertas.delete(cat.nome);
-    categorias.splice(idx, 1);
-    await salvarCategorias();
+    catAbertas.delete(cat.nome); categorias.splice(idx, 1); await salvarCategorias();
   }
 
   // ============ CARTÕES ============
@@ -6044,14 +5440,11 @@
         <div class="icone-cartao">💳</div>
         <div class="info-cartao">
           <div class="nome-cartao-view">${escaparHTML(c.nome)}</div>
-          <div class="datas-cartao">
-            <span>Fecha dia ${c.fechamento}</span>
-            <span>Vence dia ${c.vencimento}</span>
-          </div>
+          <div class="datas-cartao"><span>Fecha dia ${c.fechamento}</span><span>Vence dia ${c.vencimento}</span></div>
         </div>
         <div class="acoes-cartao">
-          <button class="btn-edit-cartao" onclick="abrirEditarCartao(${idx})" title="Editar">✏️</button>
-          <button class="btn-excluir-cartao" onclick="removerCartao(${idx})" title="Excluir">🗑️</button>
+          <button class="btn-edit-cartao" onclick="abrirEditarCartao(${idx})">✏️</button>
+          <button class="btn-excluir-cartao" onclick="removerCartao(${idx})">🗑️</button>
         </div>
       </div>
     `).join('');
@@ -6061,28 +5454,24 @@
     const fechamento = parseInt(document.getElementById('novoCartaoFechamento').value);
     const vencimento = parseInt(document.getElementById('novoCartaoVencimento').value);
     if (!nome) { alert('Digite o nome.'); return; }
-    if (!fechamento || fechamento < 1 || fechamento > 31) { alert('Dia de fechamento inválido.'); return; }
-    if (!vencimento || vencimento < 1 || vencimento > 31) { alert('Dia de vencimento inválido.'); return; }
+    if (!fechamento || fechamento < 1 || fechamento > 31) { alert('Fechamento inválido.'); return; }
+    if (!vencimento || vencimento < 1 || vencimento > 31) { alert('Vencimento inválido.'); return; }
     if (acharCartao(nome)) { alert('Já existe.'); return; }
     cartoes.push({ nome, fechamento, vencimento });
     document.getElementById('novoCartaoNome').value = '';
     document.getElementById('novoCartaoFechamento').value = '';
     document.getElementById('novoCartaoVencimento').value = '';
-    await salvarCartoes();
-    popularSelectCartoes();
+    await salvarCartoes(); popularSelectCartoes();
   }
   function abrirEditarCartao(idx) {
-    const c = cartoes[idx];
-    if (!c) return;
+    const c = cartoes[idx]; if (!c) return;
     document.getElementById('editCartaoIdx').value = idx;
     document.getElementById('editCartaoNome').value = c.nome;
     document.getElementById('editCartaoFechamento').value = c.fechamento;
     document.getElementById('editCartaoVencimento').value = c.vencimento;
     document.getElementById('modalEditarCartao').classList.add('visivel');
   }
-  function fecharEditarCartao() {
-    document.getElementById('modalEditarCartao').classList.remove('visivel');
-  }
+  function fecharEditarCartao() { document.getElementById('modalEditarCartao').classList.remove('visivel'); }
   async function salvarEdicaoCartao() {
     const idx = parseInt(document.getElementById('editCartaoIdx').value);
     const nome = document.getElementById('editCartaoNome').value.trim();
@@ -6092,11 +5481,9 @@
     if (!fechamento || fechamento < 1 || fechamento > 31) { alert('Fechamento inválido.'); return; }
     if (!vencimento || vencimento < 1 || vencimento > 31) { alert('Vencimento inválido.'); return; }
     const nomeAntigo = cartoes[idx].nome;
-    const duplicado = cartoes.find((x, i) => i !== idx && x.nome === nome);
-    if (duplicado) { alert('Já existe outro cartão com esse nome.'); return; }
+    if (cartoes.find((x, i) => i !== idx && x.nome === nome)) { alert('Já existe.'); return; }
     cartoes[idx] = { nome, fechamento, vencimento };
     await salvarCartoes();
-    // Atualiza lançamentos com o nome antigo
     if (nomeAntigo !== nome) {
       const paraAtualizar = gastos.filter(g => g.cartao === nomeAntigo);
       if (paraAtualizar.length > 0) {
@@ -6105,55 +5492,44 @@
         await batch.commit();
       }
     }
-    popularSelectCartoes();
-    fecharEditarCartao();
+    popularSelectCartoes(); fecharEditarCartao();
   }
   async function excluirCartaoDoModal() {
     const idx = parseInt(document.getElementById('editCartaoIdx').value);
-    const c = cartoes[idx];
-    if (!c) return;
+    const c = cartoes[idx]; if (!c) return;
     const usos = gastos.filter(g => g.cartao === c.nome).length;
     const msg = usos > 0 ? `"${c.nome}" tem ${usos} lançamento(s). Remover?` : `Remover "${c.nome}"?`;
     if (!confirm(msg)) return;
-    cartoes.splice(idx, 1);
-    await salvarCartoes();
-    popularSelectCartoes();
-    fecharEditarCartao();
+    cartoes.splice(idx, 1); await salvarCartoes(); popularSelectCartoes(); fecharEditarCartao();
   }
   async function removerCartao(idx) {
     const c = cartoes[idx];
     const usos = gastos.filter(g => g.cartao === c.nome).length;
     const msg = usos > 0 ? `"${c.nome}" tem ${usos} lançamento(s). Remover?` : `Remover "${c.nome}"?`;
     if (!confirm(msg)) return;
-    cartoes.splice(idx, 1);
-    await salvarCartoes();
-    popularSelectCartoes();
+    cartoes.splice(idx, 1); await salvarCartoes(); popularSelectCartoes();
   }
   async function salvarCartoes() {
     if (!firebaseOK) return;
     try {
       await refDocCasa().set({ cartoes }, { merge: true });
-      renderizarCartoes();
-      popularFiltroCartoes();
-      popularFiltroCartoesLanc();
-    } catch (e) { alert('Erro ao salvar cartões: ' + e.message); }
+      renderizarCartoes(); popularFiltroCartoes(); popularFiltroCartoesLanc();
+    } catch (e) { alert('Erro: ' + e.message); }
   }
   async function verificarLancamentosOrfaos() {
     if (!firebaseOK || cartoes.length === 0) { alert('Nada para verificar.'); return; }
     const nomesCartoes = cartoes.map(c => c.nome);
     const orfaos = gastos.filter(g => g.cartao && !nomesCartoes.includes(g.cartao));
-    if (orfaos.length === 0) { alert('Nenhum lançamento órfão encontrado! 👍'); return; }
-    const msg = `Encontrei ${orfaos.length} lançamento(s) apontando para cartões que não existem mais:\n\n` +
-      [...new Set(orfaos.map(g => g.cartao))].map(n => `• ${n} (${orfaos.filter(g => g.cartao === n).length}x)`).join('\n') +
-      `\n\nDeseja vincular todos ao primeiro cartão da lista (${cartoes[0].nome})?`;
+    if (orfaos.length === 0) { alert('Nenhum órfão encontrado! 👍'); return; }
+    const msg = `Encontrei ${orfaos.length} lançamento(s) apontando para cartões inexistentes:\n\n` + [...new Set(orfaos.map(g => g.cartao))].map(n => `• ${n} (${orfaos.filter(g => g.cartao === n).length}x)`).join('\n') + `\n\nVincular todos a "${cartoes[0].nome}"?`;
     if (!confirm(msg)) return;
     const batch = db.batch();
     orfaos.forEach(g => batch.update(colecaoGastos().doc(g.id), { cartao: cartoes[0].nome }));
     await batch.commit();
-    alert(`${orfaos.length} lançamento(s) corrigido(s).`);
+    alert(`${orfaos.length} corrigido(s).`);
   }
 
-  // ============ EXPORTAR CSV ============
+  // ============ CSV ============
   function exportarCSV() {
     const doMes = gastosFiltrados();
     if (doMes.length === 0) { alert('Sem dados.'); return; }
@@ -6192,17 +5568,13 @@
       modoLancMes = this.value;
       renderizarLancamentos();
     });
-    document.getElementById('mesFatura').addEventListener('change', function() {
-      this.dataset.tocado = '1';
-    });
+    document.getElementById('mesFatura').addEventListener('change', function() { this.dataset.tocado = '1'; });
     iniciarFirebase();
   };
 </script>
 <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
-    });
+    window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').catch(() => {}); });
   }
 </script>
 </body>
