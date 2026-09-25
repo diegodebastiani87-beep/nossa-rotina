@@ -128,7 +128,6 @@
     content: ''; position: absolute; top: 0; left: 30%; right: 30%;
     height: 2px; background: var(--primary); border-radius: 2px;
   }
-  /* Cobre todos os estados para evitar sobreposição da regra global button:hover */
   .bottom-nav button:hover,
   .bottom-nav button:focus,
   .bottom-nav button.ativa,
@@ -705,6 +704,46 @@
   .pessoa-view .btn-excluir-pessoa { color: var(--danger); }
   .pessoa-view .btn-excluir-pessoa:hover { background: var(--danger-soft); border-color: #fecaca; }
 
+  .veiculo-view {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    background: var(--surface);
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 12px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .veiculo-view:hover { border-color: var(--border-strong); box-shadow: var(--shadow-xs); }
+  .veiculo-view .icone-veiculo {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: linear-gradient(135deg, #dbeafe, #e0e7ff);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4em; flex-shrink: 0;
+    border: 1px solid var(--border);
+  }
+  .veiculo-view .info-veiculo { flex: 1; min-width: 0; }
+  .veiculo-view .nome-veiculo {
+    font-weight: 700; font-size: 0.95em;
+    color: var(--text); margin-bottom: 2px; word-break: break-word;
+    letter-spacing: -0.01em;
+  }
+  .veiculo-view .placa-veiculo {
+    font-size: 0.78em; color: var(--text-3);
+  }
+  .veiculo-view .acoes-veiculo { display: flex; gap: 6px; flex-shrink: 0; }
+  .veiculo-view .btn-edit-veiculo,
+  .veiculo-view .btn-excluir-veiculo {
+    background: var(--surface-2); color: var(--text-2);
+    border: 1px solid var(--border);
+    width: 36px; height: 36px; border-radius: 9px;
+    font-size: 0.95em; padding: 0; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .veiculo-view .btn-edit-veiculo:hover { background: var(--surface-3); color: var(--text); }
+  .veiculo-view .btn-excluir-veiculo { color: var(--danger); }
+  .veiculo-view .btn-excluir-veiculo:hover { background: var(--danger-soft); border-color: #fecaca; }
+
   .sub-abas {
     display: flex; gap: 4px;
     background: var(--surface-3);
@@ -826,7 +865,10 @@
     padding: 22px;
     margin-bottom: 14px;
     box-shadow: 0 8px 24px rgba(30,64,175,0.25);
+    cursor: pointer;
+    transition: transform 0.15s;
   }
+  .fatura-cabecalho:active { transform: scale(0.99); }
   .fatura-cabecalho .fc-topo {
     display: flex; justify-content: space-between;
     align-items: flex-start; gap: 12px;
@@ -851,6 +893,19 @@
     letter-spacing: -0.03em;
     line-height: 1;
   }
+  .fatura-cabecalho .fc-toggle {
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; margin-top: 12px; padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.18);
+    font-size: 0.8em; opacity: 0.9;
+  }
+  .fatura-cabecalho .fc-toggle .seta-fc {
+    transition: transform 0.25s;
+    font-size: 0.8em;
+  }
+  .fatura-cabecalho.aberto .fc-toggle .seta-fc {
+    transform: rotate(90deg);
+  }
 
   .fatura-tabela {
     background: var(--surface);
@@ -859,7 +914,9 @@
     overflow: hidden;
     margin-bottom: 14px;
     box-shadow: var(--shadow-xs);
+    display: none;
   }
+  .fatura-tabela.visivel { display: block; animation: fadeIn 0.25s ease-out; }
   .fatura-tabela-header {
     display: grid;
     grid-template-columns: 62px 1fr 100px;
@@ -881,7 +938,10 @@
     border-bottom: 1px solid var(--border);
     align-items: baseline;
     font-size: 0.88em;
+    cursor: pointer;
+    transition: background 0.1s;
   }
+  .fatura-linha:hover { background: var(--surface-2); }
   .fatura-linha:last-child { border-bottom: none; }
   .fatura-linha .fl-data {
     font-size: 0.82em;
@@ -1517,6 +1577,63 @@
 
   .oculto { display: none !important; }
 
+  /* ====== MEDIA CONSUMO ====== */
+  .consumo-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+  .consumo-card:last-child { margin-bottom: 0; }
+  .consumo-card .nome-veiculo-consumo {
+    font-weight: 700; font-size: 0.95em;
+    color: var(--text); margin-bottom: 4px;
+    letter-spacing: -0.01em;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .consumo-card .placa-consumo {
+    font-size: 0.78em; color: var(--text-3);
+    font-weight: 500;
+  }
+  .consumo-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .consumo-stat {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .consumo-stat .lbl {
+    font-size: 0.68em; color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .consumo-stat .vlr {
+    font-size: 1.1em; font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .consumo-stat .vlr small {
+    font-size: 0.6em;
+    font-weight: 600;
+    color: var(--text-3);
+  }
+  .consumo-vazio {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 0.85em;
+  }
+
   @media (min-width: 800px) {
     .bottom-nav {
       position: sticky; top: 0; bottom: auto;
@@ -1530,7 +1647,6 @@
     }
     .bottom-nav button .icone { font-size: 1.1em; }
     .bottom-nav button.ativa::before { display: none; }
-    /* No desktop, botão ativo ganha chip de fundo claro */
     .bottom-nav button.ativa,
     .bottom-nav button.ativa:hover,
     .bottom-nav button.ativa:focus {
@@ -1545,6 +1661,7 @@
     .modal-agenda { align-items: center; padding: 24px; }
     .modal-conteudo { border-radius: 20px; max-height: 88vh; }
     .modal-header { border-radius: 20px 20px 0 0; }
+    .consumo-stats { grid-template-columns: repeat(3, 1fr); }
   }
 </style>
 </head>
@@ -1612,6 +1729,19 @@
           <label>Detalhes (o que foi)</label>
           <input type="text" id="observacao" placeholder="Ex: Abastecimento Carro, Presente para o fulano" autocomplete="off">
           <span class="dica">Opcional, mas ajuda a lembrar depois</span>
+        </div>
+      </div>
+
+      <!-- CAMPOS DE VEÍCULO (aparecem apenas para Transporte→Combustível) -->
+      <div id="camposVeiculo" style="display:none;">
+        <div class="campo">
+          <label>🚗 Veículo</label>
+          <select id="veiculoSelecionado"></select>
+        </div>
+        <div class="campo">
+          <label>📍 KM atual</label>
+          <input type="number" id="kmAtual" placeholder="Ex: 45230" inputmode="numeric" oninput="atualizarPreviewParcelas()">
+          <span class="dica">Informe a quilometragem do painel</span>
         </div>
       </div>
 
@@ -1857,6 +1987,15 @@
       </h2>
       <div id="graficoCategorias"></div>
     </div>
+
+    <!-- CONSUMO POR VEÍCULO -->
+    <div class="card">
+      <h2 class="com-filtro">
+        ⛽ Consumo por Veículo
+        <span class="filtro-ativo" id="badgeConsumo" style="display:none;">Filtrado</span>
+      </h2>
+      <div id="consumoVeiculos"></div>
+    </div>
   </div>
 
   <!-- FATURAS -->
@@ -1934,6 +2073,7 @@
       <button class="sub-aba ativa" data-sub="cartoes" onclick="trocarSubAba('cartoes')">💳 Cartões</button>
       <button class="sub-aba" data-sub="categorias" onclick="trocarSubAba('categorias')">📂 Categorias</button>
       <button class="sub-aba" data-sub="pessoas" onclick="trocarSubAba('pessoas')">👥 Pessoas</button>
+      <button class="sub-aba" data-sub="veiculos" onclick="trocarSubAba('veiculos')">🚗 Veículos</button>
     </div>
 
     <div class="sub-painel ativo" id="sub-cartoes">
@@ -2014,6 +2154,30 @@
         </div>
       </div>
     </div>
+
+    <div class="sub-painel" id="sub-veiculos">
+      <div class="card">
+        <h2>🚗 Veículos cadastrados</h2>
+        <p style="color:var(--text-3); font-size:0.85em; margin-bottom:14px; line-height:1.55;">
+          Cadastre os veículos para registrar abastecimentos e acompanhar a média de consumo.
+        </p>
+        <div id="veiculosLista"></div>
+      </div>
+      <div class="card">
+        <h2>➕ Novo Veículo</h2>
+        <div class="nova-cat-form">
+          <div>
+            <label>Nome do veículo</label>
+            <input type="text" id="novoVeiculoNome" placeholder="Ex: Onix Diego, HB20 Eliane">
+          </div>
+          <div>
+            <label>Placa (opcional)</label>
+            <input type="text" id="novoVeiculoPlaca" placeholder="Ex: ABC-1D23" maxlength="8" style="text-transform:uppercase;">
+          </div>
+          <button onclick="criarVeiculo()" class="btn-grande" style="margin-top:6px;">+ Adicionar Veículo</button>
+        </div>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -2069,6 +2233,17 @@
           <option value="Cartão Débito">🏦 Cartão Débito</option>
           <option value="Vale Alimentação">🍽️ Vale Alimentação</option>
         </select>
+      </div>
+
+      <div id="editCamposVeiculo" style="display:none;">
+        <div class="campo">
+          <label>🚗 Veículo</label>
+          <select id="editGastoVeiculo"></select>
+        </div>
+        <div class="campo">
+          <label>📍 KM atual</label>
+          <input type="number" id="editGastoKm" placeholder="Ex: 45230" inputmode="numeric">
+        </div>
       </div>
 
       <div id="editBoxCartao" style="display:none;">
@@ -2159,6 +2334,28 @@
       </div>
       <button class="btn-grande" onclick="salvarEdicaoPessoa()">✓ Salvar alterações</button>
       <button class="btn-excluir-modal" onclick="excluirPessoaDoModal()">🗑️ Excluir pessoa</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-agenda" id="modalEditarVeiculo">
+  <div class="modal-conteudo">
+    <div class="modal-header">
+      <h2>✏️ Editar veículo</h2>
+      <button class="modal-fechar" onclick="fecharEditarVeiculo()">✕</button>
+    </div>
+    <div class="modal-corpo">
+      <input type="hidden" id="editVeiculoIdx">
+      <div class="campo">
+        <label>Nome do veículo</label>
+        <input type="text" id="editVeiculoNome">
+      </div>
+      <div class="campo">
+        <label>Placa (opcional)</label>
+        <input type="text" id="editVeiculoPlaca" maxlength="8" style="text-transform:uppercase;">
+      </div>
+      <button class="btn-grande" onclick="salvarEdicaoVeiculo()">✓ Salvar alterações</button>
+      <button class="btn-excluir-modal" onclick="excluirVeiculoDoModal()">🗑️ Excluir veículo</button>
     </div>
   </div>
 </div>
@@ -2366,6 +2563,11 @@
     { nome: "Mãe" }
   ];
 
+  const VEICULOS_PADRAO = [
+    { nome: "Onix Diego", placa: "" },
+    { nome: "HB20 Eliane", placa: "" }
+  ];
+
   const CORES_AVATAR = [
     "#1e40af", "#0891b2", "#059669", "#7c3aed", "#be185d",
     "#dc2626", "#ea580c", "#ca8a04", "#0f766e", "#4338ca"
@@ -2391,6 +2593,7 @@
   let categorias = [];
   let cartoes = [];
   let pessoas = [];
+  let veiculos = [];
   let gastos = [];
   let eventos = [];
   let db = null;
@@ -2399,6 +2602,7 @@
   const pessoasAbertas = new Set();
   const diasAgendaAbertos = new Set();
   const diasLancAbertos = new Set();
+  const faturasAbertas = new Set();
   let estabelecimentosCache = {};
 
   let visaoAgenda = 'dia';
@@ -2414,8 +2618,9 @@
   function acharCategoria(nome) { return categorias.find(c => c.nome === nome); }
   function acharCartao(nome) { return cartoes.find(c => c.nome === nome); }
   function acharPessoa(nome) { return pessoas.find(p => p.nome === nome); }
+  function acharVeiculo(nome) { return veiculos.find(v => v.nome === nome); }
 
-  // ============ DATA LOCAL (corrige bug de UTC) ============
+  // ============ DATA LOCAL ============
   function dataLocalISO(d) {
     const dt = d || new Date();
     return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
@@ -2467,6 +2672,7 @@
     document.querySelector(`.sub-aba[data-sub="${nome}"]`).classList.add('ativa');
     document.getElementById('sub-' + nome).classList.add('ativo');
     if (nome === 'pessoas') renderizarPessoas();
+    if (nome === 'veiculos') renderizarVeiculos();
   }
 
   function toggleFiltros() {
@@ -2571,7 +2777,34 @@
       box.classList.remove('visivel');
       campoData.style.display = 'block';
     }
+    verificarCamposVeiculo();
     atualizarPreviewParcelas();
+  }
+
+  // ============ VEÍCULO NO LANÇAMENTO ============
+  function verificarCamposVeiculo() {
+    const cat = document.getElementById('categoria').value;
+    const sub = document.getElementById('subcategoria').value;
+    const campos = document.getElementById('camposVeiculo');
+    if (cat === 'Transporte' && sub === 'Combustível') {
+      campos.style.display = 'block';
+      popularSelectVeiculos();
+    } else {
+      campos.style.display = 'none';
+      document.getElementById('kmAtual').value = '';
+    }
+  }
+
+  function popularSelectVeiculos() {
+    const sel = document.getElementById('veiculoSelecionado');
+    if (!sel) return;
+    if (veiculos.length === 0) {
+      sel.innerHTML = '<option value="">⚠️ Cadastre um veículo em Ajustes</option>';
+      return;
+    }
+    const atual = sel.value;
+    sel.innerHTML = veiculos.map(v => `<option value="${v.nome}">${v.nome}${v.placa ? ' - ' + v.placa : ''}</option>`).join('');
+    if (atual && acharVeiculo(atual)) sel.value = atual;
   }
 
   function popularSelectCartoes() {
@@ -2690,6 +2923,7 @@
     if (!dados.categorias) update.categorias = CATEGORIAS_PADRAO;
     if (!dados.cartoes) update.cartoes = CARTOES_PADRAO;
     if (!dados.pessoas) update.pessoas = PESSOAS_PADRAO;
+    if (!dados.veiculos) update.veiculos = VEICULOS_PADRAO;
     if (Object.keys(update).length > 0) {
       await refDocCasa().set(update, { merge: true });
     }
@@ -2705,13 +2939,16 @@
       categorias = migrarParaArray(data.categorias, CATEGORIAS_PADRAO);
       cartoes = migrarCartoesParaArray(data.cartoes, CARTOES_PADRAO);
       pessoas = migrarPessoasParaArray(data.pessoas, PESSOAS_PADRAO);
+      veiculos = migrarVeiculosParaArray(data.veiculos, VEICULOS_PADRAO);
       popularCategorias();
       popularFiltroCartoes();
       popularFiltroCartoesLanc();
       popularSelectCartoes();
+      popularSelectVeiculos();
       renderizarConfig();
       renderizarCartoes();
       renderizarPessoas();
+      renderizarVeiculos();
       renderizarAgendaFiltros();
       renderizar();
       renderizarFaturas();
@@ -2780,6 +3017,23 @@
     return arr.length ? arr : padrao;
   }
 
+  function migrarVeiculosParaArray(obj, padrao) {
+    if (Array.isArray(obj)) return obj;
+    if (!obj) return padrao;
+    const arr = [];
+    const vistas = new Set();
+    padrao.forEach(p => {
+      if (obj[p.nome]) {
+        arr.push({ nome: p.nome, placa: obj[p.nome].placa || '' });
+        vistas.add(p.nome);
+      }
+    });
+    Object.keys(obj).forEach(nome => {
+      if (!vistas.has(nome)) arr.push({ nome, placa: obj[nome].placa || '' });
+    });
+    return arr.length ? arr : padrao;
+  }
+
   function ouvirGastos() {
     atualizarStatus('conectando', 'Conectando...');
     colecaoGastos().orderBy('data', 'desc').onSnapshot(
@@ -2791,6 +3045,7 @@
         renderizarFaturas();
         renderizarUltimos();
         renderizarLancamentos();
+        renderizarConsumoVeiculos();
       },
       erro => { console.error(erro); atualizarStatus('offline', 'Erro'); }
     );
@@ -2814,185 +3069,227 @@
     document.getElementById('statusTexto').textContent = texto;
   }
 
-  // ============ CARTÕES ============
-  function renderizarCartoes() {
-    const wrap = document.getElementById('cartoesLista');
-    if (cartoes.length === 0) {
-      wrap.innerHTML = '<div class="vazio">Nenhum cartão cadastrado ainda</div>';
+  // ============ VEÍCULOS ============
+  function renderizarVeiculos() {
+    const wrap = document.getElementById('veiculosLista');
+    if (!wrap) return;
+    if (veiculos.length === 0) {
+      wrap.innerHTML = '<div class="vazio">Nenhum veículo cadastrado</div>';
       return;
     }
-    wrap.innerHTML = cartoes.map((c, idx) => `
-      <div class="cartao-view">
-        <div class="icone-cartao">💳</div>
-        <div class="info-cartao">
-          <div class="nome-cartao-view">${escaparHTML(c.nome)}</div>
-          <div class="datas-cartao">
-            <span>📅 Fecha dia <strong>${c.fechamento}</strong></span>
-            <span>·</span>
-            <span>💰 Vence dia <strong>${c.vencimento}</strong></span>
-          </div>
+    wrap.innerHTML = veiculos.map((v, idx) => `
+      <div class="veiculo-view">
+        <div class="icone-veiculo">🚗</div>
+        <div class="info-veiculo">
+          <div class="nome-veiculo">${escaparHTML(v.nome)}</div>
+          ${v.placa ? `<div class="placa-veiculo">🔖 ${escaparHTML(v.placa)}</div>` : ''}
         </div>
-        <div class="acoes-cartao">
-          <button class="btn-edit-cartao" onclick="abrirEditarCartao(${idx})" title="Editar">✏️</button>
-          <button class="btn-excluir-cartao" onclick="removerCartao(${idx})" title="Excluir">🗑️</button>
+        <div class="acoes-veiculo">
+          <button class="btn-edit-veiculo" onclick="abrirEditarVeiculo(${idx})" title="Editar">✏️</button>
+          <button class="btn-excluir-veiculo" onclick="removerVeiculo(${idx})" title="Excluir">🗑️</button>
         </div>
       </div>
     `).join('');
   }
 
-  function abrirEditarCartao(idx) {
-    const c = cartoes[idx];
-    if (!c) return;
-    document.getElementById('editCartaoIdx').value = idx;
-    document.getElementById('editCartaoNome').value = c.nome;
-    document.getElementById('editCartaoFechamento').value = c.fechamento;
-    document.getElementById('editCartaoVencimento').value = c.vencimento;
-    document.getElementById('modalEditarCartao').classList.add('visivel');
-    setTimeout(() => document.getElementById('editCartaoNome').focus(), 250);
+  function abrirEditarVeiculo(idx) {
+    const v = veiculos[idx];
+    if (!v) return;
+    document.getElementById('editVeiculoIdx').value = idx;
+    document.getElementById('editVeiculoNome').value = v.nome;
+    document.getElementById('editVeiculoPlaca').value = v.placa || '';
+    document.getElementById('modalEditarVeiculo').classList.add('visivel');
+    setTimeout(() => document.getElementById('editVeiculoNome').focus(), 250);
   }
 
-  function fecharEditarCartao() {
-    document.getElementById('modalEditarCartao').classList.remove('visivel');
+  function fecharEditarVeiculo() {
+    document.getElementById('modalEditarVeiculo').classList.remove('visivel');
   }
 
-  async function salvarEdicaoCartao() {
-    const idx = parseInt(document.getElementById('editCartaoIdx').value);
-    const nomeAntigo = cartoes[idx]?.nome;
-    const nome = document.getElementById('editCartaoNome').value.trim();
-    const fechamento = parseInt(document.getElementById('editCartaoFechamento').value);
-    const vencimento = parseInt(document.getElementById('editCartaoVencimento').value);
-
+  async function salvarEdicaoVeiculo() {
+    const idx = parseInt(document.getElementById('editVeiculoIdx').value);
+    const nome = document.getElementById('editVeiculoNome').value.trim();
+    const placa = document.getElementById('editVeiculoPlaca').value.trim().toUpperCase();
     if (!nome) { alert('Nome não pode ficar vazio.'); return; }
-    if (!fechamento || fechamento < 1 || fechamento > 31) { alert('Dia de fechamento deve estar entre 1 e 31.'); return; }
-    if (!vencimento || vencimento < 1 || vencimento > 31) { alert('Dia de vencimento deve estar entre 1 e 31.'); return; }
-    const duplicado = cartoes.find((x, i) => i !== idx && x.nome === nome);
-    if (duplicado) { alert('Já existe outro cartão com esse nome.'); return; }
-
-    const renomeou = nomeAntigo && nomeAntigo !== nome;
-    cartoes[idx] = { nome, fechamento, vencimento };
-
-    try {
-      await salvarCartoes();
-      if (renomeou) await propagarRenomeacaoCartao(nomeAntigo, nome);
-      popularFiltroCartoes();
-      popularFiltroCartoesLanc();
-      popularSelectCartoes();
-      fecharEditarCartao();
-    } catch (e) { alert('Erro ao salvar cartão: ' + e.message); }
+    const duplicado = veiculos.find((x, i) => i !== idx && x.nome === nome);
+    if (duplicado) { alert('Já existe outro veículo com esse nome.'); return; }
+    veiculos[idx] = { nome, placa };
+    await salvarVeiculos();
+    popularSelectVeiculos();
+    fecharEditarVeiculo();
   }
 
-  async function propagarRenomeacaoCartao(nomeAntigo, nomeNovo) {
-    const afetados = gastos.filter(g => g.cartao === nomeAntigo);
-    if (afetados.length === 0) return;
-    const ok = confirm(
-      `O cartão foi renomeado de "${nomeAntigo}" para "${nomeNovo}".\n\n` +
-      `Encontrei ${afetados.length} lançamento(s) vinculado(s) ao nome antigo.\n\n` +
-      `Deseja atualizar todos para o novo nome? (Recomendado)`
-    );
-    if (!ok) {
-      const i = cartoes.findIndex(c => c.nome === nomeNovo);
-      if (i >= 0) cartoes[i] = { ...cartoes[i], nome: nomeAntigo };
-      await salvarCartoes();
-      popularSelectCartoes();
-      popularFiltroCartoes();
-      popularFiltroCartoesLanc();
-      return;
-    }
-    const batch = db.batch();
-    afetados.forEach(g => {
-      const ref = colecaoGastos().doc(g.id);
-      const update = { cartao: nomeNovo };
-      if (acharCartao(nomeNovo) && g.data) update.mesFatura = calcularMesFatura(g.data, nomeNovo);
-      batch.update(ref, update);
-    });
-    await batch.commit();
-  }
-
-  function verificarLancamentosOrfaos() {
-    const nomesCartoes = new Set(cartoes.map(c => c.nome));
-    const orfaos = gastos.filter(g =>
-      g.formaPagamento === 'Cartão Crédito' && g.cartao && !nomesCartoes.has(g.cartao)
-    );
-    if (orfaos.length === 0) { alert('✅ Tudo certo! Nenhum lançamento órfão encontrado.'); return; }
-    const porNome = {};
-    orfaos.forEach(g => {
-      if (!porNome[g.cartao]) porNome[g.cartao] = [];
-      porNome[g.cartao].push(g);
-    });
-    let msg = `Encontrei ${orfaos.length} lançamento(s) apontando para cartão(ões) inexistente(s):\n\n`;
-    Object.entries(porNome).forEach(([nome, itens]) => {
-      const total = itens.reduce((s, g) => s + g.valor, 0);
-      msg += `• "${nome}" — ${itens.length} lançamento(s) — ${formatarMoeda(total)}\n`;
-    });
-    msg += `\nDeseja vincular todos ao cartão "${cartoes[0]?.nome}"?`;
-    if (!confirm(msg)) return;
-    if (!cartoes.length) { alert('Cadastre um cartão primeiro.'); return; }
-    const batch = db.batch();
-    orfaos.forEach(g => {
-      const update = { cartao: cartoes[0].nome };
-      if (g.data) update.mesFatura = calcularMesFatura(g.data, cartoes[0].nome);
-      batch.update(colecaoGastos().doc(g.id), update);
-    });
-    batch.commit()
-      .then(() => alert('✅ Lançamentos reparados!'))
-      .catch(e => alert('Erro: ' + e.message));
-  }
-
-  async function excluirCartaoDoModal() {
-    const idx = parseInt(document.getElementById('editCartaoIdx').value);
-    const c = cartoes[idx];
-    if (!c) return;
-    const usos = gastos.filter(g => g.cartao === c.nome).length;
+  async function excluirVeiculoDoModal() {
+    const idx = parseInt(document.getElementById('editVeiculoIdx').value);
+    const v = veiculos[idx];
+    if (!v) return;
+    const usos = gastos.filter(g => g.veiculo === v.nome).length;
     const msg = usos > 0
-      ? `O cartão "${c.nome}" tem ${usos} lançamento(s) vinculados.\n\nSe remover, os lançamentos antigos continuarão existindo, mas o cartão não aparecerá mais no formulário.\n\nRemover mesmo assim?`
-      : `Remover o cartão "${c.nome}"?`;
+      ? `O veículo "${v.nome}" tem ${usos} abastecimento(s) registrados. Remover mesmo assim?`
+      : `Remover "${v.nome}"?`;
     if (!confirm(msg)) return;
-    cartoes.splice(idx, 1);
-    await salvarCartoes();
-    popularFiltroCartoes();
-    popularFiltroCartoesLanc();
-    popularSelectCartoes();
-    fecharEditarCartao();
+    veiculos.splice(idx, 1);
+    await salvarVeiculos();
+    popularSelectVeiculos();
+    fecharEditarVeiculo();
   }
 
-  async function criarCartao() {
-    const nome = document.getElementById('novoCartaoNome').value.trim();
-    const fechamento = parseInt(document.getElementById('novoCartaoFechamento').value);
-    const vencimento = parseInt(document.getElementById('novoCartaoVencimento').value);
-    if (!nome) { alert('Digite o nome do cartão.'); return; }
-    if (acharCartao(nome)) { alert('Já existe um cartão com esse nome.'); return; }
-    if (!fechamento || fechamento < 1 || fechamento > 31) { alert('Fechamento deve estar entre 1 e 31.'); return; }
-    if (!vencimento || vencimento < 1 || vencimento > 31) { alert('Vencimento deve estar entre 1 e 31.'); return; }
-    cartoes.push({ nome, fechamento, vencimento });
-    document.getElementById('novoCartaoNome').value = '';
-    document.getElementById('novoCartaoFechamento').value = '';
-    document.getElementById('novoCartaoVencimento').value = '';
-    popularFiltroCartoes();
-    popularFiltroCartoesLanc();
-    popularSelectCartoes();
-    await salvarCartoes();
+  async function criarVeiculo() {
+    const nome = document.getElementById('novoVeiculoNome').value.trim();
+    const placa = document.getElementById('novoVeiculoPlaca').value.trim().toUpperCase();
+    if (!nome) { alert('Digite o nome do veículo.'); return; }
+    if (acharVeiculo(nome)) { alert('Esse veículo já existe.'); return; }
+    veiculos.push({ nome, placa });
+    document.getElementById('novoVeiculoNome').value = '';
+    document.getElementById('novoVeiculoPlaca').value = '';
+    await salvarVeiculos();
+    popularSelectVeiculos();
   }
 
-  async function removerCartao(idx) {
-    const c = cartoes[idx];
-    const usos = gastos.filter(g => g.cartao === c.nome).length;
+  async function removerVeiculo(idx) {
+    const v = veiculos[idx];
+    const usos = gastos.filter(g => g.veiculo === v.nome).length;
     const msg = usos > 0
-      ? `O cartão "${c.nome}" tem ${usos} lançamento(s). Remover?`
-      : `Remover "${c.nome}"?`;
+      ? `O veículo "${v.nome}" tem ${usos} abastecimento(s). Remover?`
+      : `Remover "${v.nome}"?`;
     if (!confirm(msg)) return;
-    cartoes.splice(idx, 1);
-    popularFiltroCartoes();
-    popularFiltroCartoesLanc();
-    popularSelectCartoes();
-    await salvarCartoes();
+    veiculos.splice(idx, 1);
+    await salvarVeiculos();
+    popularSelectVeiculos();
   }
 
-  async function salvarCartoes() {
+  async function salvarVeiculos() {
     if (!firebaseOK) return;
     try {
-      await refDocCasa().set({ cartoes }, { merge: true });
-      renderizarCartoes();
-    } catch (e) { alert('Erro: ' + e.message); }
+      await refDocCasa().set({ veiculos }, { merge: true });
+      renderizarVeiculos();
+    } catch (e) { alert('Erro ao salvar veículos: ' + e.message); }
+  }
+
+  // ============ CONSUMO POR VEÍCULO ============
+  function renderizarConsumoVeiculos() {
+    const wrap = document.getElementById('consumoVeiculos');
+    if (!wrap) return;
+
+    // Filtrar abastecimentos (Transporte → Combustível com veículo e km)
+    const abastecimentos = gastos
+      .filter(g => g.categoria === 'Transporte' && g.subcategoria === 'Combustível' && g.veiculo && g.km)
+      .sort((a, b) => (a.data || '').localeCompare(b.data || '') || (a.criadoEm?.seconds || 0) - (b.criadoEm?.seconds || 0));
+
+    if (abastecimentos.length === 0) {
+      wrap.innerHTML = '<div class="consumo-vazio">Nenhum abastecimento com KM registrado ainda.<br>Registre gastos em Transporte → Combustível informando o veículo e o KM.</div>';
+      return;
+    }
+
+    // Agrupar por veículo
+    const porVeiculo = {};
+    abastecimentos.forEach(g => {
+      if (!porVeiculo[g.veiculo]) porVeiculo[g.veiculo] = [];
+      porVeiculo[g.veiculo].push(g);
+    });
+
+    // Aplicar filtro de mês se houver
+    const mesRef = document.getElementById('mesReferencia')?.value;
+    const modo = document.getElementById('modoFiltroMes')?.value || 'compra';
+    const filtrarPorMes = mesRef;
+
+    let html = '';
+
+    Object.keys(porVeiculo).sort().forEach(nomeVeiculo => {
+      let lista = porVeiculo[nomeVeiculo];
+
+      if (filtrarPorMes) {
+        lista = lista.filter(g => {
+          if (modo === 'fatura') {
+            return (g.mesFatura || (g.data || '').substring(0, 7)) === mesRef;
+          }
+          return (g.data || '').substring(0, 7) === mesRef;
+        });
+      }
+
+      if (lista.length < 2) {
+        // Ainda mostra o card mas com aviso
+        const v = acharVeiculo(nomeVeiculo);
+        html += `
+          <div class="consumo-card">
+            <div class="nome-veiculo-consumo">🚗 ${escaparHTML(nomeVeiculo)}</div>
+            ${v && v.placa ? `<div class="placa-consumo">🔖 ${escaparHTML(v.placa)}</div>` : ''}
+            <div class="consumo-vazio" style="padding:16px 0 0; font-size:0.8em;">Poucos registros no período (${lista.length}).<br>Registre mais abastecimentos com KM para calcular a média.</div>
+          </div>
+        `;
+        return;
+      }
+
+      // Ordenar por data
+      lista.sort((a, b) => (a.data || '').localeCompare(b.data || ''));
+
+      // Calcular consumo entre abastecimentos consecutivos
+      let totalLitros = 0;
+      let totalKm = 0;
+      let melhorConsumo = Infinity;
+      let piorConsumo = 0;
+      let qtdMedicoes = 0;
+
+      for (let i = 1; i < lista.length; i++) {
+        const anterior = lista[i - 1];
+        const atual = lista[i];
+        const kmRodados = Number(atual.km) - Number(anterior.km);
+        const litros = Number(atual.valor); // valor pago (aproximação dos litros)
+
+        if (kmRodados > 0 && litros > 0) {
+          const consumo = (kmRodados / litros);
+          totalKm += kmRodados;
+          totalLitros += litros;
+          if (consumo < melhorConsumo) melhorConsumo = consumo;
+          if (consumo > piorConsumo) piorConsumo = consumo;
+          qtdMedicoes++;
+        }
+      }
+
+      const mediaConsumo = totalLitros > 0 ? (totalKm / totalLitros) : 0;
+      const custoTotal = lista.reduce((s, g) => s + (Number(g.valor) || 0), 0);
+      const kmTotal = lista.length >= 2 ? Number(lista[lista.length - 1].km) - Number(lista[0].km) : 0;
+
+      const v = acharVeiculo(nomeVeiculo);
+
+      html += `
+        <div class="consumo-card">
+          <div class="nome-veiculo-consumo">🚗 ${escaparHTML(nomeVeiculo)}</div>
+          ${v && v.placa ? `<div class="placa-consumo">🔖 ${escaparHTML(v.placa)}</div>` : ''}
+          <div class="consumo-stats">
+            <div class="consumo-stat">
+              <div class="lbl">Média</div>
+              <div class="vlr">${mediaConsumo.toFixed(2)}<small> km/L</small></div>
+            </div>
+            <div class="consumo-stat">
+              <div class="lbl">KM rodados</div>
+              <div class="vlr">${kmTotal.toFixed(0)}<small> km</small></div>
+            </div>
+            <div class="consumo-stat">
+              <div class="lbl">Abastecimentos</div>
+              <div class="vlr">${lista.length}</div>
+            </div>
+          </div>
+          ${qtdMedicoes > 0 ? `
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+              <div class="consumo-stat">
+                <div class="lbl">Melhor consumo</div>
+                <div class="vlr" style="color:var(--success);">${melhorConsumo.toFixed(2)}<small> km/L</small></div>
+              </div>
+              <div class="consumo-stat">
+                <div class="lbl">Pior consumo</div>
+                <div class="vlr" style="color:var(--danger);">${piorConsumo.toFixed(2)}<small> km/L</small></div>
+              </div>
+            </div>
+          ` : ''}
+          <div style="font-size:0.75em; color:var(--text-3); margin-top:12px; text-align:center;">
+            💰 Custo total: ${formatarMoeda(custoTotal)}
+          </div>
+        </div>
+      `;
+    });
+
+    wrap.innerHTML = html || '<div class="consumo-vazio">Nenhum dado de consumo disponível.</div>';
   }
 
   // ============ PESSOAS ============
@@ -4081,6 +4378,7 @@
     desc.style.transition = 'background 0.3s';
     desc.style.background = 'var(--success-soft)';
     setTimeout(() => { desc.style.background = ''; }, 600);
+    verificarCamposVeiculo();
   }
 
   function renderizarAtalhos() {
@@ -4147,6 +4445,7 @@
     const c = acharCategoria(cat);
     const subs = (c && c.subs) || ["Outros"];
     sel.innerHTML = subs.map(s => `<option value="${s}">${s}</option>`).join('');
+    verificarCamposVeiculo();
   }
 
   function filtrosAtivos() {
@@ -4228,7 +4527,7 @@
     const ativo = temFiltroAtivo();
     const btnLimpar = document.getElementById('btnLimparFiltros');
     const resumo = document.getElementById('resumoFiltros');
-    const badges = ['badgeFiltroAtivo', 'badgeResumo', 'badgePagamento', 'badgeCategoria'];
+    const badges = ['badgeFiltroAtivo', 'badgeResumo', 'badgePagamento', 'badgeCategoria', 'badgeConsumo'];
     badges.forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = ativo ? 'inline-block' : 'none';
@@ -4256,6 +4555,7 @@
     renderizarResumo(listaColapsada);
     renderizarPorPagamento(listaColapsada);
     renderizarGrafico(listaColapsada);
+    renderizarConsumoVeiculos();
   }
 
   // ============ ABA LANÇAMENTOS ============
@@ -4384,6 +4684,8 @@
     }
     const cartaoTag = (g.formaPagamento === 'Cartão Crédito' && g.cartao) ? `<span class="tag-fatura">${escaparHTML(g.cartao)}</span>` : '';
     const obsLinha = g.observacao ? `<div class="detalhe-nome">${escaparHTML(g.observacao)}</div>` : '';
+    const veiculoTag = g.veiculo ? `<span class="tag-sub">🚗 ${escaparHTML(g.veiculo)}</span>` : '';
+    const kmTag = g.km ? `<span class="tag-sub">📍 ${Number(g.km).toLocaleString('pt-BR')} km</span>` : '';
 
     return `
       <div class="gasto-swipe-container">
@@ -4412,6 +4714,8 @@
               <span class="tag" style="background:${cor};">${g.categoria}</span>
               ${subTag}
               ${cartaoTag}
+              ${veiculoTag}
+              ${kmTag}
             </div>
           </div>
           <div class="valor-linha">
@@ -4423,7 +4727,7 @@
     `;
   }
 
-  // ============ ÚLTIMO LANÇAMENTO (corrigido) ============
+  // ============ ÚLTIMO LANÇAMENTO ============
   function timestampDe(g) {
     if (g.criadoEm && typeof g.criadoEm.toMillis === 'function') return g.criadoEm.toMillis();
     if (g.criadoEm && typeof g.criadoEm.seconds === 'number') return g.criadoEm.seconds * 1000;
@@ -4459,6 +4763,8 @@
         valorHTML = formatarMoeda(g.valor);
       }
       const obsLinha = g.observacao ? `<div style="font-size:0.75em; color:var(--text-3); margin-top:3px; font-style:italic;">${escaparHTML(g.observacao)}</div>` : '';
+      const veiculoInfo = g.veiculo ? ` · 🚗 ${g.veiculo}` : '';
+      const kmInfo = g.km ? ` · ${Number(g.km).toLocaleString('pt-BR')} km` : '';
       return `
         <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0;">
           <div style="flex:1; min-width:0;">
@@ -4467,7 +4773,7 @@
             </div>
             ${obsLinha}
             <div style="font-size:0.76em; color:var(--text-3); margin-top:4px;">
-              ${formatarData(g.data)} · ${g.usuario}${cartaoInfo}${faturaInfo} · <span style="color:${cor}; font-weight:600;">${g.categoria}</span>
+              ${formatarData(g.data)} · ${g.usuario}${cartaoInfo}${faturaInfo}${veiculoInfo}${kmInfo} · <span style="color:${cor}; font-weight:600;">${g.categoria}</span>
             </div>
           </div>
           <div style="font-weight:700; color:var(--text); font-size:1em; margin-left:10px; white-space:nowrap; letter-spacing:-0.01em;">
@@ -4728,6 +5034,16 @@
         <div style="font-size:1em; margin-bottom:18px;">📅 ${nomeMesLongo(g.mesFatura)}</div>`);
     }
 
+    if (g.veiculo) {
+      linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Veículo</div>
+        <div style="font-size:1em; margin-bottom:18px;">🚗 ${escaparHTML(g.veiculo)}</div>`);
+    }
+
+    if (g.km) {
+      linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">KM no abastecimento</div>
+        <div style="font-size:1em; margin-bottom:18px;">📍 ${Number(g.km).toLocaleString('pt-BR')} km</div>`);
+    }
+
     document.getElementById('detalhesGastoTitulo').textContent = ehParcelado ? '📌 Detalhes (compra parcelada)' : '📌 Detalhes do lançamento';
     document.getElementById('detalhesGastoCorpo').innerHTML = linhas.join('') + `
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:22px;">
@@ -4796,10 +5112,30 @@
     }
 
     document.getElementById('editGastoParcelas').value = String(g.parcelaTotal || 1);
+
+    // Veículo
+    const selVeiculoEdit = document.getElementById('editGastoVeiculo');
+    if (veiculos.length === 0) {
+      selVeiculoEdit.innerHTML = '<option value="">⚠️ Cadastre um veículo em Ajustes</option>';
+    } else {
+      selVeiculoEdit.innerHTML = veiculos.map(v =>
+        `<option value="${v.nome}" ${v.nome === g.veiculo ? 'selected' : ''}>${v.nome}${v.placa ? ' - ' + v.placa : ''}</option>`
+      ).join('');
+    }
+    document.getElementById('editGastoKm').value = g.km || '';
+
     atualizarCamposEdicaoPagamento();
+    verificarCamposVeiculoEdicao();
     atualizarPreviewEdicao();
     document.getElementById('modalEditarGasto').classList.add('visivel');
     setTimeout(() => document.getElementById('editGastoValor').focus(), 250);
+  }
+
+  function verificarCamposVeiculoEdicao() {
+    const cat = document.getElementById('editGastoCategoria').value;
+    const sub = document.getElementById('editGastoSubcategoria').value;
+    const box = document.getElementById('editCamposVeiculo');
+    box.style.display = (cat === 'Transporte' && sub === 'Combustível') ? 'block' : 'none';
   }
 
   function atualizarCamposEdicaoPagamento() {
@@ -4845,6 +5181,7 @@
     const c = acharCategoria(cat);
     const subs = (c && c.subs) || ['Outros'];
     sel.innerHTML = subs.map(s => `<option value="${s}">${s}</option>`).join('');
+    verificarCamposVeiculoEdicao();
   }
 
   function fecharEditarGasto() {
@@ -4876,14 +5213,25 @@
     const numParcelasNovo = parseInt(String(document.getElementById('editGastoParcelas').value || '1')) || 1;
     const valor = parseFloat(String(document.getElementById('editGastoValor').value || '0'));
 
+    const veiculo = String(document.getElementById('editGastoVeiculo').value || '');
+    const km = document.getElementById('editGastoKm').value ? Number(document.getElementById('editGastoKm').value) : null;
+    const ehCombustivel = categoria === 'Transporte' && subcategoria === 'Combustível';
+
     if (!valor || valor <= 0) { alert('Informe um valor válido.'); return; }
     if (!descricao) { alert('Informe um local/descrição.'); return; }
     if (!data) { alert('Informe uma data.'); return; }
     if (formaPagamento === 'Cartão Crédito' && (!cartaoNovo || !acharCartao(cartaoNovo))) {
       alert('Selecione um cartão cadastrado.'); return;
     }
+    if (ehCombustivel && (!veiculo || !km)) {
+      alert('Para abastecimento, informe o veículo e o KM atual.'); return;
+    }
 
     try {
+      const dadosVeiculo = ehCombustivel
+        ? { veiculo, km }
+        : { veiculo: null, km: null };
+
       if (grupoId) {
         const parcelas = gastos.filter(x => x.grupoId === grupoId);
         if (parcelas.length > 0) {
@@ -4903,6 +5251,7 @@
                 formaPagamento, cartao: cartaoNovo, valor: valoresParcelas[i],
                 parcelaAtual: i + 1, parcelaTotal: numParcelasNovo, valorTotalCompra: valor,
                 grupoId,
+                ...dadosVeiculo,
                 criadoEm: parcelas[0].criadoEm || firebase.firestore.FieldValue.serverTimestamp(),
                 atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
               });
@@ -4920,6 +5269,7 @@
               valor,
               parcelaAtual: null, parcelaTotal: null, valorTotalCompra: null,
               grupoId: null,
+              ...dadosVeiculo,
               criadoEm: parcelas[0].criadoEm || firebase.firestore.FieldValue.serverTimestamp(),
               atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
             });
@@ -4946,6 +5296,7 @@
             formaPagamento, cartao: cartaoNovo, valor: valoresParcelas[i],
             parcelaAtual: i + 1, parcelaTotal: numParcelasNovo, valorTotalCompra: valor,
             grupoId: grupoIdNovo,
+            ...dadosVeiculo,
             criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
             atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
           });
@@ -4959,6 +5310,7 @@
         valor, descricao, categoria, subcategoria, usuario, formaPagamento, data, observacao,
         mesFatura: data.substring(0, 7),
         cartao: formaPagamento === 'Cartão Crédito' ? cartaoNovo : null,
+        ...dadosVeiculo,
         atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
       };
       if (formaPagamento === 'Cartão Crédito') update.mesFatura = calcularMesFatura(data, cartaoNovo);
@@ -5004,11 +5356,19 @@
     const numParcelas = ehCredito ? parseInt(String(document.getElementById('parcelas').value || '1')) || 1 : 1;
     const cartaoNome = ehCredito ? String(document.getElementById('cartaoSelecionado').value || '') : null;
 
+    // Veículo
+    const ehCombustivel = categoria === 'Transporte' && subcategoria === 'Combustível';
+    const veiculo = ehCombustivel ? String(document.getElementById('veiculoSelecionado').value || '') : null;
+    const km = ehCombustivel ? (document.getElementById('kmAtual').value ? Number(document.getElementById('kmAtual').value) : null) : null;
+
     if (!data || !descricao || isNaN(valor) || valor <= 0) {
       alert('Preencha valor, local e data!'); return;
     }
     if (ehCredito && (!cartaoNome || !acharCartao(cartaoNome))) {
       alert('Selecione um cartão de crédito cadastrado!'); return;
+    }
+    if (ehCombustivel && (!veiculo || !km)) {
+      alert('Para abastecimento, informe o veículo e o KM atual.'); return;
     }
 
     btn.disabled = true;
@@ -5017,6 +5377,8 @@
     try {
       const grupoId = 'g' + Date.now() + Math.random().toString(36).slice(2, 7);
       const lancamentos = [];
+      const dadosVeiculo = ehCombustivel ? { veiculo, km } : { veiculo: null, km: null };
+
       if (ehCredito) {
         const mesFaturaInicio = calcularMesFatura(data, cartaoNome);
         const [anoBase, mesBase] = mesFaturaInicio.split('-').map(Number);
@@ -5030,7 +5392,9 @@
             parcelaAtual: numParcelas > 1 ? i + 1 : null,
             parcelaTotal: numParcelas > 1 ? numParcelas : null,
             valorTotalCompra: numParcelas > 1 ? valor : null,
-            grupoId, criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+            grupoId,
+            ...dadosVeiculo,
+            criadoEm: firebase.firestore.FieldValue.serverTimestamp()
           });
         }
       } else {
@@ -5039,7 +5403,9 @@
           descricao, categoria, subcategoria, observacao,
           formaPagamento, cartao: null, valor,
           parcelaAtual: null, parcelaTotal: null, valorTotalCompra: null,
-          grupoId, criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+          grupoId,
+          ...dadosVeiculo,
+          criadoEm: firebase.firestore.FieldValue.serverTimestamp()
         });
       }
       const batch = db.batch();
@@ -5052,6 +5418,7 @@
       document.getElementById('descricao').value = '';
       document.getElementById('observacao').value = '';
       document.getElementById('parcelas').value = '1';
+      document.getElementById('kmAtual').value = '';
       selecionarPagamento('Dinheiro/PIX');
       if (categorias.length > 0) {
         document.getElementById('categoria').value = categorias[0].nome;
@@ -5159,7 +5526,8 @@
 
     wrap.innerHTML = nomesCartoes.map(nomeCartao => {
       const itens = porCartao[nomeCartao];
-      itens.sort((a, b) => (a.data || '').localeCompare(b.data || ''));
+      // Ordenar: mais recente primeiro (por data decrescente)
+      itens.sort((a, b) => (b.data || '').localeCompare(a.data || ''));
 
       const c = acharCartao(nomeCartao);
       const infoDatas = c
@@ -5170,13 +5538,16 @@
       const totalDiego = itens.filter(g => g.usuario === 'Diego').reduce((s, g) => s + (g.valor || 0), 0);
       const totalEliane = itens.filter(g => g.usuario === 'Eliane').reduce((s, g) => s + (g.valor || 0), 0);
 
+      const chaveAberta = mesISO + '|' + nomeCartao;
+      const aberto = faturasAbertas.has(chaveAberta);
+
       const linhasHTML = itens.map(g => {
         const ehParcela = !!(g.parcelaTotal && g.parcelaTotal > 1);
         const parcelaTag = ehParcela
           ? `<span class="fl-parcela">${g.parcelaAtual}/${g.parcelaTotal}</span>`
           : '';
         return `
-          <div class="fatura-linha">
+          <div class="fatura-linha" onclick="abrirDetalhesGasto('${g.id}')">
             <div class="fl-data">${formatarData(g.data)}</div>
             <div class="fl-desc">
               ${escaparHTML(g.descricao)}${parcelaTag}
@@ -5188,7 +5559,7 @@
       }).join('');
 
       return `
-        <div class="fatura-cabecalho">
+        <div class="fatura-cabecalho ${aberto ? 'aberto' : ''}" onclick="toggleFaturaCartao('${chaveAberta.replace(/'/g, "\\'")}')">
           <div class="fc-topo">
             <div>
               <div class="fc-cartao">💳 ${escaparHTML(nomeCartao)}</div>
@@ -5201,15 +5572,18 @@
           </div>
           <div class="fc-total-label">Total da fatura</div>
           <div class="fc-total">${formatarMoeda(totalCartao)}</div>
+          <div class="fc-toggle">
+            <span class="seta-fc">▶</span>
+            <span>${aberto ? 'Toque para fechar' : 'Toque para ver os ' + itens.length + ' lançamentos'}</span>
+          </div>
         </div>
 
-        <div class="fatura-subtotais">
-          <div class="st-item">👨 Diego <strong>${formatarMoeda(totalDiego)}</strong></div>
-          <div class="st-item">👩 Eliane <strong>${formatarMoeda(totalEliane)}</strong></div>
-          <div class="st-item">📄 ${itens.length} lançamento${itens.length > 1 ? 's' : ''}</div>
-        </div>
-
-        <div class="fatura-tabela">
+        <div class="fatura-tabela ${aberto ? 'visivel' : ''}">
+          <div class="fatura-subtotais">
+            <div class="st-item">👨 Diego <strong>${formatarMoeda(totalDiego)}</strong></div>
+            <div class="st-item">👩 Eliane <strong>${formatarMoeda(totalEliane)}</strong></div>
+            <div class="st-item">📄 ${itens.length} lançamento${itens.length > 1 ? 's' : ''}</div>
+          </div>
           <div class="fatura-tabela-header">
             <div>Data</div>
             <div>Descrição</div>
@@ -5223,6 +5597,12 @@
         </div>
       `;
     }).join('');
+  }
+
+  function toggleFaturaCartao(chave) {
+    if (faturasAbertas.has(chave)) faturasAbertas.delete(chave);
+    else faturasAbertas.add(chave);
+    renderizarFaturas();
   }
 
   // ============ CONFIG CATEGORIAS ============
@@ -5346,11 +5726,12 @@
   function exportarCSV() {
     const doMes = gastosFiltrados();
     if (doMes.length === 0) { alert('Sem dados.'); return; }
-    const linhas = [['Data Compra', 'Mês Fatura', 'Quem', 'Local', 'Categoria', 'Subcategoria', 'Forma de Pagamento', 'Cartão', 'Parcela', 'Detalhes', 'Valor']];
+    const linhas = [['Data Compra', 'Mês Fatura', 'Quem', 'Local', 'Categoria', 'Subcategoria', 'Forma de Pagamento', 'Cartão', 'Parcela', 'Veículo', 'KM', 'Detalhes', 'Valor']];
     doMes.forEach(g => linhas.push([
       g.data, g.mesFatura || g.data.substring(0, 7), g.usuario, g.descricao,
       g.categoria, g.subcategoria || '', g.formaPagamento || 'Dinheiro/PIX',
       g.cartao || '', g.parcelaTotal ? `${g.parcelaAtual}/${g.parcelaTotal}` : '',
+      g.veiculo || '', g.km ? String(g.km) : '',
       g.observacao || '', String(g.valor).replace('.', ',')
     ]));
     const csv = linhas.map(l => l.map(c => `"${String(c).replace(/"/g,'""')}"`).join(';')).join('\n');
