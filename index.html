@@ -97,7 +97,6 @@
   .painel.ativo { display: block; animation: fadeIn 0.25s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* ====== BOTTOM NAV ====== */
   .bottom-nav {
     position: fixed; bottom: 0; left: 0; right: 0;
     background: rgba(255,255,255,0.95);
@@ -120,10 +119,7 @@
     border-radius: 10px;
   }
   .bottom-nav button .icone { font-size: 1.35em; line-height: 1; }
-  .bottom-nav button.ativa {
-    color: var(--primary);
-    background: transparent;
-  }
+  .bottom-nav button.ativa { color: var(--primary); background: transparent; }
   .bottom-nav button.ativa::before {
     content: ''; position: absolute; top: 0; left: 30%; right: 30%;
     height: 2px; background: var(--primary); border-radius: 2px;
@@ -132,9 +128,7 @@
   .bottom-nav button:focus,
   .bottom-nav button.ativa,
   .bottom-nav button.ativa:hover,
-  .bottom-nav button.ativa:focus {
-    background: transparent;
-  }
+  .bottom-nav button.ativa:focus { background: transparent; }
   .bottom-nav button:hover { color: var(--text-2); }
   .bottom-nav button.ativa:hover,
   .bottom-nav button.ativa:focus { color: var(--primary); }
@@ -834,30 +828,6 @@
   .nova-cat-form .linha-cor { display: flex; gap: 10px; align-items: end; }
   .nova-cat-form input[type="color"] { width: 60px; height: 46px; padding: 4px; cursor: pointer; border-radius: 10px; }
 
-  .fatura-resumo-geral {
-    background: linear-gradient(135deg, #1e40af, #1e3a8a);
-    color: white;
-    border-radius: var(--radius-lg);
-    padding: 22px;
-    margin-bottom: 16px;
-    box-shadow: 0 8px 24px rgba(30,64,175,0.25);
-  }
-  .fatura-resumo-geral .titulo {
-    font-size: 0.78em; opacity: 0.75;
-    text-transform: uppercase; letter-spacing: 0.7px;
-    margin-bottom: 6px; font-weight: 700;
-  }
-  .fatura-resumo-geral .total-geral {
-    font-size: 2.2em; font-weight: 800;
-    margin-bottom: 16px;
-    letter-spacing: -0.03em;
-  }
-  .fatura-resumo-geral .detalhes-linha { display: flex; gap: 22px; flex-wrap: wrap; font-size: 0.8em; }
-  .fatura-resumo-geral .detalhes-linha .item-resumo { display: flex; flex-direction: column; }
-  .fatura-resumo-geral .detalhes-linha .item-resumo .lbl { opacity: 0.7; font-size: 0.9em; font-weight: 500; }
-  .fatura-resumo-geral .detalhes-linha .item-resumo .vlr { font-weight: 700; font-size: 1.08em; margin-top: 3px; letter-spacing: -0.01em; }
-
-  /* ====== FATURA ESTILO EXTRATO BANCÁRIO ====== */
   .fatura-cabecalho {
     background: linear-gradient(135deg, #1e40af, #1e3a8a);
     color: white;
@@ -1027,19 +997,6 @@
   .fatura-subtotais .st-item { display: flex; gap: 5px; align-items: baseline; }
   .fatura-subtotais .st-item strong { color: var(--text-2); font-weight: 700; }
 
-  .badge-status {
-    display: inline-block; padding: 4px 10px;
-    border-radius: 20px; font-size: 0.68em;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border: 1px solid;
-  }
-  .badge-aberta { background: var(--success-soft); color: var(--success); border-color: #a7f3d0; }
-  .badge-fechada { background: var(--warning-soft); color: var(--warning); border-color: #fde68a; }
-  .badge-futura { background: var(--accent-soft); color: var(--accent); border-color: #c7d2fe; }
-  .badge-paga { background: var(--surface-3); color: var(--text-3); border-color: var(--border); }
-
   .lanc-mes-nav {
     display: flex; justify-content: space-between;
     align-items: center; margin-bottom: 14px; gap: 8px;
@@ -1120,7 +1077,6 @@
 
   .lanc-vazio { text-align: center; padding: 44px 20px; color: var(--text-muted); font-size: 0.9em; }
 
-  /* AGENDA */
   .agenda-visao-chips {
     display: flex; gap: 4px;
     background: var(--surface-3);
@@ -1577,7 +1533,60 @@
 
   .oculto { display: none !important; }
 
-  /* ====== MEDIA CONSUMO ====== */
+  /* ====== TOGGLE TANQUE CHEIO ====== */
+  .toggle-tanque {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px;
+    background: var(--surface-2);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s;
+    margin-top: 4px;
+  }
+  .toggle-tanque:hover { border-color: var(--border-strong); background: var(--surface-3); }
+  .toggle-tanque.ativo { border-color: var(--success); background: var(--success-soft); }
+  .toggle-tanque .check-box {
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    border: 2px solid var(--border-strong);
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9em; font-weight: 700;
+    color: white;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .toggle-tanque.ativo .check-box { background: var(--success); border-color: var(--success); }
+  .toggle-tanque .texto-toggle {
+    flex: 1;
+    font-weight: 600;
+    font-size: 0.88em;
+    color: var(--text-2);
+  }
+  .toggle-tanque.ativo .texto-toggle { color: var(--success); }
+  .toggle-tanque .texto-toggle small {
+    display: block;
+    font-weight: 500;
+    font-size: 0.82em;
+    color: var(--text-3);
+    margin-top: 2px;
+  }
+  .toggle-tanque.ativo .texto-toggle small { color: #065f46; }
+
+  .aviso-km {
+    background: var(--warning-soft);
+    border-left: 3px solid var(--warning);
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 0.78em;
+    color: #78350f;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  /* ====== CONSUMO ====== */
   .consumo-card {
     background: var(--surface-2);
     border: 1px solid var(--border);
@@ -1632,6 +1641,174 @@
     color: var(--text-muted);
     font-style: italic;
     font-size: 0.85em;
+    line-height: 1.6;
+  }
+  .consumo-aviso {
+    background: var(--warning-soft);
+    border-left: 3px solid var(--warning);
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 0.82em;
+    color: #78350f;
+    line-height: 1.5;
+    margin-top: 12px;
+  }
+
+  .trecho-historico {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 10px;
+    font-size: 0.82em;
+  }
+  .trecho-historico .trecho-titulo {
+    font-size: 0.72em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    color: var(--text-3);
+    margin-bottom: 10px;
+  }
+  .trecho-item {
+    display: flex; justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--border);
+    gap: 10px;
+  }
+  .trecho-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .trecho-item:first-of-type { padding-top: 0; }
+  .trecho-item .trecho-periodo {
+    font-weight: 600;
+    color: var(--text-2);
+    font-size: 0.92em;
+    line-height: 1.4;
+  }
+  .trecho-item .trecho-periodo small {
+    display: block;
+    color: var(--text-3);
+    font-weight: 500;
+    font-size: 0.85em;
+    margin-top: 2px;
+  }
+  .trecho-item .trecho-consumo {
+    font-weight: 800;
+    color: var(--text);
+    font-size: 0.95em;
+    white-space: nowrap;
+    letter-spacing: -0.01em;
+  }
+  .trecho-item .trecho-consumo.bom { color: var(--success); }
+  .trecho-item .trecho-consumo.ruim { color: var(--danger); }
+
+  /* ====== GRÁFICO DE PREÇO DO LITRO ====== */
+  .grafico-preco-wrap {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 20px 0 0;
+    overflow-x: auto;
+    min-height: 220px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .grafico-preco-wrap::-webkit-scrollbar { height: 6px; }
+  .grafico-preco-wrap::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+  .barra-preco-col {
+    flex: 1;
+    min-width: 55px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .barra-preco-valor-topo {
+    font-size: 0.72em;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+  .barra-preco-container {
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    height: 140px;
+    position: relative;
+  }
+  .barra-preco-fill {
+    width: 70%;
+    max-width: 42px;
+    background: linear-gradient(180deg, #3b82f6, #1e40af);
+    border-radius: 6px 6px 0 0;
+    transition: height 0.5s ease-out;
+    position: relative;
+    box-shadow: 0 2px 6px rgba(30,64,175,0.25);
+    min-height: 6px;
+  }
+  .barra-preco-fill.menor {
+    background: linear-gradient(180deg, #10b981, #059669);
+    box-shadow: 0 2px 6px rgba(5,150,105,0.25);
+  }
+  .barra-preco-fill.maior {
+    background: linear-gradient(180deg, #ef4444, #b91c1c);
+    box-shadow: 0 2px 6px rgba(185,28,28,0.25);
+  }
+  .barra-preco-label-mes {
+    font-size: 0.7em;
+    font-weight: 700;
+    color: var(--text-2);
+    text-align: center;
+    line-height: 1.2;
+    text-transform: capitalize;
+  }
+  .barra-preco-label-mes small {
+    display: block;
+    font-weight: 500;
+    color: var(--text-muted);
+    font-size: 0.85em;
+    font-size: 0.62em;
+  }
+  .grafico-preco-resumo {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .grafico-preco-resumo .item {
+    background: var(--surface-2);
+    border-radius: 10px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .grafico-preco-resumo .item .lbl {
+    font-size: 0.66em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    color: var(--text-3);
+    margin-bottom: 4px;
+  }
+  .grafico-preco-resumo .item .vlr {
+    font-size: 1.05em;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .grafico-preco-resumo .item .vlr small { font-size: 0.6em; color: var(--text-3); font-weight: 600; }
+  .grafico-preco-resumo .item.variacao-up .vlr { color: var(--danger); }
+  .grafico-preco-resumo .item.variacao-down .vlr { color: var(--success); }
+  .grafico-preco-linha-base {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.72em;
+    color: var(--text-3);
+    margin-top: 8px;
+    font-style: italic;
+    line-height: 1.5;
   }
 
   @media (min-width: 800px) {
@@ -1700,7 +1877,7 @@
       <div class="secao">
         <div class="secao-titulo"><span class="num">2</span> Quanto</div>
         <div class="campo valor-destaque" style="margin-bottom:0;">
-          <input type="number" id="valor" step="0.01" min="0" inputmode="decimal" placeholder="R$ 0,00" oninput="atualizarPreviewParcelas()">
+          <input type="number" id="valor" step="0.01" min="0" inputmode="decimal" placeholder="R$ 0,00" oninput="atualizarPreviewParcelas(); atualizarInfoCombustivel()">
         </div>
       </div>
 
@@ -1732,17 +1909,37 @@
         </div>
       </div>
 
-      <!-- CAMPOS DE VEÍCULO (aparecem apenas para Transporte→Combustível) -->
+      <!-- CAMPOS DE COMBUSTÍVEL -->
       <div id="camposVeiculo" style="display:none;">
+        <div class="secao-titulo" style="margin-top:4px;"><span class="num">⛽</span> Abastecimento</div>
+
         <div class="campo">
           <label>🚗 Veículo</label>
-          <select id="veiculoSelecionado"></select>
+          <select id="veiculoSelecionado" onchange="atualizarInfoCombustivel()"></select>
         </div>
-        <div class="campo">
-          <label>📍 KM atual</label>
-          <input type="number" id="kmAtual" placeholder="Ex: 45230" inputmode="numeric" oninput="atualizarPreviewParcelas()">
-          <span class="dica">Informe a quilometragem do painel</span>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div class="campo">
+            <label>📍 KM atual</label>
+            <input type="number" id="kmAtual" placeholder="45230" inputmode="numeric" oninput="verificarKmEAtualizarInfo()">
+          </div>
+          <div class="campo">
+            <label>⛽ Litros</label>
+            <input type="number" id="litros" placeholder="32.5" step="0.01" min="0" inputmode="decimal" oninput="atualizarInfoCombustivel()">
+          </div>
         </div>
+
+        <div id="avisoKm" class="aviso-km" style="display:none;"></div>
+
+        <div id="toggleTanque" class="toggle-tanque" onclick="toggleTanqueCheio()">
+          <div class="check-box" id="checkTanque">✓</div>
+          <div class="texto-toggle">
+            Completei o tanque
+            <small>Marque se encheu até a boca</small>
+          </div>
+        </div>
+
+        <div id="infoCombustivel" style="display:none; background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:14px; margin-top:14px; font-size:0.85em; line-height:1.7; color:var(--text-2);"></div>
       </div>
 
       <div class="secao">
@@ -1797,7 +1994,7 @@
         <div class="secao-titulo"><span class="num">5</span> Quando</div>
         <div class="campo">
           <label>Data</label>
-          <input type="date" id="data">
+          <input type="date" id="data" onchange="verificarKmEAtualizarInfo()">
         </div>
       </div>
 
@@ -1995,6 +2192,15 @@
         <span class="filtro-ativo" id="badgeConsumo" style="display:none;">Filtrado</span>
       </h2>
       <div id="consumoVeiculos"></div>
+    </div>
+
+    <!-- VARIAÇÃO DO PREÇO DO LITRO -->
+    <div class="card">
+      <h2>💹 Variação do Preço do Litro</h2>
+      <p style="color:var(--text-3); font-size:0.82em; margin-bottom:16px; line-height:1.6;">
+        Preço médio do litro pago por mês (todos os veículos). 🟢 Abaixo da média geral · 🔵 Na média · 🔴 Acima da média.
+      </p>
+      <div id="graficoPrecoLitro"></div>
     </div>
   </div>
 
@@ -2235,14 +2441,28 @@
         </select>
       </div>
 
-      <div id="editCamposVeiculo" style="display:none;">
+      <div id="editCamposVeiculo" style="display:none; background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:14px;">
+        <div style="font-size:0.78em; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">⛽ Abastecimento</div>
         <div class="campo">
           <label>🚗 Veículo</label>
           <select id="editGastoVeiculo"></select>
         </div>
-        <div class="campo">
-          <label>📍 KM atual</label>
-          <input type="number" id="editGastoKm" placeholder="Ex: 45230" inputmode="numeric">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div class="campo">
+            <label>📍 KM atual</label>
+            <input type="number" id="editGastoKm" placeholder="45230" inputmode="numeric">
+          </div>
+          <div class="campo">
+            <label>⛽ Litros</label>
+            <input type="number" id="editGastoLitros" placeholder="32.5" step="0.01" min="0" inputmode="decimal">
+          </div>
+        </div>
+        <div id="editToggleTanque" class="toggle-tanque" onclick="toggleTanqueCheioEdit()">
+          <div class="check-box" id="editCheckTanque">✓</div>
+          <div class="texto-toggle">
+            Completei o tanque
+            <small>Marque se encheu até a boca</small>
+          </div>
         </div>
       </div>
 
@@ -2590,6 +2810,8 @@
     { valor: "Outros",   emoji: "📌", classe: "tag-tipo-outros" }
   ];
 
+  const MESES_ABREV = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
   let categorias = [];
   let cartoes = [];
   let pessoas = [];
@@ -2615,18 +2837,19 @@
   let filtrosLancExpandidos = false;
   let modoLancMes = 'compra';
 
+  let tanqueCheioLanc = false;
+  let tanqueCheioEdit = false;
+
   function acharCategoria(nome) { return categorias.find(c => c.nome === nome); }
   function acharCartao(nome) { return cartoes.find(c => c.nome === nome); }
   function acharPessoa(nome) { return pessoas.find(p => p.nome === nome); }
   function acharVeiculo(nome) { return veiculos.find(v => v.nome === nome); }
 
-  // ============ DATA LOCAL ============
   function dataLocalISO(d) {
     const dt = d || new Date();
     return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
   }
 
-  // ============ AVATARES ============
   function iniciais(nome) {
     const partes = String(nome || '').trim().split(/\s+/);
     if (partes.length === 1) return partes[0].substring(0, 2).toUpperCase();
@@ -2645,7 +2868,6 @@
     return `<span class="avatar-mini ${extraClass || ''}" style="background:${corAvatar(nome)};">${iniciais(nome)}</span>`;
   }
 
-  // ============ NAVEGAÇÃO ============
   function trocarAba(nome) {
     document.querySelectorAll('.bottom-nav button').forEach(b => b.classList.remove('ativa'));
     document.querySelectorAll('.painel').forEach(p => p.classList.remove('ativo'));
@@ -2681,7 +2903,6 @@
     document.getElementById('filtrosConteudo').classList.toggle('aberto', filtrosExpandidos);
   }
 
-  // ============ FILTROS LANÇAMENTOS ============
   function toggleFiltrosLanc() {
     filtrosLancExpandidos = !filtrosLancExpandidos;
     document.getElementById('lancFiltrosCabecalho').classList.toggle('aberto', filtrosLancExpandidos);
@@ -2781,7 +3002,7 @@
     atualizarPreviewParcelas();
   }
 
-  // ============ VEÍCULO NO LANÇAMENTO ============
+  // ============ VEÍCULO / COMBUSTÍVEL ============
   function verificarCamposVeiculo() {
     const cat = document.getElementById('categoria').value;
     const sub = document.getElementById('subcategoria').value;
@@ -2789,9 +3010,15 @@
     if (cat === 'Transporte' && sub === 'Combustível') {
       campos.style.display = 'block';
       popularSelectVeiculos();
+      verificarKmEAtualizarInfo();
     } else {
       campos.style.display = 'none';
       document.getElementById('kmAtual').value = '';
+      document.getElementById('litros').value = '';
+      document.getElementById('avisoKm').style.display = 'none';
+      document.getElementById('infoCombustivel').style.display = 'none';
+      tanqueCheioLanc = false;
+      atualizarVisualToggleTanque();
     }
   }
 
@@ -2805,6 +3032,131 @@
     const atual = sel.value;
     sel.innerHTML = veiculos.map(v => `<option value="${v.nome}">${v.nome}${v.placa ? ' - ' + v.placa : ''}</option>`).join('');
     if (atual && acharVeiculo(atual)) sel.value = atual;
+  }
+
+  function atualizarVisualToggleTanque() {
+    const t = document.getElementById('toggleTanque');
+    const c = document.getElementById('checkTanque');
+    if (tanqueCheioLanc) {
+      t.classList.add('ativo');
+      c.textContent = '✓';
+    } else {
+      t.classList.remove('ativo');
+      c.textContent = '';
+    }
+  }
+
+  function toggleTanqueCheio() {
+    tanqueCheioLanc = !tanqueCheioLanc;
+    atualizarVisualToggleTanque();
+  }
+
+  function toggleTanqueCheioEdit() {
+    tanqueCheioEdit = !tanqueCheioEdit;
+    const t = document.getElementById('editToggleTanque');
+    const c = document.getElementById('editCheckTanque');
+    if (tanqueCheioEdit) {
+      t.classList.add('ativo');
+      c.textContent = '✓';
+    } else {
+      t.classList.remove('ativo');
+      c.textContent = '';
+    }
+  }
+
+  // Retorna o último abastecimento do veículo (por data + km)
+  function ultimoAbastecimentoVeiculo(nomeVeiculo, ignorarId) {
+    const lista = gastos.filter(g =>
+      g.categoria === 'Transporte' &&
+      g.subcategoria === 'Combustível' &&
+      g.veiculo === nomeVeiculo &&
+      g.km && g.litros &&
+      g.id !== ignorarId
+    );
+    if (lista.length === 0) return null;
+    lista.sort((a, b) => (a.data || '').localeCompare(b.data || '') || (Number(a.km) - Number(b.km)));
+    return lista[lista.length - 1];
+  }
+
+  function verificarKmEAtualizarInfo() {
+    const avisoEl = document.getElementById('avisoKm');
+    const veiculo = document.getElementById('veiculoSelecionado').value;
+    const km = Number(document.getElementById('kmAtual').value);
+    const data = document.getElementById('data').value;
+    avisoEl.style.display = 'none';
+
+    if (!veiculo || !km) { atualizarInfoCombustivel(); return; }
+
+    const ultimo = ultimoAbastecimentoVeiculo(veiculo);
+    if (ultimo) {
+      const kmAnterior = Number(ultimo.km);
+      if (km < kmAnterior) {
+        avisoEl.innerHTML = `⚠️ <strong>KM menor que o último abastecimento</strong><br>
+          Último registro: ${kmAnterior.toLocaleString('pt-BR')} km em ${formatarData(ultimo.data)}.<br>
+          Verifique se digitou certo.`;
+        avisoEl.style.display = 'block';
+      } else if (data && ultimo.data && data < ultimo.data) {
+        avisoEl.innerHTML = `⚠️ <strong>Data anterior ao último abastecimento</strong><br>
+          Último registro: ${formatarData(ultimo.data)} em ${kmAnterior.toLocaleString('pt-BR')} km.<br>
+          Verifique a data.`;
+        avisoEl.style.display = 'block';
+      }
+    }
+    atualizarInfoCombustivel();
+  }
+
+  function atualizarInfoCombustivel() {
+    const info = document.getElementById('infoCombustivel');
+    const valor = parseFloat(document.getElementById('valor').value) || 0;
+    const litros = parseFloat(document.getElementById('litros').value) || 0;
+    const veiculo = document.getElementById('veiculoSelecionado').value;
+    const km = Number(document.getElementById('kmAtual').value);
+
+    if (valor <= 0 || litros <= 0) {
+      info.style.display = 'none';
+      return;
+    }
+
+    const precoLitro = valor / litros;
+    let html = `💡 <strong>Preço do litro:</strong> ${formatarMoeda(precoLitro)}`;
+
+    if (veiculo && km) {
+      const ultimo = ultimoAbastecimentoVeiculo(veiculo);
+      if (ultimo && km > Number(ultimo.km)) {
+        const kmRodados = km - Number(ultimo.km);
+        html += `<br>🛣️ <strong>KM rodados desde o último:</strong> ${kmRodados.toLocaleString('pt-BR')} km`;
+        if (tanqueCheioLanc && ultimo.tanqueCheio) {
+          // Calcula litros somados entre os dois cheios
+          const litrosSomados = calcularLitrosEntreCheios(veiculo, ultimo.km, km);
+          if (litrosSomados > 0) {
+            const consumo = kmRodados / litrosSomados;
+            html += `<br>⛽ <strong>Consumo estimado:</strong> ${consumo.toFixed(2)} km/L`;
+            if (consumo < 5 || consumo > 25) {
+              html += ` <span style="color:var(--warning);">(verifique os dados)</span>`;
+            }
+          }
+        } else if (!tanqueCheioLanc) {
+          html += `<br><span style="color:var(--text-3); font-size:0.9em;">💡 Marque "Completei o tanque" para o cálculo preciso</span>`;
+        }
+      } else if (!ultimo) {
+        html += `<br>📌 <span style="color:var(--text-3); font-size:0.9em;">Este será o 1º abastecimento deste veículo</span>`;
+      }
+    }
+    info.innerHTML = html;
+    info.style.display = 'block';
+  }
+
+  // Soma os litros de todos os abastecimentos entre dois KMs (inclusive o novo)
+  function calcularLitrosEntreCheios(veiculo, kmInicio, kmFim) {
+    const entre = gastos.filter(g =>
+      g.categoria === 'Transporte' &&
+      g.subcategoria === 'Combustível' &&
+      g.veiculo === veiculo &&
+      g.km && g.litros &&
+      Number(g.km) > Number(kmInicio) &&
+      Number(g.km) <= Number(kmFim)
+    );
+    return entre.reduce((s, g) => s + Number(g.litros || 0), 0);
   }
 
   function popularSelectCartoes() {
@@ -3045,7 +3397,6 @@
         renderizarFaturas();
         renderizarUltimos();
         renderizarLancamentos();
-        renderizarConsumoVeiculos();
       },
       erro => { console.error(erro); atualizarStatus('offline', 'Erro'); }
     );
@@ -3166,130 +3517,382 @@
     } catch (e) { alert('Erro ao salvar veículos: ' + e.message); }
   }
 
-  // ============ CONSUMO POR VEÍCULO ============
+  // ============ CÁLCULO DE CONSUMO (TANQUE A TANQUE) ============
+  /**
+   * Calcula o consumo de um veículo com a lógica "tanque a tanque".
+   * Só considera trechos entre dois abastecimentos com "tanqueCheio = true".
+   * Os abastecimentos parciais no meio têm seus litros somados.
+   */
+  function calcularConsumoVeiculo(nomeVeiculo, filtroMes, modoMes) {
+    // 1. Pega todos os abastecimentos com veículo, km, litros e ordena por data/km
+    let lista = gastos.filter(g =>
+      g.categoria === 'Transporte' &&
+      g.subcategoria === 'Combustível' &&
+      g.veiculo === nomeVeiculo &&
+      g.km && g.litros && Number(g.litros) > 0
+    );
+
+    if (lista.length < 2) {
+      return { media: 0, medicoes: [], kmTotal: 0, litrosTotal: 0, melhor: 0, pior: 0, temDados: false, poucosDados: true };
+    }
+
+    // Ordena por data, depois por KM (para empates)
+    lista.sort((a, b) => (a.data || '').localeCompare(b.data || '') || (Number(a.km) - Number(b.km)));
+
+    // 2. Encontra os abastecimentos com "tanque cheio"
+    const cheios = lista.filter(a => a.tanqueCheio === true);
+
+    if (cheios.length < 2) {
+      return { media: 0, medicoes: [], kmTotal: 0, litrosTotal: 0, melhor: 0, pior: 0, temDados: false, poucosCheios: true, totalAbast: lista.length, totalCheios: cheios.length };
+    }
+
+    // 3. Para cada par de cheios consecutivos, calcula o consumo
+    const medicoes = [];
+
+    for (let i = 1; i < cheios.length; i++) {
+      const anterior = cheios[i - 1];
+      const atual = cheios[i];
+
+      const kmRodados = Number(atual.km) - Number(anterior.km);
+      if (kmRodados <= 0) continue;
+
+      // Soma TODOS os litros entre os dois cheios (incluindo o próprio "atual")
+      const litrosNoIntervalo = lista
+        .filter(a =>
+          Number(a.km) > Number(anterior.km) &&
+          Number(a.km) <= Number(atual.km)
+        )
+        .reduce((soma, a) => soma + Number(a.litros || 0), 0);
+
+      if (litrosNoIntervalo > 0) {
+        const consumo = kmRodados / litrosNoIntervalo;
+        // Filtra valores absurdos (< 3 ou > 30 km/L) como provável erro de digitação
+        if (consumo >= 3 && consumo <= 30) {
+          medicoes.push({
+            km: kmRodados,
+            litros: litrosNoIntervalo,
+            consumo,
+            dataInicio: anterior.data,
+            dataFim: atual.data,
+            kmInicio: Number(anterior.km),
+            kmFim: Number(atual.km)
+          });
+        }
+      }
+    }
+
+    if (medicoes.length === 0) {
+      return { media: 0, medicoes: [], kmTotal: 0, litrosTotal: 0, melhor: 0, pior: 0, temDados: false, semTrechos: true };
+    }
+
+    // 4. Filtra por mês (se solicitado)
+    let medicoesFiltradas = medicoes;
+    if (filtroMes) {
+      medicoesFiltradas = medicoes.filter(m => {
+        // Considera o mês do abastecimento FINAL do trecho
+        return (m.dataFim || '').substring(0, 7) === filtroMes;
+      });
+    }
+
+    if (medicoesFiltradas.length === 0) {
+      return { media: 0, medicoes: [], kmTotal: 0, litrosTotal: 0, melhor: 0, pior: 0, temDados: false, semTrechos: true, totalMedicoes: medicoes.length };
+    }
+
+    const kmTotal = medicoesFiltradas.reduce((s, m) => s + m.km, 0);
+    const litrosTotal = medicoesFiltradas.reduce((s, m) => s + m.litros, 0);
+    const media = kmTotal / litrosTotal;
+    const consumos = medicoesFiltradas.map(m => m.consumo);
+    const melhor = Math.max(...consumos);
+    const pior = Math.min(...consumos);
+
+    return {
+      media,
+      medicoes: medicoesFiltradas,
+      todasMedicoes: medicoes,
+      kmTotal,
+      litrosTotal,
+      melhor,
+      pior,
+      temDados: true,
+      totalAbast: lista.length,
+      totalCheios: cheios.length,
+      totalMedicoes: medicoes.length
+    };
+  }
+
   function renderizarConsumoVeiculos() {
     const wrap = document.getElementById('consumoVeiculos');
     if (!wrap) return;
 
-    // Filtrar abastecimentos (Transporte → Combustível com veículo e km)
-    const abastecimentos = gastos
-      .filter(g => g.categoria === 'Transporte' && g.subcategoria === 'Combustível' && g.veiculo && g.km)
-      .sort((a, b) => (a.data || '').localeCompare(b.data || '') || (a.criadoEm?.seconds || 0) - (b.criadoEm?.seconds || 0));
+    // Verifica se existe algum abastecimento registrado
+    const qualquerAbastecimento = gastos.some(g =>
+      g.categoria === 'Transporte' && g.subcategoria === 'Combustível' && g.veiculo && g.km && g.litros
+    );
 
-    if (abastecimentos.length === 0) {
-      wrap.innerHTML = '<div class="consumo-vazio">Nenhum abastecimento com KM registrado ainda.<br>Registre gastos em Transporte → Combustível informando o veículo e o KM.</div>';
+    if (!qualquerAbastecimento) {
+      wrap.innerHTML = '<div class="consumo-vazio">Nenhum abastecimento registrado ainda.<br>Registre em Transporte → Combustível informando veículo, KM e litros.</div>';
       return;
     }
 
-    // Agrupar por veículo
-    const porVeiculo = {};
-    abastecimentos.forEach(g => {
-      if (!porVeiculo[g.veiculo]) porVeiculo[g.veiculo] = [];
-      porVeiculo[g.veiculo].push(g);
-    });
-
-    // Aplicar filtro de mês se houver
     const mesRef = document.getElementById('mesReferencia')?.value;
-    const modo = document.getElementById('modoFiltroMes')?.value || 'compra';
-    const filtrarPorMes = mesRef;
 
     let html = '';
+    let algumVeiculoComDados = false;
 
-    Object.keys(porVeiculo).sort().forEach(nomeVeiculo => {
-      let lista = porVeiculo[nomeVeiculo];
+    veiculos.forEach(v => {
+      const r = calcularConsumoVeiculo(v.nome, null, null); // usa todos os dados
 
-      if (filtrarPorMes) {
-        lista = lista.filter(g => {
-          if (modo === 'fatura') {
-            return (g.mesFatura || (g.data || '').substring(0, 7)) === mesRef;
-          }
-          return (g.data || '').substring(0, 7) === mesRef;
-        });
-      }
+      const veiculoCard = (conteudoInterno) => `
+        <div class="consumo-card">
+          <div class="nome-veiculo-consumo">🚗 ${escaparHTML(v.nome)}</div>
+          ${v.placa ? `<div class="placa-consumo">🔖 ${escaparHTML(v.placa)}</div>` : ''}
+          ${conteudoInterno}
+        </div>
+      `;
 
-      if (lista.length < 2) {
-        // Ainda mostra o card mas com aviso
-        const v = acharVeiculo(nomeVeiculo);
-        html += `
-          <div class="consumo-card">
-            <div class="nome-veiculo-consumo">🚗 ${escaparHTML(nomeVeiculo)}</div>
-            ${v && v.placa ? `<div class="placa-consumo">🔖 ${escaparHTML(v.placa)}</div>` : ''}
-            <div class="consumo-vazio" style="padding:16px 0 0; font-size:0.8em;">Poucos registros no período (${lista.length}).<br>Registre mais abastecimentos com KM para calcular a média.</div>
-          </div>
-        `;
+      if (r.poucosDados) {
+        html += veiculoCard(`<div class="consumo-vazio" style="padding:16px 0 0; font-size:0.82em;">Poucos registros (${r.totalAbast || 0}).<br>Precisa de pelo menos 2 abastecimentos com KM e litros.</div>`);
         return;
       }
 
-      // Ordenar por data
-      lista.sort((a, b) => (a.data || '').localeCompare(b.data || ''));
-
-      // Calcular consumo entre abastecimentos consecutivos
-      let totalLitros = 0;
-      let totalKm = 0;
-      let melhorConsumo = Infinity;
-      let piorConsumo = 0;
-      let qtdMedicoes = 0;
-
-      for (let i = 1; i < lista.length; i++) {
-        const anterior = lista[i - 1];
-        const atual = lista[i];
-        const kmRodados = Number(atual.km) - Number(anterior.km);
-        const litros = Number(atual.valor); // valor pago (aproximação dos litros)
-
-        if (kmRodados > 0 && litros > 0) {
-          const consumo = (kmRodados / litros);
-          totalKm += kmRodados;
-          totalLitros += litros;
-          if (consumo < melhorConsumo) melhorConsumo = consumo;
-          if (consumo > piorConsumo) piorConsumo = consumo;
-          qtdMedicoes++;
-        }
+      if (r.poucosCheios) {
+        html += veiculoCard(`
+          <div class="consumo-aviso">
+            ⚠️ <strong>Precisa de pelo menos 2 abastecimentos com "tanque cheio"</strong><br>
+            Já registrou ${r.totalCheios} cheio(s) de ${r.totalAbast} abastecimento(s).<br>
+            Marque "Completei o tanque" nos próximos para calcular.
+          </div>
+        `);
+        return;
       }
 
-      const mediaConsumo = totalLitros > 0 ? (totalKm / totalLitros) : 0;
-      const custoTotal = lista.reduce((s, g) => s + (Number(g.valor) || 0), 0);
-      const kmTotal = lista.length >= 2 ? Number(lista[lista.length - 1].km) - Number(lista[0].km) : 0;
+      if (!r.temDados) {
+        html += veiculoCard(`<div class="consumo-vazio" style="padding:16px 0 0; font-size:0.82em;">Ainda sem trechos válidos para calcular.</div>`);
+        return;
+      }
 
-      const v = acharVeiculo(nomeVeiculo);
+      algumVeiculoComDados = true;
 
-      html += `
-        <div class="consumo-card">
-          <div class="nome-veiculo-consumo">🚗 ${escaparHTML(nomeVeiculo)}</div>
-          ${v && v.placa ? `<div class="placa-consumo">🔖 ${escaparHTML(v.placa)}</div>` : ''}
-          <div class="consumo-stats">
-            <div class="consumo-stat">
-              <div class="lbl">Média</div>
-              <div class="vlr">${mediaConsumo.toFixed(2)}<small> km/L</small></div>
+      // Histórico de trechos (últimos 3)
+      const ultimosTrechos = r.todasMedicoes.slice(-3).reverse();
+
+      const trechosHTML = ultimosTrechos.map(m => {
+        const classeConsumo = m.consumo >= r.media * 1.05 ? 'bom' : (m.consumo <= r.media * 0.95 ? 'ruim' : '');
+        return `
+          <div class="trecho-item">
+            <div class="trecho-periodo">
+              ${formatarData(m.dataInicio)} → ${formatarData(m.dataFim)}
+              <small>${m.km.toLocaleString('pt-BR')} km · ${m.litros.toFixed(1)} L</small>
             </div>
-            <div class="consumo-stat">
-              <div class="lbl">KM rodados</div>
-              <div class="vlr">${kmTotal.toFixed(0)}<small> km</small></div>
-            </div>
-            <div class="consumo-stat">
-              <div class="lbl">Abastecimentos</div>
-              <div class="vlr">${lista.length}</div>
-            </div>
+            <div class="trecho-consumo ${classeConsumo}">${m.consumo.toFixed(2)} <span style="font-size:0.75em; font-weight:600;">km/L</span></div>
           </div>
-          ${qtdMedicoes > 0 ? `
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
-              <div class="consumo-stat">
-                <div class="lbl">Melhor consumo</div>
-                <div class="vlr" style="color:var(--success);">${melhorConsumo.toFixed(2)}<small> km/L</small></div>
-              </div>
-              <div class="consumo-stat">
-                <div class="lbl">Pior consumo</div>
-                <div class="vlr" style="color:var(--danger);">${piorConsumo.toFixed(2)}<small> km/L</small></div>
-              </div>
-            </div>
-          ` : ''}
-          <div style="font-size:0.75em; color:var(--text-3); margin-top:12px; text-align:center;">
-            💰 Custo total: ${formatarMoeda(custoTotal)}
+        `;
+      }).join('');
+
+      const consumoDoMes = mesRef ? calcularConsumoVeiculo(v.nome, mesRef, null) : null;
+      const infoMes = (consumoDoMes && consumoDoMes.temDados) ? `
+        <div style="background:var(--primary-soft); border-left:3px solid var(--primary); padding:10px 12px; border-radius:8px; margin-top:12px; font-size:0.82em; color:var(--primary); line-height:1.5;">
+          📅 <strong>No mês selecionado:</strong> ${consumoDoMes.media.toFixed(2)} km/L
+          <span style="color:var(--text-3);">(${consumoDoMes.medicoes.length} trecho${consumoDoMes.medicoes.length > 1 ? 's' : ''} · ${consumoDoMes.kmTotal.toLocaleString('pt-BR')} km)</span>
+        </div>
+      ` : '';
+
+      html += veiculoCard(`
+        <div class="consumo-stats">
+          <div class="consumo-stat">
+            <div class="lbl">Média geral</div>
+            <div class="vlr">${r.media.toFixed(2)}<small> km/L</small></div>
+          </div>
+          <div class="consumo-stat">
+            <div class="lbl">KM total</div>
+            <div class="vlr">${r.kmTotal.toLocaleString('pt-BR')}<small> km</small></div>
+          </div>
+          <div class="consumo-stat">
+            <div class="lbl">Trechos</div>
+            <div class="vlr">${r.medicoes.length}</div>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+          <div class="consumo-stat">
+            <div class="lbl">Melhor</div>
+            <div class="vlr" style="color:var(--success);">${r.melhor.toFixed(2)}<small> km/L</small></div>
+          </div>
+          <div class="consumo-stat">
+            <div class="lbl">Pior</div>
+            <div class="vlr" style="color:var(--danger);">${r.pior.toFixed(2)}<small> km/L</small></div>
+          </div>
+        </div>
+        ${infoMes}
+        ${ultimosTrechos.length > 0 ? `
+          <div class="trecho-historico">
+            <div class="trecho-titulo">📈 Últimos trechos</div>
+            ${trechosHTML}
+          </div>
+        ` : ''}
+      `);
+    });
+
+    if (!algumVeiculoComDados && veiculos.length === 0) {
+      html = '<div class="consumo-vazio">Cadastre um veículo em Ajustes → Veículos.</div>';
+    }
+
+    wrap.innerHTML = html;
+  }
+
+  // ============ GRÁFICO DE PREÇO DO LITRO ============
+  function renderizarGraficoPrecoLitro() {
+    const wrap = document.getElementById('graficoPrecoLitro');
+    if (!wrap) return;
+
+    // Pega todos os abastecimentos com litros e valor
+    const abastecimentos = gastos.filter(g =>
+      g.categoria === 'Transporte' &&
+      g.subcategoria === 'Combustível' &&
+      g.litros && Number(g.litros) > 0 &&
+      g.valor && Number(g.valor) > 0 &&
+      g.data
+    );
+
+    if (abastecimentos.length === 0) {
+      wrap.innerHTML = '<div class="consumo-vazio">Nenhum abastecimento registrado ainda.</div>';
+      return;
+    }
+
+    // Agrupa por mês (YYYY-MM)
+    const porMes = {};
+    abastecimentos.forEach(g => {
+      const mes = g.data.substring(0, 7);
+      if (!porMes[mes]) porMes[mes] = { litros: 0, valor: 0, qtd: 0 };
+      porMes[mes].litros += Number(g.litros);
+      porMes[mes].valor += Number(g.valor);
+      porMes[mes].qtd++;
+    });
+
+    // Calcula preço médio do mês
+    const meses = Object.keys(porMes).sort();
+    const dados = meses.map(m => {
+      const d = porMes[m];
+      return {
+        mes: m,
+        precoMedio: d.valor / d.litros,
+        litros: d.litros,
+        valor: d.valor,
+        qtd: d.qtd
+      };
+    });
+
+    if (dados.length === 0) {
+      wrap.innerHTML = '<div class="consumo-vazio">Nenhum dado disponível.</div>';
+      return;
+    }
+
+    // Mostra os últimos 12 meses
+    const dadosExibir = dados.slice(-12);
+
+    // Calcula média geral
+    const litrosTotal = dadosExibir.reduce((s, d) => s + d.litros, 0);
+    const valorTotal = dadosExibir.reduce((s, d) => s + d.valor, 0);
+    const mediaGeral = valorTotal / litrosTotal;
+
+    // Maior e menor preço
+    const precos = dadosExibir.map(d => d.precoMedio);
+    const maxPreco = Math.max(...precos);
+    const minPreco = Math.min(...precos);
+    const mesMax = dadosExibir.find(d => d.precoMedio === maxPreco);
+    const mesMin = dadosExibir.find(d => d.precoMedio === minPreco);
+
+    // Variação entre primeiro e último mês
+    let variacao = 0;
+    if (dadosExibir.length >= 2) {
+      const primeiro = dadosExibir[0].precoMedio;
+      const ultimo = dadosExibir[dadosExibir.length - 1].precoMedio;
+      variacao = ((ultimo - primeiro) / primeiro) * 100;
+    }
+
+    // Renderiza as barras
+    const maxBarra = maxPreco * 1.15; // margem visual
+
+    const barrasHTML = dadosExibir.map(d => {
+      const alturaPct = (d.precoMedio / maxBarra) * 100;
+      let classeBarra = '';
+      if (d.precoMedio < mediaGeral * 0.97) classeBarra = 'menor';
+      else if (d.precoMedio > mediaGeral * 1.03) classeBarra = 'maior';
+
+      const [ano, mes] = d.mes.split('-');
+      const nomeMes = MESES_ABREV[Number(mes) - 1];
+
+      return `
+        <div class="barra-preco-col">
+          <div class="barra-preco-valor-topo">${d.precoMedio.toFixed(2)}</div>
+          <div class="barra-preco-container">
+            <div class="barra-preco-fill ${classeBarra}" style="height:${alturaPct}%;" title="${nomeMes} ${ano}: R$ ${d.precoMedio.toFixed(2)}/L em ${d.qtd} abastecimento(s)"></div>
+          </div>
+          <div class="barra-preco-label-mes">
+            ${nomeMes}
+            <small>${ano.substring(2)}</small>
           </div>
         </div>
       `;
-    });
+    }).join('');
 
-    wrap.innerHTML = html || '<div class="consumo-vazio">Nenhum dado de consumo disponível.</div>';
+    // Variação da primeira à última medição
+    const variacaoHTML = dadosExibir.length >= 2 ? (() => {
+      const diff = dadosExibir[dadosExibir.length - 1].precoMedio - dadosExibir[0].precoMedio;
+      const sinal = diff > 0 ? '+' : '';
+      const classe = diff > 0 ? 'variacao-up' : (diff < 0 ? 'variacao-down' : '');
+      return `
+        <div class="grafico-preco-resumo">
+          <div class="item">
+            <div class="lbl">Média geral</div>
+            <div class="vlr">R$ ${mediaGeral.toFixed(2)}<small>/L</small></div>
+          </div>
+          <div class="item ${classe}">
+            <div class="lbl">Variação</div>
+            <div class="vlr">${sinal}R$ ${diff.toFixed(2)}<small> ${sinal}${variacao.toFixed(1)}%</small></div>
+          </div>
+          <div class="item">
+            <div class="lbl">Total período</div>
+            <div class="vlr">${litrosTotal.toFixed(0)}<small> L</small></div>
+          </div>
+        </div>
+      `;
+    })() : '';
+
+    // Detalhes menor/maior mês
+    const extremosHTML = `
+      <div class="grafico-preco-resumo" style="margin-top:10px;">
+        <div class="item variacao-down">
+          <div class="lbl">Mais barato</div>
+          <div class="vlr">R$ ${minPreco.toFixed(2)}<small>/L</small></div>
+          <div style="font-size:0.7em; color:var(--text-3); margin-top:3px;">${mesMin ? MESES_ABREV[Number(mesMin.mes.split('-')[1]) - 1] + '/' + mesMin.mes.substring(2, 4) : '—'}</div>
+        </div>
+        <div class="item">
+          <div class="lbl">Meses</div>
+          <div class="vlr">${dadosExibir.length}</div>
+        </div>
+        <div class="item variacao-up">
+          <div class="lbl">Mais caro</div>
+          <div class="vlr">R$ ${maxPreco.toFixed(2)}<small>/L</small></div>
+          <div style="font-size:0.7em; color:var(--text-3); margin-top:3px;">${mesMax ? MESES_ABREV[Number(mesMax.mes.split('-')[1]) - 1] + '/' + mesMax.mes.substring(2, 4) : '—'}</div>
+        </div>
+      </div>
+    `;
+
+    wrap.innerHTML = `
+      <div class="grafico-preco-wrap">
+        ${barrasHTML}
+      </div>
+      <div class="grafico-preco-linha-base">
+        <span>🔵 Na média (R$ ${mediaGeral.toFixed(2)}/L)</span>
+        <span>🟢 Abaixo</span>
+        <span>🔴 Acima</span>
+      </div>
+      ${variacaoHTML}
+      ${extremosHTML}
+      <div style="font-size:0.72em; color:var(--text-muted); margin-top:14px; text-align:center; font-style:italic;">
+        Preço médio = total pago ÷ total de litros no mês
+      </div>
+    `;
   }
 
   // ============ PESSOAS ============
@@ -4556,6 +5159,7 @@
     renderizarPorPagamento(listaColapsada);
     renderizarGrafico(listaColapsada);
     renderizarConsumoVeiculos();
+    renderizarGraficoPrecoLitro();
   }
 
   // ============ ABA LANÇAMENTOS ============
@@ -4686,6 +5290,8 @@
     const obsLinha = g.observacao ? `<div class="detalhe-nome">${escaparHTML(g.observacao)}</div>` : '';
     const veiculoTag = g.veiculo ? `<span class="tag-sub">🚗 ${escaparHTML(g.veiculo)}</span>` : '';
     const kmTag = g.km ? `<span class="tag-sub">📍 ${Number(g.km).toLocaleString('pt-BR')} km</span>` : '';
+    const litrosTag = g.litros ? `<span class="tag-sub">⛽ ${Number(g.litros).toFixed(1)} L</span>` : '';
+    const cheioTag = g.tanqueCheio ? `<span class="tag-parcela">✓ Cheio</span>` : '';
 
     return `
       <div class="gasto-swipe-container">
@@ -4716,6 +5322,8 @@
               ${cartaoTag}
               ${veiculoTag}
               ${kmTag}
+              ${litrosTag}
+              ${cheioTag}
             </div>
           </div>
           <div class="valor-linha">
@@ -4765,6 +5373,7 @@
       const obsLinha = g.observacao ? `<div style="font-size:0.75em; color:var(--text-3); margin-top:3px; font-style:italic;">${escaparHTML(g.observacao)}</div>` : '';
       const veiculoInfo = g.veiculo ? ` · 🚗 ${g.veiculo}` : '';
       const kmInfo = g.km ? ` · ${Number(g.km).toLocaleString('pt-BR')} km` : '';
+      const litrosInfo = g.litros ? ` · ⛽ ${Number(g.litros).toFixed(1)} L` : '';
       return `
         <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0;">
           <div style="flex:1; min-width:0;">
@@ -4773,7 +5382,7 @@
             </div>
             ${obsLinha}
             <div style="font-size:0.76em; color:var(--text-3); margin-top:4px;">
-              ${formatarData(g.data)} · ${g.usuario}${cartaoInfo}${faturaInfo}${veiculoInfo}${kmInfo} · <span style="color:${cor}; font-weight:600;">${g.categoria}</span>
+              ${formatarData(g.data)} · ${g.usuario}${cartaoInfo}${faturaInfo}${veiculoInfo}${kmInfo}${litrosInfo} · <span style="color:${cor}; font-weight:600;">${g.categoria}</span>
             </div>
           </div>
           <div style="font-weight:700; color:var(--text); font-size:1em; margin-left:10px; white-space:nowrap; letter-spacing:-0.01em;">
@@ -5044,6 +5653,19 @@
         <div style="font-size:1em; margin-bottom:18px;">📍 ${Number(g.km).toLocaleString('pt-BR')} km</div>`);
     }
 
+    if (g.litros) {
+      linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Litros abastecidos</div>
+        <div style="font-size:1em; margin-bottom:18px;">⛽ ${Number(g.litros).toFixed(2)} L
+          ${g.valor ? `<span style="color:var(--text-3); font-size:0.9em;"> · R$ ${(Number(g.valor) / Number(g.litros)).toFixed(2)}/L</span>` : ''}
+        </div>`);
+    }
+
+    if (g.tanqueCheio) {
+      linhas.push(`<div style="background:var(--success-soft); border-left:3px solid var(--success); padding:10px 12px; border-radius:6px; font-size:0.82em; color:#065f46; margin-bottom:18px;">
+        ✓ <strong>Tanque completo</strong> — este abastecimento serve como referência para o cálculo de consumo.
+      </div>`);
+    }
+
     document.getElementById('detalhesGastoTitulo').textContent = ehParcelado ? '📌 Detalhes (compra parcelada)' : '📌 Detalhes do lançamento';
     document.getElementById('detalhesGastoCorpo').innerHTML = linhas.join('') + `
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:22px;">
@@ -5123,6 +5745,17 @@
       ).join('');
     }
     document.getElementById('editGastoKm').value = g.km || '';
+    document.getElementById('editGastoLitros').value = g.litros || '';
+    tanqueCheioEdit = !!g.tanqueCheio;
+    const t = document.getElementById('editToggleTanque');
+    const c = document.getElementById('editCheckTanque');
+    if (tanqueCheioEdit) {
+      t.classList.add('ativo');
+      c.textContent = '✓';
+    } else {
+      t.classList.remove('ativo');
+      c.textContent = '';
+    }
 
     atualizarCamposEdicaoPagamento();
     verificarCamposVeiculoEdicao();
@@ -5215,6 +5848,8 @@
 
     const veiculo = String(document.getElementById('editGastoVeiculo').value || '');
     const km = document.getElementById('editGastoKm').value ? Number(document.getElementById('editGastoKm').value) : null;
+    const litros = document.getElementById('editGastoLitros').value ? Number(document.getElementById('editGastoLitros').value) : null;
+    const tanqueCheio = tanqueCheioEdit;
     const ehCombustivel = categoria === 'Transporte' && subcategoria === 'Combustível';
 
     if (!valor || valor <= 0) { alert('Informe um valor válido.'); return; }
@@ -5223,14 +5858,14 @@
     if (formaPagamento === 'Cartão Crédito' && (!cartaoNovo || !acharCartao(cartaoNovo))) {
       alert('Selecione um cartão cadastrado.'); return;
     }
-    if (ehCombustivel && (!veiculo || !km)) {
-      alert('Para abastecimento, informe o veículo e o KM atual.'); return;
+    if (ehCombustivel && (!veiculo || !km || !litros)) {
+      alert('Para abastecimento, informe o veículo, KM e litros.'); return;
     }
 
     try {
       const dadosVeiculo = ehCombustivel
-        ? { veiculo, km }
-        : { veiculo: null, km: null };
+        ? { veiculo, km, litros, tanqueCheio }
+        : { veiculo: null, km: null, litros: null, tanqueCheio: null };
 
       if (grupoId) {
         const parcelas = gastos.filter(x => x.grupoId === grupoId);
@@ -5360,6 +5995,8 @@
     const ehCombustivel = categoria === 'Transporte' && subcategoria === 'Combustível';
     const veiculo = ehCombustivel ? String(document.getElementById('veiculoSelecionado').value || '') : null;
     const km = ehCombustivel ? (document.getElementById('kmAtual').value ? Number(document.getElementById('kmAtual').value) : null) : null;
+    const litros = ehCombustivel ? (document.getElementById('litros').value ? Number(document.getElementById('litros').value) : null) : null;
+    const tanqueCheio = ehCombustivel ? tanqueCheioLanc : null;
 
     if (!data || !descricao || isNaN(valor) || valor <= 0) {
       alert('Preencha valor, local e data!'); return;
@@ -5367,8 +6004,10 @@
     if (ehCredito && (!cartaoNome || !acharCartao(cartaoNome))) {
       alert('Selecione um cartão de crédito cadastrado!'); return;
     }
-    if (ehCombustivel && (!veiculo || !km)) {
-      alert('Para abastecimento, informe o veículo e o KM atual.'); return;
+    if (ehCombustivel) {
+      if (!veiculo) { alert('Selecione um veículo.'); return; }
+      if (!km) { alert('Informe o KM atual.'); return; }
+      if (!litros) { alert('Informe os litros abastecidos.'); return; }
     }
 
     btn.disabled = true;
@@ -5377,7 +6016,7 @@
     try {
       const grupoId = 'g' + Date.now() + Math.random().toString(36).slice(2, 7);
       const lancamentos = [];
-      const dadosVeiculo = ehCombustivel ? { veiculo, km } : { veiculo: null, km: null };
+      const dadosVeiculo = ehCombustivel ? { veiculo, km, litros, tanqueCheio } : { veiculo: null, km: null, litros: null, tanqueCheio: null };
 
       if (ehCredito) {
         const mesFaturaInicio = calcularMesFatura(data, cartaoNome);
@@ -5419,6 +6058,11 @@
       document.getElementById('observacao').value = '';
       document.getElementById('parcelas').value = '1';
       document.getElementById('kmAtual').value = '';
+      document.getElementById('litros').value = '';
+      document.getElementById('avisoKm').style.display = 'none';
+      document.getElementById('infoCombustivel').style.display = 'none';
+      tanqueCheioLanc = false;
+      atualizarVisualToggleTanque();
       selecionarPagamento('Dinheiro/PIX');
       if (categorias.length > 0) {
         document.getElementById('categoria').value = categorias[0].nome;
@@ -5466,7 +6110,7 @@
 
   // ============ HELPERS ============
   function formatarMoeda(v) {
-    return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   }
   function formatarData(iso) {
     const [a, m, d] = iso.split('-');
@@ -5726,14 +6370,18 @@
   function exportarCSV() {
     const doMes = gastosFiltrados();
     if (doMes.length === 0) { alert('Sem dados.'); return; }
-    const linhas = [['Data Compra', 'Mês Fatura', 'Quem', 'Local', 'Categoria', 'Subcategoria', 'Forma de Pagamento', 'Cartão', 'Parcela', 'Veículo', 'KM', 'Detalhes', 'Valor']];
-    doMes.forEach(g => linhas.push([
-      g.data, g.mesFatura || g.data.substring(0, 7), g.usuario, g.descricao,
-      g.categoria, g.subcategoria || '', g.formaPagamento || 'Dinheiro/PIX',
-      g.cartao || '', g.parcelaTotal ? `${g.parcelaAtual}/${g.parcelaTotal}` : '',
-      g.veiculo || '', g.km ? String(g.km) : '',
-      g.observacao || '', String(g.valor).replace('.', ',')
-    ]));
+    const linhas = [['Data Compra', 'Mês Fatura', 'Quem', 'Local', 'Categoria', 'Subcategoria', 'Forma de Pagamento', 'Cartão', 'Parcela', 'Veículo', 'KM', 'Litros', 'Tanque Cheio', 'Preço/L', 'Detalhes', 'Valor']];
+    doMes.forEach(g => {
+      const precoL = (g.litros && Number(g.litros) > 0) ? (Number(g.valor) / Number(g.litros)).toFixed(2) : '';
+      linhas.push([
+        g.data, g.mesFatura || g.data.substring(0, 7), g.usuario, g.descricao,
+        g.categoria, g.subcategoria || '', g.formaPagamento || 'Dinheiro/PIX',
+        g.cartao || '', g.parcelaTotal ? `${g.parcelaAtual}/${g.parcelaTotal}` : '',
+        g.veiculo || '', g.km ? String(g.km) : '', g.litros ? String(g.litros) : '',
+        g.tanqueCheio ? 'Sim' : 'Não', precoL,
+        g.observacao || '', String(g.valor).replace('.', ',')
+      ]);
+    });
     const csv = linhas.map(l => l.map(c => `"${String(c).replace(/"/g,'""')}"`).join(';')).join('\n');
     const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
