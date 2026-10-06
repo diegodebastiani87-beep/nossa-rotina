@@ -176,6 +176,7 @@
     border-radius: 50%;
     font-size: 0.72em; font-weight: 700;
   }
+  .secao-titulo .num.reembolso { background: var(--success); }
 
   .campo { margin-bottom: 14px; position: relative; }
   .campo:last-child { margin-bottom: 0; }
@@ -237,6 +238,8 @@
     font-weight: 700;
     letter-spacing: 0.01em;
   }
+  .btn-grande.reembolso { background: var(--success); }
+  .btn-grande.reembolso:hover { background: #047857; }
 
   .valor-destaque input {
     font-size: 1.7em !important;
@@ -252,6 +255,14 @@
     border-color: var(--primary);
     background: var(--surface);
     box-shadow: 0 0 0 3px rgba(30,64,175,0.10);
+  }
+  .valor-destaque.reembolso input {
+    border-color: var(--success);
+    color: var(--success);
+    background: var(--success-soft);
+  }
+  .valor-destaque.reembolso input:focus {
+    box-shadow: 0 0 0 3px rgba(5,150,105,0.15);
   }
 
   .toggle-grupo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -273,6 +284,11 @@
     box-shadow: 0 4px 12px rgba(30,64,175,0.25);
   }
   .toggle-grupo button:hover:not(.ativo) { background: var(--surface-3); border-color: var(--border-strong); }
+  .toggle-grupo button.ativo.reembolso {
+    background: var(--success);
+    border-color: var(--success);
+    box-shadow: 0 4px 12px rgba(5,150,105,0.25);
+  }
 
   .pagamento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .pagamento-grid button {
@@ -392,6 +408,18 @@
     line-height: 1.6;
   }
   .dica-fatura strong { color: #78350f; }
+  .dica-reembolso {
+    background: var(--success-soft);
+    border-left: 3px solid var(--success);
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 0.8em;
+    color: #065f46;
+    margin-top: 12px;
+    font-style: normal;
+    line-height: 1.6;
+  }
+  .dica-reembolso strong { color: #065f46; }
 
   .resumo { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .resumo-item {
@@ -420,6 +448,12 @@
   }
   .resumo-item.total .label { color: rgba(255,255,255,0.7); }
   .resumo-item.total .valor { color: white; font-size: 1.5em; }
+  .resumo-item.reembolso-item {
+    background: var(--success-soft);
+    border-color: #a7f3d0;
+  }
+  .resumo-item.reembolso-item .label { color: var(--success); }
+  .resumo-item.reembolso-item .valor { color: var(--success); }
 
   .tag {
     display: inline-block; padding: 3px 10px; border-radius: 20px;
@@ -447,6 +481,14 @@
     background: var(--accent-soft);
     color: var(--accent);
     border: 1px solid #c7d2fe;
+    margin-left: 3px;
+  }
+  .tag-reembolso {
+    display: inline-block; padding: 3px 9px; border-radius: 20px;
+    font-size: 0.72em; font-weight: 700;
+    background: var(--success-soft);
+    color: var(--success);
+    border: 1px solid #a7f3d0;
     margin-left: 3px;
   }
 
@@ -592,6 +634,10 @@
     border: 1px solid var(--border);
     box-shadow: var(--shadow-xs);
   }
+  .gasto-swipe-item.reembolso-item {
+    background: var(--success-soft);
+    border-color: #a7f3d0;
+  }
   .gasto-swipe-item.swiping { transition: none; }
   .gasto-swipe-item .info-principal { flex: 1; min-width: 0; }
   .gasto-swipe-item .desc-linha {
@@ -600,6 +646,7 @@
     margin-bottom: 4px;
     letter-spacing: -0.01em;
   }
+  .gasto-swipe-item.reembolso-item .desc-linha { color: #065f46; }
   .gasto-swipe-item .desc-linha .local-nome { display: block; margin-bottom: 2px; }
   .gasto-swipe-item .desc-linha .detalhe-nome {
     display: block; font-size: 0.85em; font-weight: 500;
@@ -620,6 +667,7 @@
     font-size: 1em; white-space: nowrap;
     letter-spacing: -0.01em;
   }
+  .gasto-swipe-item.reembolso-item .valor-num { color: var(--success); }
   .gasto-swipe-item .tags-linha { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
 
   .cartao-view {
@@ -863,6 +911,20 @@
     letter-spacing: -0.03em;
     line-height: 1;
   }
+  .fatura-cabecalho .fc-reembolso-info {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: rgba(16,185,129,0.18);
+    border: 1px solid rgba(16,185,129,0.35);
+    border-radius: 8px;
+    font-size: 0.78em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .fatura-cabecalho .fc-reembolso-info .lbl { opacity: 0.85; font-weight: 600; }
+  .fatura-cabecalho .fc-reembolso-info .vlr { font-weight: 800; }
   .fatura-cabecalho .fc-toggle {
     display: flex; align-items: center; justify-content: center;
     gap: 6px; margin-top: 12px; padding-top: 12px;
@@ -913,18 +975,24 @@
   }
   .fatura-linha:hover { background: var(--surface-2); }
   .fatura-linha:last-child { border-bottom: none; }
+  .fatura-linha.reembolso-linha {
+    background: var(--success-soft);
+  }
+  .fatura-linha.reembolso-linha:hover { background: #d1fae5; }
   .fatura-linha .fl-data {
     font-size: 0.82em;
     color: var(--text-3);
     font-weight: 600;
     white-space: nowrap;
   }
+  .fatura-linha.reembolso-linha .fl-data { color: var(--success); }
   .fatura-linha .fl-desc {
     color: var(--text);
     font-weight: 500;
     word-break: break-word;
     line-height: 1.35;
   }
+  .fatura-linha.reembolso-linha .fl-desc { color: #065f46; font-weight: 600; }
   .fatura-linha .fl-desc .fl-parcela {
     color: var(--text-muted);
     font-size: 0.85em;
@@ -939,6 +1007,7 @@
     font-weight: 500;
     margin-top: 1px;
   }
+  .fatura-linha.reembolso-linha .fl-desc .fl-quem { color: #047857; }
   .fatura-linha .fl-valor {
     text-align: right;
     font-weight: 700;
@@ -946,6 +1015,10 @@
     white-space: nowrap;
     font-size: 0.94em;
     letter-spacing: -0.01em;
+  }
+  .fatura-linha.reembolso-linha .fl-valor {
+    color: var(--success);
+    font-weight: 800;
   }
 
   .fatura-total-rodape {
@@ -996,6 +1069,7 @@
   }
   .fatura-subtotais .st-item { display: flex; gap: 5px; align-items: baseline; }
   .fatura-subtotais .st-item strong { color: var(--text-2); font-weight: 700; }
+  .fatura-subtotais .st-item.reembolso strong { color: var(--success); }
 
   .lanc-mes-nav {
     display: flex; justify-content: space-between;
@@ -1465,6 +1539,15 @@
   }
   .aviso-edicao-parcela strong { color: #312e81; }
 
+  .aviso-reembolso {
+    background: var(--success-soft);
+    border-left: 4px solid var(--success);
+    padding: 14px 16px; border-radius: 8px;
+    margin-bottom: 14px; font-size: 0.85em;
+    color: #065f46; line-height: 1.55;
+  }
+  .aviso-reembolso strong { color: #065f46; }
+
   .btn-excluir-modal {
     background: var(--surface);
     color: var(--danger);
@@ -1580,7 +1663,7 @@
   <!-- LANÇAR -->
   <div class="painel ativo" id="painel-lancar">
     <div class="card">
-      <h2>➕ Novo Gasto</h2>
+      <h2 id="tituloNovoGasto">➕ Novo Gasto</h2>
 
       <div class="secao">
         <div class="secao-titulo"><span class="num">1</span> Quem gastou</div>
@@ -1597,7 +1680,7 @@
 
       <div class="secao">
         <div class="secao-titulo"><span class="num">2</span> Quanto</div>
-        <div class="campo valor-destaque" style="margin-bottom:0;">
+        <div class="campo valor-destaque" id="valorDestaqueBox" style="margin-bottom:0;">
           <input type="number" id="valor" step="0.01" min="0" inputmode="decimal" placeholder="R$ 0,00" oninput="atualizarPreviewParcelas()">
         </div>
       </div>
@@ -1649,6 +1732,23 @@
         <input type="hidden" id="formaPagamento" value="Dinheiro/PIX">
       </div>
 
+      <!-- REEMBOLSO: seletor que aparece só no cartão de crédito -->
+      <div class="secao" id="secaoTipoLancamento" style="display:none;">
+        <div class="secao-titulo" id="tituloTipoLanc"><span class="num">5</span> Tipo de lançamento</div>
+        <div class="toggle-grupo" id="grupoTipoLancamento">
+          <button type="button" class="ativo" data-tipo="gasto" onclick="selecionarTipoLancamento('gasto')">
+            <span class="emoji">🛒</span> Gasto
+          </button>
+          <button type="button" data-tipo="reembolso" onclick="selecionarTipoLancamento('reembolso')">
+            <span class="emoji">↩️</span> Reembolso
+          </button>
+        </div>
+        <input type="hidden" id="tipoLancamento" value="gasto">
+        <div class="dica-reembolso" id="dicaReembolso" style="display:none;">
+          ↩️ <strong>Reembolso / estorno</strong> — o valor será <strong>descontado</strong> do total da fatura.
+        </div>
+      </div>
+
       <div class="parcelas-box" id="boxParcelas">
         <label>Data da compra</label>
         <input type="date" id="dataCompraCredito" onchange="atualizarPreviewParcelas()">
@@ -1656,7 +1756,7 @@
           <label>Cartão</label>
           <select id="cartaoSelecionado" onchange="atualizarPreviewParcelas()"></select>
         </div>
-        <div class="sub-campo">
+        <div class="sub-campo" id="subCampoParcelas">
           <label>Número de parcelas</label>
           <select id="parcelas" onchange="atualizarPreviewParcelas()">
             <option value="1">1x (à vista)</option>
@@ -1679,7 +1779,7 @@
       </div>
 
       <div class="secao" id="campoDataNormal">
-        <div class="secao-titulo"><span class="num">5</span> Quando</div>
+        <div class="secao-titulo"><span class="num">6</span> Quando</div>
         <div class="campo">
           <label>Data</label>
           <input type="date" id="data">
@@ -1762,6 +1862,10 @@
         <div class="item">
           <span class="lbl">Eliane</span>
           <span class="vlr" id="lancTotalEliane">R$ 0,00</span>
+        </div>
+        <div class="item" id="lancItemReembolso" style="display:none;">
+          <span class="lbl">↩️ Reembolsos</span>
+          <span class="vlr" id="lancTotalReembolso">R$ 0,00</span>
         </div>
         <div class="item">
           <span class="lbl">Lançamentos</span>
@@ -2072,6 +2176,10 @@
         💳 <strong>Compra parcelada</strong><br>
         <span id="avisoEdicaoParcelaTexto"></span>
       </div>
+      <div class="aviso-reembolso" id="avisoEdicaoReembolso" style="display:none;">
+        ↩️ <strong>Este é um reembolso</strong><br>
+        <span>O valor será descontado do total da fatura.</span>
+      </div>
 
       <div class="campo">
         <label>Valor total *</label>
@@ -2111,13 +2219,21 @@
         </select>
       </div>
 
+      <!-- REEMBOLSO: seletor tipo lançamento na edição -->
+      <div class="campo" id="editCampoTipoLancamento" style="display:none;">
+        <label>Tipo de lançamento</label>
+        <select id="editGastoTipoLancamento" onchange="atualizarCamposEdicaoPagamento()">
+          <option value="gasto">🛒 Gasto</option>
+          <option value="reembolso">↩️ Reembolso</option>
+        </select>
+      </div>
+
       <div id="editBoxCartao" style="display:none;">
         <div class="campo">
           <label>Cartão</label>
           <select id="editGastoCartao" onchange="atualizarPreviewEdicao()"></select>
         </div>
 
-        <!-- NOVO CAMPO: MÊS DA FATURA -->
         <div class="campo">
           <label>📅 Mês da fatura (vencimento)</label>
           <select id="editGastoMesFatura" onchange="marcarMesFaturaManual()"></select>
@@ -2165,7 +2281,6 @@
   </div>
 </div>
 
-<!-- NOVO MODAL: TROCAR FATURA -->
 <div class="modal-agenda" id="modalTrocarFatura">
   <div class="modal-conteudo" style="max-width:480px;">
     <div class="modal-header">
@@ -2512,7 +2627,6 @@
   let filtrosLancExpandidos = false;
   let modoLancMes = 'compra';
 
-  // Controle de edição de mês da fatura
   let mesFaturaManualEdit = false;
 
   function acharCategoria(nome) { return categorias.find(c => c.nome === nome); }
@@ -2655,6 +2769,42 @@
     });
   }
 
+  // REEMBOLSO: selecionar tipo lançamento (gasto vs reembolso)
+  function selecionarTipoLancamento(tipo) {
+    document.getElementById('tipoLancamento').value = tipo;
+    document.querySelectorAll('#grupoTipoLancamento button').forEach(b => {
+      b.classList.toggle('ativo', b.dataset.tipo === tipo);
+      if (tipo === 'reembolso' && b.dataset.tipo === 'reembolso') {
+        b.classList.add('reembolso');
+      } else {
+        b.classList.remove('reembolso');
+      }
+    });
+    const dica = document.getElementById('dicaReembolso');
+    const valorBox = document.getElementById('valorDestaqueBox');
+    const btnAdicionar = document.getElementById('btnAdicionar');
+    const tituloGasto = document.getElementById('tituloNovoGasto');
+    const subCampoParcelas = document.getElementById('subCampoParcelas');
+    if (tipo === 'reembolso') {
+      dica.style.display = 'block';
+      valorBox.classList.add('reembolso');
+      btnAdicionar.classList.add('reembolso');
+      btnAdicionar.textContent = '↩️ Adicionar Reembolso';
+      tituloGasto.textContent = '↩️ Novo Reembolso';
+      // Reembolso não parcela
+      subCampoParcelas.style.display = 'none';
+      document.getElementById('parcelas').value = '1';
+    } else {
+      dica.style.display = 'none';
+      valorBox.classList.remove('reembolso');
+      btnAdicionar.classList.remove('reembolso');
+      btnAdicionar.textContent = '✓ Adicionar Gasto';
+      tituloGasto.textContent = '➕ Novo Gasto';
+      subCampoParcelas.style.display = 'block';
+    }
+    atualizarPreviewParcelas();
+  }
+
   function selecionarPagamento(pag) {
     document.getElementById('formaPagamento').value = pag;
     document.querySelectorAll('#grupoPagamento button').forEach(b => {
@@ -2662,9 +2812,11 @@
     });
     const box = document.getElementById('boxParcelas');
     const campoData = document.getElementById('campoDataNormal');
+    const secaoTipoLanc = document.getElementById('secaoTipoLancamento');
     if (pag === 'Cartão Crédito') {
       box.classList.add('visivel');
       campoData.style.display = 'none';
+      secaoTipoLanc.style.display = 'block'; // REEMBOLSO: mostrar seletor de tipo
       if (!document.getElementById('dataCompraCredito').value) {
         document.getElementById('dataCompraCredito').value = document.getElementById('data').value;
       }
@@ -2672,6 +2824,11 @@
     } else {
       box.classList.remove('visivel');
       campoData.style.display = 'block';
+      secaoTipoLanc.style.display = 'none';
+      // Se estava como reembolso e trocou de pagamento, reseta para gasto
+      if (document.getElementById('tipoLancamento').value === 'reembolso') {
+        selecionarTipoLancamento('gasto');
+      }
     }
     atualizarPreviewParcelas();
   }
@@ -2728,8 +2885,9 @@
     if (!preview) return;
     const formaPag = document.getElementById('formaPagamento').value;
     if (formaPag !== 'Cartão Crédito') return;
+    const ehReembolso = document.getElementById('tipoLancamento').value === 'reembolso';
     const valor = parseFloat(document.getElementById('valor').value) || 0;
-    const n = parseInt(document.getElementById('parcelas').value) || 1;
+    const n = ehReembolso ? 1 : (parseInt(document.getElementById('parcelas').value) || 1);
     const dataCompra = document.getElementById('dataCompraCredito').value;
     const cartaoNome = document.getElementById('cartaoSelecionado').value;
     if (valor <= 0 || !dataCompra) {
@@ -2750,7 +2908,10 @@
     }
     const c = acharCartao(cartaoNome);
     let html = '';
-    if (n === 1) {
+    if (ehReembolso) {
+      html = `<strong style="color:var(--success);">↩️ Reembolso de R$ ${valor.toFixed(2).replace('.', ',')}</strong><br>
+              <span style="color:var(--success);">Será <strong>descontado</strong> da fatura que vence em <strong>${meses[0]}</strong></span>`;
+    } else if (n === 1) {
       html = `<strong>R$ ${valor.toFixed(2).replace('.', ',')}</strong> à vista<br>
               <span style="color:var(--text-2);">Cai na fatura que vence em <strong>${meses[0]}</strong></span>`;
     } else {
@@ -2760,7 +2921,7 @@
     }
     html += `<div class="dica-fatura">
       💳 <strong>${cartaoNome}</strong> · fecha dia ${c.fechamento} · vence dia ${c.vencimento}<br>
-      Compra em <strong>${formatarData(dataCompra)}</strong> → 1ª parcela vence em <strong>${meses[0]}</strong>
+      ${ehReembolso ? 'Reembolso lançado' : 'Compra'} em <strong>${formatarData(dataCompra)}</strong> → 1ª ${ehReembolso ? 'fatura' : 'parcela'} em <strong>${meses[0]}</strong>
     </div>`;
     preview.innerHTML = html;
   }
@@ -2934,6 +3095,17 @@
     if (tipo === 'online') el.classList.add('online');
     if (tipo === 'offline') el.classList.add('offline');
     document.getElementById('statusTexto').textContent = texto;
+  }
+
+  // REEMBOLSO: helper para saber se um gasto é reembolso
+  function ehReembolso(g) {
+    return g && g.tipoLancamento === 'reembolso';
+  }
+
+  // REEMBOLSO: valor efetivo (negativo se reembolso)
+  function valorEfetivo(g) {
+    const base = g._parcelado ? g._valorTotal : (g.valor || 0);
+    return ehReembolso(g) ? -base : base;
   }
 
   // ============ VEÍCULOS ============
@@ -3935,6 +4107,7 @@
       const chave = normalizarChave(g.descricao);
       if (!chave) return;
       if (g.parcelaTotal && g.parcelaAtual && g.parcelaAtual > 1) return;
+      if (ehReembolso(g)) return; // REEMBOLSO: não entra nas sugestões
       if (!mapa[chave]) {
         mapa[chave] = { nome: g.descricao.trim(), count: 0, catCount: {}, subCount: {}, pagCount: {}, cartaoCount: {}, valores: [], ultimoUso: g.data };
       }
@@ -4335,15 +4508,24 @@
     const doMes = lancamentosDoMesAtual();
     const colapsado = colapsarParcelas(doMes);
 
-    const valorDe = g => g._parcelado ? g._valorTotal : g.valor;
-    const total = colapsado.reduce((s, g) => s + valorDe(g), 0);
-    const totalDiego = colapsado.filter(g => g.usuario === 'Diego').reduce((s, g) => s + valorDe(g), 0);
-    const totalEliane = colapsado.filter(g => g.usuario === 'Eliane').reduce((s, g) => s + valorDe(g), 0);
+    const total = colapsado.reduce((s, g) => s + valorEfetivo(g), 0);
+    const totalDiego = colapsado.filter(g => g.usuario === 'Diego').reduce((s, g) => s + valorEfetivo(g), 0);
+    const totalEliane = colapsado.filter(g => g.usuario === 'Eliane').reduce((s, g) => s + valorEfetivo(g), 0);
+    const totalReembolso = colapsado.filter(ehReembolso).reduce((s, g) => s + (g._parcelado ? g._valorTotal : g.valor), 0);
 
     document.getElementById('lancTotalMes').textContent = formatarMoeda(total);
     document.getElementById('lancTotalDiego').textContent = formatarMoeda(totalDiego);
     document.getElementById('lancTotalEliane').textContent = formatarMoeda(totalEliane);
     document.getElementById('lancQtd').textContent = colapsado.length;
+
+    // REEMBOLSO: mostrar total de reembolsos se houver
+    const itemReembolso = document.getElementById('lancItemReembolso');
+    if (totalReembolso > 0) {
+      itemReembolso.style.display = 'flex';
+      document.getElementById('lancTotalReembolso').textContent = '-' + formatarMoeda(totalReembolso);
+    } else {
+      itemReembolso.style.display = 'none';
+    }
 
     const tituloResumo = document.getElementById('lancResumoTitulo');
     tituloResumo.textContent = modoLancMes === 'fatura'
@@ -4366,7 +4548,7 @@
 
     wrap.innerHTML = diasOrdenados.map(dia => {
       const itens = porDia[dia];
-      const totalDia = itens.reduce((s, g) => s + valorDe(g), 0);
+      const totalDia = itens.reduce((s, g) => s + valorEfetivo(g), 0);
       const chave = mesLancamentos + '|' + dia;
       const aberto = diasLancAbertos.has(chave);
       const ehHoje = dia === dataHojeISO();
@@ -4401,14 +4583,18 @@
     const cor = corDa(g.categoria);
     const sub = g.subcategoria || '';
     const subTag = sub ? `<span class="tag-sub">${escaparHTML(sub)}</span>` : '';
+    const reemb = ehReembolso(g);
     let valorHTML, parcelaTag = '';
     if (g._parcelado) {
       parcelaTag = `<span class="tag-parcela">${g._numParcelas}x ${formatarMoeda(g._valorParcela)}</span>`;
       valorHTML = formatarMoeda(g._valorTotal);
     } else {
-      valorHTML = formatarMoeda(g.valor);
+      valorHTML = (reemb ? '-' : '') + formatarMoeda(g.valor);
     }
+    if (reemb) valorHTML = '-' + formatarMoeda(g._parcelado ? g._valorTotal : g.valor);
+
     const cartaoTag = (g.formaPagamento === 'Cartão Crédito' && g.cartao) ? `<span class="tag-fatura">${escaparHTML(g.cartao)}</span>` : '';
+    const reembTag = reemb ? `<span class="tag-reembolso">↩️ Reembolso</span>` : '';
     const obsLinha = g.observacao ? `<div class="detalhe-nome">${escaparHTML(g.observacao)}</div>` : '';
 
     return `
@@ -4423,10 +4609,10 @@
             <span class="icone-swipe">✏️</span> Editar
           </button>
         </div>
-        <div class="gasto-swipe-item" data-id="${g.id}" onclick="abrirDetalhesGasto('${g.id}')">
+        <div class="gasto-swipe-item ${reemb ? 'reembolso-item' : ''}" data-id="${g.id}" onclick="abrirDetalhesGasto('${g.id}')">
           <div class="info-principal">
             <div class="desc-linha">
-              <span class="local-nome">${escaparHTML(g.descricao)}</span>
+              <span class="local-nome">${reemb ? '↩️ ' : ''}${escaparHTML(g.descricao)}</span>
               ${obsLinha}
             </div>
             <div class="meta-linha">
@@ -4438,6 +4624,7 @@
               <span class="tag" style="background:${cor};">${g.categoria}</span>
               ${subTag}
               ${cartaoTag}
+              ${reembTag}
             </div>
           </div>
           <div class="valor-linha">
@@ -4475,6 +4662,7 @@
     }
     wrap.innerHTML = ultimos.map(g => {
       const cor = corDa(g.categoria);
+      const reemb = ehReembolso(g);
       const cartaoInfo = g.cartao ? ` · ${g.cartao}` : '';
       const faturaInfo = (g.formaPagamento === 'Cartão Crédito' && g.mesFatura) ? ` · Fatura ${nomeMes(g.mesFatura)}` : '';
       let valorHTML, parcelaTag = '';
@@ -4482,21 +4670,22 @@
         parcelaTag = `<span class="tag-parcela">${g._numParcelas}x ${formatarMoeda(g._valorParcela)}</span>`;
         valorHTML = formatarMoeda(g._valorTotal);
       } else {
-        valorHTML = formatarMoeda(g.valor);
+        valorHTML = (reemb ? '-' : '') + formatarMoeda(g.valor);
       }
       const obsLinha = g.observacao ? `<div style="font-size:0.75em; color:var(--text-3); margin-top:3px; font-style:italic;">${escaparHTML(g.observacao)}</div>` : '';
+      const reembTag = reemb ? `<span class="tag-reembolso">↩️ Reembolso</span>` : '';
       return `
         <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0;">
           <div style="flex:1; min-width:0;">
-            <div style="font-weight:700; font-size:0.95em; letter-spacing:-0.01em;">
-              ${escaparHTML(g.descricao)} ${parcelaTag}
+            <div style="font-weight:700; font-size:0.95em; letter-spacing:-0.01em; ${reemb ? 'color:var(--success);' : ''}">
+              ${reemb ? '↩️ ' : ''}${escaparHTML(g.descricao)} ${parcelaTag} ${reembTag}
             </div>
             ${obsLinha}
             <div style="font-size:0.76em; color:var(--text-3); margin-top:4px;">
               ${formatarData(g.data)} · ${g.usuario}${cartaoInfo}${faturaInfo} · <span style="color:${cor}; font-weight:600;">${g.categoria}</span>
             </div>
           </div>
-          <div style="font-weight:700; color:var(--text); font-size:1em; margin-left:10px; white-space:nowrap; letter-spacing:-0.01em;">
+          <div style="font-weight:700; color:${reemb ? 'var(--success)' : 'var(--text)'}; font-size:1em; margin-left:10px; white-space:nowrap; letter-spacing:-0.01em;">
             ${valorHTML}
           </div>
         </div>
@@ -4507,10 +4696,9 @@
   function renderizarResumo(lista) {
     const mes = document.getElementById('mesReferencia').value;
     if (!mes) return;
-    const valorDe = g => g._parcelado ? g._valorTotal : g.valor;
-    const total = lista.reduce((s, g) => s + valorDe(g), 0);
-    const totalDiego = lista.filter(g => g.usuario === 'Diego').reduce((s, g) => s + valorDe(g), 0);
-    const totalEliane = lista.filter(g => g.usuario === 'Eliane').reduce((s, g) => s + valorDe(g), 0);
+    const total = lista.reduce((s, g) => s + valorEfetivo(g), 0);
+    const totalDiego = lista.filter(g => g.usuario === 'Diego').reduce((s, g) => s + valorEfetivo(g), 0);
+    const totalEliane = lista.filter(g => g.usuario === 'Eliane').reduce((s, g) => s + valorEfetivo(g), 0);
     const hoje = new Date();
     const [ano, mesNum] = mes.split('-').map(Number);
     const diasNoMes = new Date(ano, mesNum, 0).getDate();
@@ -4523,12 +4711,11 @@
   }
 
   function renderizarPorPagamento(lista) {
-    const valorDe = g => g._parcelado ? g._valorTotal : g.valor;
-    const total = lista.reduce((s, g) => s + valorDe(g), 0);
+    const total = lista.reduce((s, g) => s + valorEfetivo(g), 0);
     const porPag = {};
     lista.forEach(g => {
       const p = g.formaPagamento || 'Dinheiro/PIX';
-      porPag[p] = (porPag[p] || 0) + valorDe(g);
+      porPag[p] = (porPag[p] || 0) + valorEfetivo(g);
     });
     const wrap = document.getElementById('porPagamento');
     if (Object.keys(porPag).length === 0) {
@@ -4551,15 +4738,14 @@
   }
 
   function renderizarGrafico(lista) {
-    const valorDe = g => g._parcelado ? g._valorTotal : g.valor;
-    const total = lista.reduce((s, g) => s + valorDe(g), 0);
+    const total = lista.reduce((s, g) => s + valorEfetivo(g), 0);
     const porCat = {};
     lista.forEach(g => {
-      const valorEfetivo = valorDe(g);
+      const valorEfet = valorEfetivo(g);
       if (!porCat[g.categoria]) porCat[g.categoria] = { total: 0, subs: {} };
-      porCat[g.categoria].total += valorEfetivo;
+      porCat[g.categoria].total += valorEfet;
       const sub = g.subcategoria || "(sem sub)";
-      porCat[g.categoria].subs[sub] = (porCat[g.categoria].subs[sub] || 0) + valorEfetivo;
+      porCat[g.categoria].subs[sub] = (porCat[g.categoria].subs[sub] || 0) + valorEfet;
     });
     const grafico = document.getElementById('graficoCategorias');
     if (Object.keys(porCat).length === 0) {
@@ -4570,12 +4756,12 @@
     const catsOrdenadas = Object.entries(porCat).sort((a, b) => b[1].total - a[1].total);
     grafico.innerHTML = catsOrdenadas.map(([cat, info], idx) => {
       const cor = corDa(cat);
-      const pct = (info.total / max) * 100;
+      const pct = max > 0 ? (info.total / max) * 100 : 0;
       const pctTotal = total > 0 ? ((info.total / total) * 100).toFixed(0) : 0;
       const subsOrdenadas = Object.entries(info.subs).sort((a, b) => b[1] - a[1]);
       const maxSub = Math.max(...Object.values(info.subs));
       const subsHTML = subsOrdenadas.map(([sub, val]) => {
-        const pctSub = (val / maxSub) * 100;
+        const pctSub = maxSub > 0 ? (val / maxSub) * 100 : 0;
         return `
           <div class="linha-sub">
             <div class="nome-sub">${sub}</div>
@@ -4707,6 +4893,7 @@
     if (!g) return;
     const cor = corDa(g.categoria);
     const pag = FORMAS_PAGAMENTO.find(f => f.valor === g.formaPagamento);
+    const reemb = ehReembolso(g);
 
     const todasParcelas = (g.grupoId && g.parcelaTotal && g.parcelaTotal > 1)
       ? gastos.filter(x => x.grupoId === g.grupoId).sort((a, b) => (a.parcelaAtual || 1) - (b.parcelaAtual || 1))
@@ -4715,8 +4902,16 @@
     const valorTotal = ehParcelado ? todasParcelas.reduce((s, x) => s + x.valor, 0) : g.valor;
 
     const linhas = [];
+
+    if (reemb) {
+      linhas.push(`<div class="aviso-reembolso">
+        ↩️ <strong>Reembolso / Estorno</strong><br>
+        Este valor será <strong>descontado</strong> do total da fatura.
+      </div>`);
+    }
+
     linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Local</div>
-      <div style="font-size:1.15em; font-weight:700; margin-bottom:18px; letter-spacing:-0.01em;">${escaparHTML(g.descricao)}</div>`);
+      <div style="font-size:1.15em; font-weight:700; margin-bottom:18px; letter-spacing:-0.01em; ${reemb ? 'color:var(--success);' : ''}">${reemb ? '↩️ ' : ''}${escaparHTML(g.descricao)}</div>`);
 
     if (g.observacao) {
       linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Detalhes</div>
@@ -4731,7 +4926,9 @@
         </div>`);
     } else {
       linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Valor</div>
-        <div style="font-size:1.6em; font-weight:800; color:var(--text); margin-bottom:18px; letter-spacing:-0.02em;">${formatarMoeda(g.valor)}</div>`);
+        <div style="font-size:1.6em; font-weight:800; color:${reemb ? 'var(--success)' : 'var(--text)'}; margin-bottom:18px; letter-spacing:-0.02em;">
+          ${reemb ? '-' : ''}${formatarMoeda(g.valor)}
+        </div>`);
     }
 
     linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Quando</div>
@@ -4741,6 +4938,7 @@
       <div style="margin-bottom:18px;">
         <span class="tag" style="background:${cor};">${g.categoria}</span>
         ${g.subcategoria ? `<span class="tag-sub">${escaparHTML(g.subcategoria)}</span>` : ''}
+        ${reemb ? '<span class="tag-reembolso">↩️ Reembolso</span>' : ''}
       </div>`);
 
     linhas.push(`<div style="font-size:0.78em; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700;">Forma de pagamento</div>
@@ -4754,9 +4952,10 @@
         <div style="font-size:1em; margin-bottom:18px;">📅 ${nomeMesLongo(g.mesFatura)}</div>`);
     }
 
-    document.getElementById('detalhesGastoTitulo').textContent = ehParcelado ? '📌 Detalhes (compra parcelada)' : '📌 Detalhes do lançamento';
+    document.getElementById('detalhesGastoTitulo').textContent = reemb
+      ? '↩️ Detalhes do reembolso'
+      : (ehParcelado ? '📌 Detalhes (compra parcelada)' : '📌 Detalhes do lançamento');
 
-    // Botão extra de trocar fatura (só para cartão de crédito)
     const botaoTrocarFatura = (g.formaPagamento === 'Cartão Crédito')
       ? `<button onclick="fecharDetalhesGasto(); abrirTrocarFatura('${g.id}')" style="padding:15px; background:var(--accent); width:100%; margin-bottom:10px; border-radius:10px; font-weight:700; color:white; border:none; cursor:pointer;">📅 Trocar fatura</button>`
       : '';
@@ -4776,11 +4975,10 @@
     document.getElementById('modalDetalhesGasto').classList.remove('visivel');
   }
 
-  // ============ TROCAR FATURA (NOVO) ============
+  // ============ TROCAR FATURA ============
   function preencherMesesFatura(selectEl, mesSelecionado) {
     const hoje = new Date();
     const opcoes = [];
-    // 12 meses atrás até 24 meses à frente
     for (let i = -12; i <= 24; i++) {
       const d = new Date(hoje.getFullYear(), hoje.getMonth() + i, 1);
       const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
@@ -4849,12 +5047,16 @@
     const g = gastos.find(x => x.id === id);
     if (!g) return;
     mesFaturaManualEdit = false;
+    const reemb = ehReembolso(g);
     document.getElementById('editGastoId').value = g.id;
     document.getElementById('editGastoGrupoId').value = g.grupoId || '';
 
     const ehParcelado = !!(g.grupoId && g.parcelaTotal && g.parcelaTotal > 1);
     const avisoEl = document.getElementById('avisoEdicaoParcela');
     const dicaEl = document.getElementById('editGastoValorDica');
+    const avisoReemb = document.getElementById('avisoEdicaoReembolso');
+
+    avisoReemb.style.display = reemb ? 'block' : 'none';
 
     if (ehParcelado) {
       const todas = gastos.filter(x => x.grupoId === g.grupoId);
@@ -4879,6 +5081,9 @@
     document.getElementById('editGastoData').value = g.data;
     document.getElementById('editGastoObservacao').value = g.observacao || '';
 
+    // REEMBOLSO: campo de tipo na edição
+    document.getElementById('editGastoTipoLancamento').value = reemb ? 'reembolso' : 'gasto';
+
     const selCat = document.getElementById('editGastoCategoria');
     selCat.innerHTML = categorias.map(c =>
       `<option value="${c.nome}" ${c.nome === g.categoria ? 'selected' : ''}>${c.nome}</option>`
@@ -4900,7 +5105,6 @@
 
     document.getElementById('editGastoParcelas').value = String(g.parcelaTotal || 1);
 
-    // Preenche o select de mês da fatura
     const mesFaturaAtual = g.mesFatura || calcularMesFatura(g.data, g.cartao);
     preencherMesesFatura(document.getElementById('editGastoMesFatura'), mesFaturaAtual);
 
@@ -4913,9 +5117,25 @@
   function atualizarCamposEdicaoPagamento() {
     const pag = document.getElementById('editGastoPagamento').value;
     const box = document.getElementById('editBoxCartao');
-    box.style.display = pag === 'Cartão Crédito' ? 'block' : 'none';
-    // Reset manual ao trocar forma de pagamento (volta a calcular automático)
-    if (pag !== 'Cartão Crédito') mesFaturaManualEdit = false;
+    const campo_tipo = document.getElementById('editCampoTipoLancamento');
+    const selParcelas = document.getElementById('editGastoParcelas');
+    const subCampoParc = selParcelas ? selParcelas.closest('.campo') : null;
+
+    if (pag === 'Cartão Crédito') {
+      box.style.display = 'block';
+      campo_tipo.style.display = 'block';
+      // Se é reembolso, esconder número de parcelas
+      const isReemb = document.getElementById('editGastoTipoLancamento').value === 'reembolso';
+      if (subCampoParc) subCampoParc.style.display = isReemb ? 'none' : 'block';
+    } else {
+      box.style.display = 'none';
+      campo_tipo.style.display = 'none';
+      mesFaturaManualEdit = false;
+      // Se estava reembolso, voltar para gasto
+      if (document.getElementById('editGastoTipoLancamento').value === 'reembolso') {
+        document.getElementById('editGastoTipoLancamento').value = 'gasto';
+      }
+    }
     atualizarPreviewEdicao();
   }
 
@@ -4925,7 +5145,6 @@
   }
 
   function aoMudarParcelasEdicao() {
-    // Se o usuário não mexeu manualmente no mês da fatura, recalcula com base no cartão/data
     if (!mesFaturaManualEdit) {
       const data = document.getElementById('editGastoData').value;
       const cartao = document.getElementById('editGastoCartao').value;
@@ -4942,8 +5161,9 @@
     const preview = document.getElementById('editPreviewParcelas');
     if (!preview) return;
     if (pag !== 'Cartão Crédito') { preview.innerHTML = ''; return; }
+    const isReemb = document.getElementById('editGastoTipoLancamento').value === 'reembolso';
     const valor = parseFloat(document.getElementById('editGastoValor').value) || 0;
-    const n = parseInt(document.getElementById('editGastoParcelas').value) || 1;
+    const n = isReemb ? 1 : (parseInt(document.getElementById('editGastoParcelas').value) || 1);
     const dataCompra = String(document.getElementById('editGastoData').value || '');
     const cartaoNome = String(document.getElementById('editGastoCartao').value || '');
     const mesFaturaSelect = document.getElementById('editGastoMesFatura');
@@ -4962,7 +5182,10 @@
     }
     const c = acharCartao(cartaoNome);
     let html = '';
-    if (n === 1) {
+    if (isReemb) {
+      html = `<strong style="color:var(--success);">↩️ Reembolso de ${formatarMoeda(valor)}</strong><br>
+        <span style="color:var(--success);">Será descontado da fatura <strong>${meses[0]}</strong></span>`;
+    } else if (n === 1) {
       html = `<strong>${formatarMoeda(valor)}</strong> à vista<br>
         <span style="color:var(--text-2);">Fatura escolhida: <strong>${meses[0]}</strong></span>`;
     } else {
@@ -5011,9 +5234,10 @@
     const data = String(document.getElementById('editGastoData').value || '');
     const observacao = String(document.getElementById('editGastoObservacao').value || '').trim();
     const cartaoNovo = String(document.getElementById('editGastoCartao').value || '');
-    const numParcelasNovo = parseInt(String(document.getElementById('editGastoParcelas').value || '1')) || 1;
+    const tipoLanc = String(document.getElementById('editGastoTipoLancamento').value || 'gasto');
+    const isReemb = tipoLanc === 'reembolso';
+    const numParcelasNovo = isReemb ? 1 : (parseInt(String(document.getElementById('editGastoParcelas').value || '1')) || 1);
     const valor = parseFloat(String(document.getElementById('editGastoValor').value || '0'));
-    // Mês da fatura escolhido
     let mesFaturaEscolhido = '';
     if (formaPagamento === 'Cartão Crédito') {
       const selMes = document.getElementById('editGastoMesFatura');
@@ -5030,16 +5254,16 @@
       alert('Selecione o mês da fatura.'); return;
     }
 
+    // Se não é crédito, força tipoLancamento gasto
+    const tipoFinal = (formaPagamento === 'Cartão Crédito' && isReemb) ? 'reembolso' : 'gasto';
+
     try {
-      // Mesmo que o usuário não tenha mexido no mês da fatura, usamos o valor do select.
-      // Se ele não mexeu e o select foi preenchido automaticamente, é o mesmo cálculo automático.
-      // A diferença é que agora o select existe sempre e o valor dele é respeitado.
       if (grupoId) {
         const parcelas = gastos.filter(x => x.grupoId === grupoId);
         if (parcelas.length > 0) {
           parcelas.sort((a, b) => (a.parcelaAtual || 1) - (b.parcelaAtual || 1));
           const batch = db.batch();
-          if (formaPagamento === 'Cartão Crédito' && numParcelasNovo > 1) {
+          if (formaPagamento === 'Cartão Crédito' && numParcelasNovo > 1 && !isReemb) {
             const valoresParcelas = dividirEmParcelas(valor, numParcelasNovo);
             const [anoBase, mesBase] = mesFaturaEscolhido.split('-').map(Number);
             parcelas.forEach(p => batch.delete(colecaoGastos().doc(p.id)));
@@ -5051,7 +5275,7 @@
                 usuario, data, mesFatura, descricao, categoria, subcategoria, observacao,
                 formaPagamento, cartao: cartaoNovo, valor: valoresParcelas[i],
                 parcelaAtual: i + 1, parcelaTotal: numParcelasNovo, valorTotalCompra: valor,
-                grupoId,
+                grupoId, tipoLancamento: 'gasto',
                 criadoEm: parcelas[0].criadoEm || firebase.firestore.FieldValue.serverTimestamp(),
                 atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
               });
@@ -5069,6 +5293,7 @@
               valor,
               parcelaAtual: null, parcelaTotal: null, valorTotalCompra: null,
               grupoId: null,
+              tipoLancamento: tipoFinal,
               criadoEm: parcelas[0].criadoEm || firebase.firestore.FieldValue.serverTimestamp(),
               atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
             });
@@ -5079,7 +5304,7 @@
         }
       }
 
-      if (formaPagamento === 'Cartão Crédito' && numParcelasNovo > 1) {
+      if (formaPagamento === 'Cartão Crédito' && numParcelasNovo > 1 && !isReemb) {
         const grupoIdNovo = 'g' + Date.now() + Math.random().toString(36).slice(2, 7);
         const valoresParcelas = dividirEmParcelas(valor, numParcelasNovo);
         const [anoBase, mesBase] = mesFaturaEscolhido.split('-').map(Number);
@@ -5093,7 +5318,7 @@
             usuario, data, mesFatura, descricao, categoria, subcategoria, observacao,
             formaPagamento, cartao: cartaoNovo, valor: valoresParcelas[i],
             parcelaAtual: i + 1, parcelaTotal: numParcelasNovo, valorTotalCompra: valor,
-            grupoId: grupoIdNovo,
+            grupoId: grupoIdNovo, tipoLancamento: 'gasto',
             criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
             atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
           });
@@ -5107,6 +5332,7 @@
         valor, descricao, categoria, subcategoria, usuario, formaPagamento, data, observacao,
         mesFatura: data.substring(0, 7),
         cartao: formaPagamento === 'Cartão Crédito' ? cartaoNovo : null,
+        tipoLancamento: tipoFinal,
         atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
       };
       if (formaPagamento === 'Cartão Crédito') update.mesFatura = mesFaturaEscolhido;
@@ -5149,7 +5375,11 @@
     const data = ehCredito
       ? String(document.getElementById('dataCompraCredito').value || '')
       : String(document.getElementById('data').value || '');
-    const numParcelas = ehCredito ? parseInt(String(document.getElementById('parcelas').value || '1')) || 1 : 1;
+    const tipoLanc = ehCredito ? String(document.getElementById('tipoLancamento').value || 'gasto') : 'gasto';
+    const isReemb = tipoLanc === 'reembolso';
+    const numParcelas = (ehCredito && !isReemb)
+      ? (parseInt(String(document.getElementById('parcelas').value || '1')) || 1)
+      : 1;
     const cartaoNome = ehCredito ? String(document.getElementById('cartaoSelecionado').value || '') : null;
 
     if (!data || !descricao || isNaN(valor) || valor <= 0) {
@@ -5168,18 +5398,30 @@
       if (ehCredito) {
         const mesFaturaInicio = calcularMesFatura(data, cartaoNome);
         const [anoBase, mesBase] = mesFaturaInicio.split('-').map(Number);
-        const valoresParcelas = dividirEmParcelas(valor, numParcelas);
-        for (let i = 0; i < numParcelas; i++) {
-          const m = new Date(anoBase, mesBase - 1 + i, 1);
-          const mesFatura = `${m.getFullYear()}-${String(m.getMonth() + 1).padStart(2, '0')}`;
+        if (isReemb) {
+          // Reembolso: 1 lançamento, tipoLancamento='reembolso'
           lancamentos.push({
-            usuario, data, mesFatura, descricao, categoria, subcategoria, observacao,
-            formaPagamento, cartao: cartaoNome, valor: valoresParcelas[i],
-            parcelaAtual: numParcelas > 1 ? i + 1 : null,
-            parcelaTotal: numParcelas > 1 ? numParcelas : null,
-            valorTotalCompra: numParcelas > 1 ? valor : null,
-            grupoId, criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+            usuario, data, mesFatura: mesFaturaInicio, descricao, categoria, subcategoria, observacao,
+            formaPagamento, cartao: cartaoNome, valor,
+            parcelaAtual: null, parcelaTotal: null, valorTotalCompra: null,
+            grupoId: null, tipoLancamento: 'reembolso',
+            criadoEm: firebase.firestore.FieldValue.serverTimestamp()
           });
+        } else {
+          const valoresParcelas = dividirEmParcelas(valor, numParcelas);
+          for (let i = 0; i < numParcelas; i++) {
+            const m = new Date(anoBase, mesBase - 1 + i, 1);
+            const mesFatura = `${m.getFullYear()}-${String(m.getMonth() + 1).padStart(2, '0')}`;
+            lancamentos.push({
+              usuario, data, mesFatura, descricao, categoria, subcategoria, observacao,
+              formaPagamento, cartao: cartaoNome, valor: valoresParcelas[i],
+              parcelaAtual: numParcelas > 1 ? i + 1 : null,
+              parcelaTotal: numParcelas > 1 ? numParcelas : null,
+              valorTotalCompra: numParcelas > 1 ? valor : null,
+              grupoId, tipoLancamento: 'gasto',
+              criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+            });
+          }
         }
       } else {
         lancamentos.push({
@@ -5187,7 +5429,8 @@
           descricao, categoria, subcategoria, observacao,
           formaPagamento, cartao: null, valor,
           parcelaAtual: null, parcelaTotal: null, valorTotalCompra: null,
-          grupoId, criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+          grupoId, tipoLancamento: 'gasto',
+          criadoEm: firebase.firestore.FieldValue.serverTimestamp()
         });
       }
       const batch = db.batch();
@@ -5200,6 +5443,8 @@
       document.getElementById('descricao').value = '';
       document.getElementById('observacao').value = '';
       document.getElementById('parcelas').value = '1';
+      // Reset tipo lançamento
+      selecionarTipoLancamento('gasto');
       selecionarPagamento('Dinheiro/PIX');
       if (categorias.length > 0) {
         document.getElementById('categoria').value = categorias[0].nome;
@@ -5211,8 +5456,15 @@
       atualizarPreviewParcelas();
       fecharSugestoes();
       document.getElementById('valor').focus();
-      btn.textContent = numParcelas > 1 ? `✓ ${numParcelas} parcelas criadas!` : '✓ Adicionado!';
-      setTimeout(() => { btn.textContent = '✓ Adicionar Gasto'; }, 1400);
+      if (isReemb) {
+        btn.textContent = '↩️ Reembolso adicionado!';
+      } else {
+        btn.textContent = numParcelas > 1 ? `✓ ${numParcelas} parcelas criadas!` : '✓ Adicionado!';
+      }
+      setTimeout(() => {
+        btn.textContent = '✓ Adicionar Gasto';
+        btn.classList.remove('reembolso');
+      }, 1400);
     } catch (e) {
       console.error(e);
       alert('Erro ao salvar: ' + e.message);
@@ -5314,29 +5566,46 @@
         ? `Fecha dia ${c.fechamento} · Vence dia ${c.vencimento}`
         : 'Cartão não cadastrado';
 
-      const totalCartao = itens.reduce((s, g) => s + (g.valor || 0), 0);
-      const totalDiego = itens.filter(g => g.usuario === 'Diego').reduce((s, g) => s + (g.valor || 0), 0);
-      const totalEliane = itens.filter(g => g.usuario === 'Eliane').reduce((s, g) => s + (g.valor || 0), 0);
+      // REEMBOLSO: total = soma de gastos - soma de reembolsos
+      const totalGastosCartao = itens.filter(g => !ehReembolso(g)).reduce((s, g) => s + (g.valor || 0), 0);
+      const totalReembolsosCartao = itens.filter(ehReembolso).reduce((s, g) => s + (g.valor || 0), 0);
+      const totalCartao = totalGastosCartao - totalReembolsosCartao;
+
+      const totalDiego = itens
+        .filter(g => g.usuario === 'Diego')
+        .reduce((s, g) => s + (ehReembolso(g) ? -(g.valor || 0) : (g.valor || 0)), 0);
+      const totalEliane = itens
+        .filter(g => g.usuario === 'Eliane')
+        .reduce((s, g) => s + (ehReembolso(g) ? -(g.valor || 0) : (g.valor || 0)), 0);
 
       const chaveAberta = mesISO + '|' + nomeCartao;
       const aberto = faturasAbertas.has(chaveAberta);
 
       const linhasHTML = itens.map(g => {
+        const reemb = ehReembolso(g);
         const ehParcela = !!(g.parcelaTotal && g.parcelaTotal > 1);
         const parcelaTag = ehParcela
           ? `<span class="fl-parcela">${g.parcelaAtual}/${g.parcelaTotal}</span>`
           : '';
         return `
-          <div class="fatura-linha" onclick="abrirDetalhesGasto('${g.id}')">
+          <div class="fatura-linha ${reemb ? 'reembolso-linha' : ''}" onclick="abrirDetalhesGasto('${g.id}')">
             <div class="fl-data">${formatarData(g.data)}</div>
             <div class="fl-desc">
-              ${escaparHTML(g.descricao)}${parcelaTag}
-              <span class="fl-quem">${escaparHTML(g.usuario)}${g.observacao ? ' · ' + escaparHTML(g.observacao) : ''}</span>
+              ${reemb ? '↩️ ' : ''}${escaparHTML(g.descricao)}${parcelaTag}
+              <span class="fl-quem">${escaparHTML(g.usuario)}${g.observacao ? ' · ' + escaparHTML(g.observacao) : ''}${reemb ? ' · Reembolso' : ''}</span>
             </div>
-            <div class="fl-valor">${formatarMoeda(g.valor)}</div>
+            <div class="fl-valor">${reemb ? '-' : ''}${formatarMoeda(g.valor)}</div>
           </div>
         `;
       }).join('');
+
+      // REEMBOLSO: mostrar info de reembolso no cabeçalho
+      const blocoReembolso = totalReembolsosCartao > 0
+        ? `<div class="fc-reembolso-info">
+             <span class="lbl">↩️ Reembolsos</span>
+             <span class="vlr">-${formatarMoeda(totalReembolsosCartao)}</span>
+           </div>`
+        : '';
 
       return `
         <div class="fatura-cabecalho ${aberto ? 'aberto' : ''}" onclick="toggleFaturaCartao('${chaveAberta.replace(/'/g, "\\'")}')">
@@ -5352,6 +5621,7 @@
           </div>
           <div class="fc-total-label">Total da fatura</div>
           <div class="fc-total">${formatarMoeda(totalCartao)}</div>
+          ${blocoReembolso}
           <div class="fc-toggle">
             <span class="seta-fc">▶</span>
             <span>${aberto ? 'Toque para fechar' : 'Toque para ver os ' + itens.length + ' lançamentos'}</span>
@@ -5363,6 +5633,7 @@
             <div class="st-item">👨 Diego <strong>${formatarMoeda(totalDiego)}</strong></div>
             <div class="st-item">👩 Eliane <strong>${formatarMoeda(totalEliane)}</strong></div>
             <div class="st-item">📄 ${itens.length} lançamento${itens.length > 1 ? 's' : ''}</div>
+            ${totalReembolsosCartao > 0 ? `<div class="st-item reembolso">↩️ Reembolsos <strong>-${formatarMoeda(totalReembolsosCartao)}</strong></div>` : ''}
           </div>
           <div class="fatura-tabela-header">
             <div>Data</div>
@@ -5506,9 +5777,11 @@
   function exportarCSV() {
     const doMes = gastosFiltrados();
     if (doMes.length === 0) { alert('Sem dados.'); return; }
-    const linhas = [['Data Compra', 'Mês Fatura', 'Quem', 'Local', 'Categoria', 'Subcategoria', 'Forma de Pagamento', 'Cartão', 'Parcela', 'Detalhes', 'Valor']];
+    const linhas = [['Data Compra', 'Mês Fatura', 'Tipo', 'Quem', 'Local', 'Categoria', 'Subcategoria', 'Forma de Pagamento', 'Cartão', 'Parcela', 'Detalhes', 'Valor']];
     doMes.forEach(g => linhas.push([
-      g.data, g.mesFatura || g.data.substring(0, 7), g.usuario, g.descricao,
+      g.data, g.mesFatura || g.data.substring(0, 7),
+      ehReembolso(g) ? 'Reembolso' : 'Gasto',
+      g.usuario, g.descricao,
       g.categoria, g.subcategoria || '', g.formaPagamento || 'Dinheiro/PIX',
       g.cartao || '', g.parcelaTotal ? `${g.parcelaAtual}/${g.parcelaTotal}` : '',
       g.observacao || '', String(g.valor).replace('.', ',')
