@@ -2116,9 +2116,17 @@
           <label>Cartão</label>
           <select id="editGastoCartao" onchange="atualizarPreviewEdicao()"></select>
         </div>
+
+        <!-- NOVO CAMPO: MÊS DA FATURA -->
+        <div class="campo">
+          <label>📅 Mês da fatura (vencimento)</label>
+          <select id="editGastoMesFatura" onchange="marcarMesFaturaManual()"></select>
+          <span class="dica" id="editGastoMesFaturaDica">Você pode ajustar manualmente caso o banco considere em outro mês.</span>
+        </div>
+
         <div class="campo">
           <label>Número de parcelas</label>
-          <select id="editGastoParcelas" onchange="atualizarPreviewEdicao()">
+          <select id="editGastoParcelas" onchange="aoMudarParcelasEdicao()">
             <option value="1">1x (à vista)</option>
             <option value="2">2x</option>
             <option value="3">3x</option>
@@ -2154,6 +2162,30 @@
       <button class="modal-fechar" onclick="fecharDetalhesGasto()">✕</button>
     </div>
     <div class="modal-corpo" id="detalhesGastoCorpo"></div>
+  </div>
+</div>
+
+<!-- NOVO MODAL: TROCAR FATURA -->
+<div class="modal-agenda" id="modalTrocarFatura">
+  <div class="modal-conteudo" style="max-width:480px;">
+    <div class="modal-header">
+      <h2>📅 Trocar fatura</h2>
+      <button class="modal-fechar" onclick="fecharTrocarFatura()">✕</button>
+    </div>
+    <div class="modal-corpo">
+      <input type="hidden" id="trocarFaturaGastoId">
+      <p id="trocarFaturaInfo" style="color:var(--text-2); font-size:0.88em; margin-bottom:18px; line-height:1.6;"></p>
+      <div class="campo">
+        <label>Novo mês da fatura (vencimento)</label>
+        <select id="trocarFaturaMes"></select>
+      </div>
+      <div class="campo">
+        <label>Motivo (opcional)</label>
+        <input type="text" id="trocarFaturaMotivo" placeholder="Ex: Banco lançou no mês seguinte">
+        <span class="dica">Ajuda a lembrar depois por que você ajustou</span>
+      </div>
+      <button class="btn-grande" onclick="salvarTrocaFatura()">✓ Confirmar troca</button>
+    </div>
   </div>
 </div>
 
@@ -2479,6 +2511,9 @@
 
   let filtrosLancExpandidos = false;
   let modoLancMes = 'compra';
+
+  // Controle de edição de mês da fatura
+  let mesFaturaManualEdit = false;
 
   function acharCategoria(nome) { return categorias.find(c => c.nome === nome); }
   function acharCartao(nome) { return cartoes.find(c => c.nome === nome); }
@@ -4720,8 +4755,15 @@
     }
 
     document.getElementById('detalhesGastoTitulo').textContent = ehParcelado ? '📌 Detalhes (compra parcelada)' : '📌 Detalhes do lançamento';
+
+    // Botão extra de trocar fatura (só para cartão de crédito)
+    const botaoTrocarFatura = (g.formaPagamento === 'Cartão Crédito')
+      ? `<button onclick="fecharDetalhesGasto(); abrirTrocarFatura('${g.id}')" style="padding:15px; background:var(--accent); width:100%; margin-bottom:10px; border-radius:10px; font-weight:700; color:white; border:none; cursor:pointer;">📅 Trocar fatura</button>`
+      : '';
+
     document.getElementById('detalhesGastoCorpo').innerHTML = linhas.join('') + `
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:22px;">
+      ${botaoTrocarFatura}
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:${botaoTrocarFatura ? '0' : '22px'};">
         <button onclick="fecharDetalhesGasto(); abrirEditarGasto('${g.id}')" style="padding:15px; background:var(--warning);">✏️ Editar</button>
         <button onclick="fecharDetalhesGasto(); removerGasto('${g.id}')" style="padding:15px; background:var(--danger);">🗑️ Excluir</button>
       </div>
@@ -4734,9 +4776,79 @@
     document.getElementById('modalDetalhesGasto').classList.remove('visivel');
   }
 
+  // ============ TROCAR FATURA (NOVO) ============
+  function preencherMesesFatura(selectEl, mesSelecionado) {
+    const hoje = new Date();
+    const opcoes = [];
+    // 12 meses atrás até 24 meses à frente
+    for (let i = -12; i <= 24; i++) {
+      const d = new Date(hoje.getFullYear(), hoje.getMonth() + i, 1);
+      const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const label = d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+      const labelCap = label.charAt(0).toUpperCase() + label.slice(1);
+      opcoes.push({ iso, label: labelCap });
+    }
+    selectEl.innerHTML = opcoes.map(o =>
+      `<option value="${o.iso}" ${o.iso === mesSelecionado ? 'selected' : ''}>${o.label}</option>`
+    ).join('');
+  }
+
+  function abrirTrocarFatura(idGasto) {
+    const g = gastos.find(x => x.id === idGasto);
+    if (!g) return;
+    if (g.formaPagamento !== 'Cartão Crédito') {
+      alert('Este lançamento não é de cartão de crédito.');
+      return;
+    }
+    document.getElementById('trocarFaturaGastoId').value = idGasto;
+    const mesAtual = g.mesFatura || (g.data || '').substring(0, 7);
+    preencherMesesFatura(document.getElementById('trocarFaturaMes'), mesAtual);
+    document.getElementById('trocarFaturaInfo').innerHTML = `
+      <strong>${escaparHTML(g.descricao)}</strong><br>
+      Valor: <strong>${formatarMoeda(g.valor)}</strong>${g.parcelaTotal ? ` · Parcela ${g.parcelaAtual}/${g.parcelaTotal}` : ''}<br>
+      Cartão: <strong>${escaparHTML(g.cartao || '(sem cartão)')}</strong><br>
+      Fatura atual: <strong>${nomeMesLongo(mesAtual)}</strong>
+    `;
+    document.getElementById('trocarFaturaMotivo').value = '';
+    document.getElementById('modalTrocarFatura').classList.add('visivel');
+  }
+
+  function fecharTrocarFatura() {
+    document.getElementById('modalTrocarFatura').classList.remove('visivel');
+  }
+
+  async function salvarTrocaFatura() {
+    const idGasto = document.getElementById('trocarFaturaGastoId').value;
+    const novoMes = document.getElementById('trocarFaturaMes').value;
+    const motivo = document.getElementById('trocarFaturaMotivo').value.trim();
+    const g = gastos.find(x => x.id === idGasto);
+    if (!g) { alert('Lançamento não encontrado.'); return; }
+    if (!novoMes) { alert('Escolha um mês.'); return; }
+    if (novoMes === g.mesFatura) { fecharTrocarFatura(); return; }
+
+    try {
+      const update = {
+        mesFatura: novoMes,
+        ajusteFatura: {
+          de: g.mesFatura || '',
+          para: novoMes,
+          motivo: motivo || '',
+          quando: new Date().toISOString()
+        },
+        atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      await colecaoGastos().doc(idGasto).update(update);
+      fecharTrocarFatura();
+    } catch (e) {
+      alert('Erro ao trocar fatura: ' + e.message);
+    }
+  }
+
+  // ============ EDITAR GASTO ============
   function abrirEditarGasto(id) {
     const g = gastos.find(x => x.id === id);
     if (!g) return;
+    mesFaturaManualEdit = false;
     document.getElementById('editGastoId').value = g.id;
     document.getElementById('editGastoGrupoId').value = g.grupoId || '';
 
@@ -4787,6 +4899,11 @@
     }
 
     document.getElementById('editGastoParcelas').value = String(g.parcelaTotal || 1);
+
+    // Preenche o select de mês da fatura
+    const mesFaturaAtual = g.mesFatura || calcularMesFatura(g.data, g.cartao);
+    preencherMesesFatura(document.getElementById('editGastoMesFatura'), mesFaturaAtual);
+
     atualizarCamposEdicaoPagamento();
     atualizarPreviewEdicao();
     document.getElementById('modalEditarGasto').classList.add('visivel');
@@ -4797,6 +4914,26 @@
     const pag = document.getElementById('editGastoPagamento').value;
     const box = document.getElementById('editBoxCartao');
     box.style.display = pag === 'Cartão Crédito' ? 'block' : 'none';
+    // Reset manual ao trocar forma de pagamento (volta a calcular automático)
+    if (pag !== 'Cartão Crédito') mesFaturaManualEdit = false;
+    atualizarPreviewEdicao();
+  }
+
+  function marcarMesFaturaManual() {
+    mesFaturaManualEdit = true;
+    atualizarPreviewEdicao();
+  }
+
+  function aoMudarParcelasEdicao() {
+    // Se o usuário não mexeu manualmente no mês da fatura, recalcula com base no cartão/data
+    if (!mesFaturaManualEdit) {
+      const data = document.getElementById('editGastoData').value;
+      const cartao = document.getElementById('editGastoCartao').value;
+      if (data && cartao && acharCartao(cartao)) {
+        const mesCalc = calcularMesFatura(data, cartao);
+        preencherMesesFatura(document.getElementById('editGastoMesFatura'), mesCalc);
+      }
+    }
     atualizarPreviewEdicao();
   }
 
@@ -4809,10 +4946,14 @@
     const n = parseInt(document.getElementById('editGastoParcelas').value) || 1;
     const dataCompra = String(document.getElementById('editGastoData').value || '');
     const cartaoNome = String(document.getElementById('editGastoCartao').value || '');
+    const mesFaturaSelect = document.getElementById('editGastoMesFatura');
+    const mesFaturaInicio = mesFaturaSelect ? mesFaturaSelect.value : '';
+
     if (valor <= 0 || !dataCompra) { preview.innerHTML = '<em>Preencha valor e data.</em>'; return; }
     if (!cartaoNome || !acharCartao(cartaoNome)) { preview.innerHTML = '<em>⚠️ Selecione um cartão cadastrado.</em>'; return; }
-    const mesInicio = calcularMesFatura(dataCompra, cartaoNome);
-    const [anoBase, mesBase] = mesInicio.split('-').map(Number);
+    if (!mesFaturaInicio) { preview.innerHTML = '<em>⚠️ Selecione o mês da fatura.</em>'; return; }
+
+    const [anoBase, mesBase] = mesFaturaInicio.split('-').map(Number);
     const valorParcela = valor / n;
     const meses = [];
     for (let i = 0; i < n; i++) {
@@ -4820,14 +4961,19 @@
       meses.push(m.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }).replace('.', ''));
     }
     const c = acharCartao(cartaoNome);
+    let html = '';
     if (n === 1) {
-      preview.innerHTML = `<strong>${formatarMoeda(valor)}</strong> à vista · fatura vence em <strong>${meses[0]}</strong><br>
-        <span style="font-size:0.9em;">💳 ${cartaoNome} · fecha dia ${c.fechamento} · vence dia ${c.vencimento}</span>`;
+      html = `<strong>${formatarMoeda(valor)}</strong> à vista<br>
+        <span style="color:var(--text-2);">Fatura escolhida: <strong>${meses[0]}</strong></span>`;
     } else {
-      preview.innerHTML = `<strong>${n}x de ${formatarMoeda(valorParcela)}</strong> · Total ${formatarMoeda(valor)}<br>
-        <span style="font-size:0.9em;">Faturas: ${meses.join(' • ')}</span><br>
-        <span style="font-size:0.9em;">💳 ${cartaoNome} · fecha dia ${c.fechamento} · vence dia ${c.vencimento}</span>`;
+      html = `<strong>${n}x de ${formatarMoeda(valorParcela)}</strong> · Total ${formatarMoeda(valor)}<br>
+        <span style="color:var(--text-2);">Faturas: ${meses.join(' • ')}</span>`;
     }
+    html += `<br><span style="font-size:0.9em;">💳 ${cartaoNome} · fecha dia ${c.fechamento} · vence dia ${c.vencimento}</span>`;
+    if (mesFaturaManualEdit) {
+      html += `<br><span style="font-size:0.85em; color:var(--warning); font-weight:600;">⚠️ Mês da fatura ajustado manualmente</span>`;
+    }
+    preview.innerHTML = html;
   }
 
   function atualizarSubcategoriasEdicao() {
@@ -4840,6 +4986,7 @@
 
   function fecharEditarGasto() {
     document.getElementById('modalEditarGasto').classList.remove('visivel');
+    mesFaturaManualEdit = false;
   }
 
   function dividirEmParcelas(valorTotal, n) {
@@ -4866,6 +5013,12 @@
     const cartaoNovo = String(document.getElementById('editGastoCartao').value || '');
     const numParcelasNovo = parseInt(String(document.getElementById('editGastoParcelas').value || '1')) || 1;
     const valor = parseFloat(String(document.getElementById('editGastoValor').value || '0'));
+    // Mês da fatura escolhido
+    let mesFaturaEscolhido = '';
+    if (formaPagamento === 'Cartão Crédito') {
+      const selMes = document.getElementById('editGastoMesFatura');
+      mesFaturaEscolhido = selMes ? selMes.value : '';
+    }
 
     if (!valor || valor <= 0) { alert('Informe um valor válido.'); return; }
     if (!descricao) { alert('Informe um local/descrição.'); return; }
@@ -4873,8 +5026,14 @@
     if (formaPagamento === 'Cartão Crédito' && (!cartaoNovo || !acharCartao(cartaoNovo))) {
       alert('Selecione um cartão cadastrado.'); return;
     }
+    if (formaPagamento === 'Cartão Crédito' && !mesFaturaEscolhido) {
+      alert('Selecione o mês da fatura.'); return;
+    }
 
     try {
+      // Mesmo que o usuário não tenha mexido no mês da fatura, usamos o valor do select.
+      // Se ele não mexeu e o select foi preenchido automaticamente, é o mesmo cálculo automático.
+      // A diferença é que agora o select existe sempre e o valor dele é respeitado.
       if (grupoId) {
         const parcelas = gastos.filter(x => x.grupoId === grupoId);
         if (parcelas.length > 0) {
@@ -4882,8 +5041,7 @@
           const batch = db.batch();
           if (formaPagamento === 'Cartão Crédito' && numParcelasNovo > 1) {
             const valoresParcelas = dividirEmParcelas(valor, numParcelasNovo);
-            const mesInicio = calcularMesFatura(data, cartaoNovo);
-            const [anoBase, mesBase] = mesInicio.split('-').map(Number);
+            const [anoBase, mesBase] = mesFaturaEscolhido.split('-').map(Number);
             parcelas.forEach(p => batch.delete(colecaoGastos().doc(p.id)));
             for (let i = 0; i < numParcelasNovo; i++) {
               const m = new Date(anoBase, mesBase - 1 + i, 1);
@@ -4902,7 +5060,7 @@
             parcelas.forEach(p => batch.delete(colecaoGastos().doc(p.id)));
             const novoRef = colecaoGastos().doc();
             const novoMesFatura = formaPagamento === 'Cartão Crédito'
-              ? calcularMesFatura(data, cartaoNovo)
+              ? mesFaturaEscolhido
               : data.substring(0, 7);
             batch.set(novoRef, {
               usuario, data, mesFatura: novoMesFatura, descricao, categoria, subcategoria, observacao,
@@ -4924,8 +5082,7 @@
       if (formaPagamento === 'Cartão Crédito' && numParcelasNovo > 1) {
         const grupoIdNovo = 'g' + Date.now() + Math.random().toString(36).slice(2, 7);
         const valoresParcelas = dividirEmParcelas(valor, numParcelasNovo);
-        const mesInicio = calcularMesFatura(data, cartaoNovo);
-        const [anoBase, mesBase] = mesInicio.split('-').map(Number);
+        const [anoBase, mesBase] = mesFaturaEscolhido.split('-').map(Number);
         const batch = db.batch();
         batch.delete(colecaoGastos().doc(id));
         for (let i = 0; i < numParcelasNovo; i++) {
@@ -4952,7 +5109,7 @@
         cartao: formaPagamento === 'Cartão Crédito' ? cartaoNovo : null,
         atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
       };
-      if (formaPagamento === 'Cartão Crédito') update.mesFatura = calcularMesFatura(data, cartaoNovo);
+      if (formaPagamento === 'Cartão Crédito') update.mesFatura = mesFaturaEscolhido;
       await colecaoGastos().doc(id).update(update);
       fecharEditarGasto();
     } catch (e) {
