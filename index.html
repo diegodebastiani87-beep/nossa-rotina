@@ -1616,6 +1616,149 @@
 
   .oculto { display: none !important; }
 
+  /* ============ NOVO: COMPARATIVO ============ */
+  .comp-controles {
+    display: flex; flex-direction: column; gap: 12px;
+    margin-bottom: 16px;
+  }
+  .comp-linha {
+    display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+  }
+  .comp-linha label {
+    font-size: 0.72em; margin-bottom: 0; white-space: nowrap;
+  }
+  .comp-toggle {
+    display: flex; gap: 4px;
+    background: var(--surface-3);
+    padding: 4px; border-radius: 10px;
+    border: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .comp-toggle button {
+    padding: 8px 14px;
+    background: transparent;
+    color: var(--text-3);
+    border: none; border-radius: 8px;
+    font-weight: 600; font-size: 0.78em; cursor: pointer;
+    transition: all 0.15s;
+    width: auto;
+    white-space: nowrap;
+  }
+  .comp-toggle button.ativa {
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow-xs);
+  }
+  .comp-toggle button:hover:not(.ativa) {
+    background: var(--surface-2);
+    color: var(--text-2);
+  }
+
+  .comp-lista { display: flex; flex-direction: column; gap: 12px; }
+  .comp-item {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    transition: box-shadow 0.2s;
+  }
+  .comp-item:hover { box-shadow: var(--shadow-xs); }
+  .comp-item-topo {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 10px; margin-bottom: 12px;
+  }
+  .comp-item-nome {
+    font-weight: 700; font-size: 0.9em; color: var(--text);
+    display: flex; align-items: center; gap: 8px;
+    word-break: break-word;
+  }
+  .comp-item-nome .cor-bolinha {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  }
+  .comp-item-var {
+    font-size: 0.78em; font-weight: 700;
+    padding: 4px 10px; border-radius: 20px;
+    white-space: nowrap;
+  }
+  .comp-item-var.positivo { background: var(--danger-soft); color: var(--danger); }
+  .comp-item-var.negativo { background: var(--success-soft); color: var(--success); }
+  .comp-item-var.neutro { background: var(--surface-3); color: var(--text-3); }
+
+  .comp-barras { display: flex; flex-direction: column; gap: 6px; }
+  .comp-barra-linha {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.8em;
+  }
+  .comp-barra-rotulo {
+    width: 90px; flex-shrink: 0;
+    color: var(--text-3); font-weight: 600;
+    font-size: 0.9em;
+    text-align: right;
+  }
+  .comp-barra-bg {
+    flex: 1; height: 18px; background: var(--surface-3);
+    border-radius: 9px; overflow: hidden;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .comp-barra-fill {
+    height: 100%; border-radius: 8px;
+    transition: width 0.6s ease;
+    display: flex; align-items: center; justify-content: flex-end;
+    padding-right: 6px; color: white;
+    font-size: 0.72em; font-weight: 700;
+    min-width: 0;
+  }
+  .comp-barra-fill.atual { background: var(--primary); }
+  .comp-barra-fill.anterior { background: var(--text-muted); opacity: 0.65; }
+  .comp-barra-valor {
+    width: 95px; text-align: right; flex-shrink: 0;
+    font-weight: 700; color: var(--text);
+    font-size: 0.9em;
+  }
+  .comp-sub-lista {
+    margin-top: 12px; padding-top: 12px;
+    border-top: 1px dashed var(--border);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .comp-sub-lista .comp-barra-rotulo { width: 90px; font-size: 0.8em; }
+  .comp-sub-lista .comp-barra-bg { height: 14px; }
+  .comp-sub-lista .comp-barra-fill { font-size: 0.65em; padding-right: 4px; }
+  .comp-sub-lista .comp-barra-valor { font-size: 0.8em; width: 85px; }
+
+  .comp-resumo-periodo {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    margin-bottom: 16px;
+  }
+  .comp-resumo-box {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .comp-resumo-box .titulo {
+    font-size: 0.68em; color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.6px;
+    margin-bottom: 6px; font-weight: 700;
+  }
+  .comp-resumo-box .valor {
+    font-size: 1.2em; font-weight: 800; color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .comp-resumo-box.atual {
+    background: linear-gradient(135deg, #1e40af, #1e3a8a);
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(30,64,175,0.25);
+  }
+  .comp-resumo-box.atual .titulo { color: rgba(255,255,255,0.75); }
+  .comp-resumo-box.atual .valor { color: white; }
+
+  .comp-vazio {
+    text-align: center; padding: 40px 20px;
+    color: var(--text-muted); font-size: 0.9em;
+    font-style: italic;
+  }
+
   @media (min-width: 800px) {
     .bottom-nav {
       position: sticky; top: 0; bottom: auto;
@@ -1643,6 +1786,8 @@
     .modal-agenda { align-items: center; padding: 24px; }
     .modal-conteudo { border-radius: 20px; max-height: 88vh; }
     .modal-header { border-radius: 20px 20px 0 0; }
+    .comp-controles { flex-direction: row; align-items: center; }
+    .comp-resumo-periodo { grid-template-columns: repeat(4, 1fr); }
   }
 </style>
 </head>
@@ -1975,6 +2120,35 @@
         <span class="filtro-ativo" id="badgeCategoria" style="display:none;">Filtrado</span>
       </h2>
       <div id="graficoCategorias"></div>
+    </div>
+
+    <!-- NOVO: COMPARATIVO ENTRE PERÍODOS -->
+    <div class="card">
+      <h2 class="com-filtro">
+        📊 Comparativo entre períodos
+        <span class="filtro-ativo" id="badgeComparativo" style="display:none;">Ativo</span>
+      </h2>
+      <div class="comp-controles">
+        <div class="comp-linha">
+          <label>Comparar com:</label>
+          <div class="comp-toggle" id="compPeriodoToggle">
+            <button class="ativo" data-periodo="anterior" onclick="mudarPeriodoComparacao('anterior')">📅 Mês anterior</button>
+            <button data-periodo="3meses" onclick="mudarPeriodoComparacao('3meses')">📆 Últimos 3 meses</button>
+            <button data-periodo="6meses" onclick="mudarPeriodoComparacao('6meses')">📅 Últimos 6 meses</button>
+            <button data-periodo="ano" onclick="mudarPeriodoComparacao('ano')">📅 Este ano</button>
+          </div>
+        </div>
+        <div class="comp-linha">
+          <label>Detalhar por:</label>
+          <div class="comp-toggle" id="compNivelToggle">
+            <button class="ativo" data-nivel="categoria" onclick="mudarNivelComparacao('categoria')">📂 Categoria</button>
+            <button data-nivel="subcategoria" onclick="mudarNivelComparacao('subcategoria')">📁 Subcategoria</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="compResumo" class="comp-resumo-periodo"></div>
+      <div id="compLista" class="comp-lista"></div>
     </div>
   </div>
 
@@ -2628,6 +2802,10 @@
   let modoLancMes = 'compra';
 
   let mesFaturaManualEdit = false;
+
+  // ============ NOVO: Estado do comparativo ============
+  let compPeriodo = 'anterior';   // 'anterior' | '3meses' | '6meses' | 'ano'
+  let compNivel = 'categoria';    // 'categoria' | 'subcategoria'
 
   function acharCategoria(nome) { return categorias.find(c => c.nome === nome); }
   function acharCartao(nome) { return cartoes.find(c => c.nome === nome); }
@@ -4455,6 +4633,7 @@
     renderizarResumo(listaColapsada);
     renderizarPorPagamento(listaColapsada);
     renderizarGrafico(listaColapsada);
+    renderizarComparativo();
   }
 
   // ============ ABA LANÇAMENTOS ============
@@ -5792,6 +5971,294 @@
     link.href = URL.createObjectURL(blob);
     link.download = `gastos-${document.getElementById('mesReferencia').value}.csv`;
     link.click();
+  }
+
+  // ============ COMPARATIVO ENTRE PERÍODOS ============
+
+  function mudarPeriodoComparacao(periodo) {
+    compPeriodo = periodo;
+    document.querySelectorAll('#compPeriodoToggle button').forEach(b => {
+      b.classList.toggle('ativo', b.dataset.periodo === periodo);
+    });
+    renderizarComparativo();
+  }
+
+  function mudarNivelComparacao(nivel) {
+    compNivel = nivel;
+    document.querySelectorAll('#compNivelToggle button').forEach(b => {
+      b.classList.toggle('ativo', b.dataset.nivel === nivel);
+    });
+    renderizarComparativo();
+  }
+
+  // Retorna a lista de meses (YYYY-MM) de um intervalo inclusivo
+  function listarMeses(anoInicio, mesInicio, anoFim, mesFim) {
+    const meses = [];
+    let a = anoInicio, m = mesInicio;
+    while (a < anoFim || (a === anoFim && m <= mesFim)) {
+      meses.push(`${a}-${String(m).padStart(2, '0')}`);
+      m++;
+      if (m > 12) { m = 1; a++; }
+    }
+    return meses;
+  }
+
+  // Retorna o mês de referência atual (YYYY-MM) do input da Análise
+  function mesReferenciaAtual() {
+    return document.getElementById('mesReferencia').value || mesAtualISO();
+  }
+
+  // Determina o período de comparação com base na seleção
+  // Retorna { rotulo, meses: [YYYY-MM, ...] } — meses ANTERIORES (sem o mês atual)
+  function obterPeriodoComparacao() {
+    const mesAtual = mesReferenciaAtual();
+    const [anoAtual, mesAtualNum] = mesAtual.split('-').map(Number);
+
+    if (compPeriodo === 'anterior') {
+      const d = new Date(anoAtual, mesAtualNum - 2, 1); // mês anterior
+      const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      return { rotulo: nomeMesLongo(iso), meses: [iso] };
+    }
+
+    if (compPeriodo === '3meses') {
+      const meses = [];
+      for (let i = 3; i >= 1; i--) {
+        const d = new Date(anoAtual, mesAtualNum - 1 - i, 1);
+        meses.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+      }
+      return { rotulo: 'Últimos 3 meses', meses };
+    }
+
+    if (compPeriodo === '6meses') {
+      const meses = [];
+      for (let i = 6; i >= 1; i--) {
+        const d = new Date(anoAtual, mesAtualNum - 1 - i, 1);
+        meses.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+      }
+      return { rotulo: 'Últimos 6 meses', meses };
+    }
+
+    if (compPeriodo === 'ano') {
+      const meses = [];
+      for (let m = 1; m <= 12; m++) {
+        // Considera apenas meses até o atual (não inclui o mês corrente para não misturar)
+        if (m < mesAtualNum) meses.push(`${anoAtual}-${String(m).padStart(2, '0')}`);
+      }
+      return { rotulo: `Ano ${anoAtual}`, meses };
+    }
+
+    return { rotulo: '', meses: [] };
+  }
+
+  // Filtra gastos de um conjunto de meses (YYYY-MM) pelo modo selecionado
+  function gastosDosMeses(meses) {
+    const modo = document.getElementById('modoFiltroMes').value;
+    const f = filtrosAtivos();
+    let lista = gastos.filter(g => {
+      const ref = (modo === 'fatura')
+        ? (g.mesFatura || (g.data || '').substring(0, 7))
+        : (g.data || '').substring(0, 7);
+      return meses.includes(ref);
+    });
+    if (f.categoria) lista = lista.filter(g => g.categoria === f.categoria);
+    if (f.usuario) lista = lista.filter(g => g.usuario === f.usuario);
+    if (f.pagamento) lista = lista.filter(g => (g.formaPagamento || 'Dinheiro/PIX') === f.pagamento);
+    if (f.cartao) lista = lista.filter(g => g.cartao === f.cartao);
+    return lista;
+  }
+
+  // Agrupa valores por chave (categoria ou subcategoria), já aplicando sinal de reembolso
+  function agruparPorNivel(lista) {
+    const mapa = {};
+    lista.forEach(g => {
+      const chave = compNivel === 'categoria'
+        ? g.categoria
+        : (g.subcategoria || '(sem sub)');
+      if (!chave) return;
+      if (!mapa[chave]) mapa[chave] = { total: 0, itens: 0, catOrigem: g.categoria };
+      const valor = ehReembolso(g) ? -(g.valor || 0) : (g.valor || 0);
+      mapa[chave].total += valor;
+      mapa[chave].itens++;
+    });
+    return mapa;
+  }
+
+  function renderizarComparativo() {
+    const wrapResumo = document.getElementById('compResumo');
+    const wrapLista = document.getElementById('compLista');
+    const badge = document.getElementById('badgeComparativo');
+
+    if (badge) badge.style.display = 'inline-block';
+
+    const mesAtual = mesReferenciaAtual();
+    const mesesAtual = [mesAtual];
+    const periodo = obterPeriodoComparacao();
+
+    // Sem dados de comparação (ex: ano sem meses anteriores)
+    if (periodo.meses.length === 0) {
+      wrapResumo.innerHTML = '';
+      wrapLista.innerHTML = `<div class="comp-vazio">Nenhum mês anterior para comparar em "${periodo.rotulo}".</div>`;
+      return;
+    }
+
+    const listaAtual = colapsarParcelas(gastosDosMeses(mesesAtual));
+    const listaAnterior = colapsarParcelas(gastosDosMeses(periodo.meses));
+
+    const totalAtual = listaAtual.reduce((s, g) => s + valorEfetivo(g), 0);
+    const totalAnterior = listaAnterior.reduce((s, g) => s + valorEfetivo(g), 0);
+    const diff = totalAtual - totalAnterior;
+    const pct = totalAnterior !== 0 ? (diff / Math.abs(totalAnterior)) * 100 : null;
+
+    // Resumo no topo
+    let resumoHTML = `
+      <div class="comp-resumo-box atual">
+        <div class="titulo">${nomeMesLongo(mesAtual)}</div>
+        <div class="valor">${formatarMoeda(totalAtual)}</div>
+      </div>
+      <div class="comp-resumo-box">
+        <div class="titulo">${periodo.rotulo}</div>
+        <div class="valor">${formatarMoeda(totalAnterior)}</div>
+      </div>
+    `;
+    if (pct !== null) {
+      const classe = diff > 0 ? 'positivo' : (diff < 0 ? 'negativo' : 'neutro');
+      const seta = diff > 0 ? '▲' : (diff < 0 ? '▼' : '●');
+      const sinal = diff > 0 ? '+' : '';
+      resumoHTML += `
+        <div class="comp-resumo-box" style="grid-column: span 2;">
+          <div class="titulo">Variação</div>
+          <div class="valor" style="color:${diff > 0 ? 'var(--danger)' : diff < 0 ? 'var(--success)' : 'var(--text-3)'};">
+            ${seta} ${sinal}${formatarMoeda(diff)} <span style="font-size:0.7em; font-weight:700;">(${sinal}${pct.toFixed(1)}%)</span>
+          </div>
+        </div>
+      `;
+    }
+    wrapResumo.innerHTML = resumoHTML;
+
+    // Mapa de categorias/subcategorias do mês atual
+    const mapaAtual = agruparPorNivel(listaAtual);
+    const mapaAnterior = agruparPorNivel(listaAnterior);
+
+    // União das chaves
+    const chaves = new Set([...Object.keys(mapaAtual), ...Object.keys(mapaAnterior)]);
+    if (chaves.size === 0) {
+      wrapLista.innerHTML = '<div class="comp-vazio">Sem dados para exibir no período selecionado.</div>';
+      return;
+    }
+
+    // Ordena pela soma (atual + anterior) decrescente para dar prioridade aos maiores
+    const chavesOrdenadas = [...chaves].sort((a, b) => {
+      const sa = (mapaAtual[a]?.total || 0) + (mapaAnterior[a]?.total || 0);
+      const sb = (mapaAtual[b]?.total || 0) + (mapaAnterior[b]?.total || 0);
+      return sb - sa;
+    });
+
+    // Calcula o máximo global para dimensionar as barras
+    let maxValor = 0;
+    chavesOrdenadas.forEach(ch => {
+      maxValor = Math.max(maxValor, Math.abs(mapaAtual[ch]?.total || 0), Math.abs(mapaAnterior[ch]?.total || 0));
+    });
+
+    wrapLista.innerHTML = chavesOrdenadas.map(ch => {
+      const vAtual = mapaAtual[ch]?.total || 0;
+      const vAnt = mapaAnterior[ch]?.total || 0;
+      const d = vAtual - vAnt;
+      const p = vAnt !== 0 ? (d / Math.abs(vAnt)) * 100 : null;
+      const classeVar = d > 0 ? 'positivo' : (d < 0 ? 'negativo' : 'neutro');
+      const seta = d > 0 ? '▲' : (d < 0 ? '▼' : '●');
+      const cor = (compNivel === 'categoria') ? corDa(ch) : corDa(mapaAtual[ch]?.catOrigem || mapaAnterior[ch]?.catOrigem);
+
+      const pctAtual = maxValor > 0 ? (Math.abs(vAtual) / maxValor) * 100 : 0;
+      const pctAnt = maxValor > 0 ? (Math.abs(vAnt) / maxValor) * 100 : 0;
+
+      // Texto de variação
+      const txtVar = p === null
+        ? (d !== 0 ? `${d > 0 ? '+' : ''}${formatarMoeda(d)}` : '—')
+        : `${seta} ${d > 0 ? '+' : ''}${p.toFixed(0)}%`;
+
+      // Se for subcategoria, agrupar por categoria de origem para exibir a cor
+      const nomeExibir = ch;
+
+      // Sub-linhas por subcategoria dentro de cada categoria (quando nível = categoria)
+      let subsHTML = '';
+      if (compNivel === 'categoria') {
+        const subsAtual = {};
+        const subsAnt = {};
+        listaAtual.filter(g => g.categoria === ch).forEach(g => {
+          const s = g.subcategoria || '(sem sub)';
+          subsAtual[s] = (subsAtual[s] || 0) + (ehReembolso(g) ? -(g.valor || 0) : (g.valor || 0));
+        });
+        listaAnterior.filter(g => g.categoria === ch).forEach(g => {
+          const s = g.subcategoria || '(sem sub)';
+          subsAnt[s] = (subsAnt[s] || 0) + (ehReembolso(g) ? -(g.valor || 0) : (g.valor || 0));
+        });
+        const todasSubs = new Set([...Object.keys(subsAtual), ...Object.keys(subsAnt)]);
+        if (todasSubs.size > 0 && (vAtual > 0 || vAnt > 0)) {
+          const subsOrdenadas = [...todasSubs].sort((a, b) =>
+            ((subsAtual[b] || 0) + (subsAnt[b] || 0)) - ((subsAtual[a] || 0) + (subsAnt[a] || 0))
+          );
+          const maxSub = Math.max(...subsOrdenadas.map(s => Math.max(Math.abs(subsAtual[s] || 0), Math.abs(subsAnt[s] || 0))), 0);
+          subsHTML = `
+            <div class="comp-sub-lista">
+              ${subsOrdenadas.map(s => {
+                const sa = subsAtual[s] || 0;
+                const sn = subsAnt[s] || 0;
+                const pctSa = maxSub > 0 ? (Math.abs(sa) / maxSub) * 100 : 0;
+                const pctSn = maxSub > 0 ? (Math.abs(sn) / maxSub) * 100 : 0;
+                const dd = sa - sn;
+                const setaSub = dd > 0 ? '▲' : (dd < 0 ? '▼' : '●');
+                const classeSub = dd > 0 ? 'positivo' : (dd < 0 ? 'negativo' : 'neutro');
+                return `
+                  <div class="comp-barra-linha">
+                    <div class="comp-barra-rotulo">${escaparHTML(s)}</div>
+                    <div style="flex:1; display:flex; flex-direction:column; gap:2px;">
+                      <div class="comp-barra-bg" style="height:12px;">
+                        <div class="comp-barra-fill atual" style="width:${pctSa}%; font-size:0.62em; padding-right:3px;">${sa > 0 ? formatarMoeda(sa).replace('R$ ','') : ''}</div>
+                      </div>
+                      <div class="comp-barra-bg" style="height:12px;">
+                        <div class="comp-barra-fill anterior" style="width:${pctSn}%; font-size:0.62em; padding-right:3px;">${sn > 0 ? formatarMoeda(sn).replace('R$ ','') : ''}</div>
+                      </div>
+                    </div>
+                    <div class="comp-barra-valor" style="font-size:0.78em;">
+                      <span style="color:${dd > 0 ? 'var(--danger)' : dd < 0 ? 'var(--success)' : 'var(--text-3)'}; font-weight:700;">${setaSub}</span>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+        }
+      }
+
+      return `
+        <div class="comp-item">
+          <div class="comp-item-topo">
+            <div class="comp-item-nome">
+              ${compNivel === 'categoria' ? `<span class="cor-bolinha" style="background:${cor};"></span>` : ''}
+              ${escaparHTML(nomeExibir)}
+            </div>
+            <span class="comp-item-var ${classeVar}">${txtVar}</span>
+          </div>
+          <div class="comp-barras">
+            <div class="comp-barra-linha">
+              <div class="comp-barra-rotulo">${nomeMesLongo(mesAtual)}</div>
+              <div class="comp-barra-bg">
+                <div class="comp-barra-fill atual" style="width:${pctAtual}%;">${vAtual !== 0 ? formatarMoeda(vAtual).replace('R$ ','') : ''}</div>
+              </div>
+              <div class="comp-barra-valor">${formatarMoeda(vAtual)}</div>
+            </div>
+            <div class="comp-barra-linha">
+              <div class="comp-barra-rotulo">${periodo.rotulo}</div>
+              <div class="comp-barra-bg">
+                <div class="comp-barra-fill anterior" style="width:${pctAnt}%;">${vAnt !== 0 ? formatarMoeda(vAnt).replace('R$ ','') : ''}</div>
+              </div>
+              <div class="comp-barra-valor">${formatarMoeda(vAnt)}</div>
+            </div>
+          </div>
+          ${subsHTML}
+        </div>
+      `;
+    }).join('');
   }
 
   // ============ INICIALIZAÇÃO ============
