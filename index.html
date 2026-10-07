@@ -30,10 +30,6 @@
     --warning-soft: #fffbeb;
     --danger: #dc2626;
     --danger-soft: #fef2f2;
-    --diego: #2563eb;
-    --diego-soft: #dbeafe;
-    --eliane: #db2777;
-    --eliane-soft: #fce7f3;
     --radius: 12px;
     --radius-lg: 16px;
     --radius-xl: 20px;
@@ -110,17 +106,12 @@
     z-index: 100;
     border-top: 1px solid var(--border);
     padding-bottom: env(safe-area-inset-bottom);
-    overflow-x: auto;
-    scrollbar-width: none;
   }
-  .bottom-nav::-webkit-scrollbar { display: none; }
   .bottom-nav button {
-    flex: 1 0 auto;
-    min-width: 56px;
-    padding: 10px 4px 8px;
+    flex: 1; padding: 10px 2px 8px;
     background: none; border: none;
     color: var(--text-muted);
-    font-size: 0.55em; font-weight: 600; cursor: pointer;
+    font-size: 0.58em; font-weight: 600; cursor: pointer;
     display: flex; flex-direction: column; align-items: center; gap: 3px;
     letter-spacing: 0.02em;
     transition: color 0.15s, transform 0.15s;
@@ -1625,7 +1616,7 @@
 
   .oculto { display: none !important; }
 
-  /* ============ COMPARATIVO (MENU SEPARADO) ============ */
+  /* ============ NOVO: COMPARATIVO ============ */
   .comp-controles {
     display: flex; flex-direction: column; gap: 12px;
     margin-bottom: 16px;
@@ -1663,47 +1654,6 @@
     color: var(--text-2);
   }
 
-  .comp-resumo-periodo {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-    margin-bottom: 16px;
-  }
-  .comp-resumo-box {
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-  }
-  .comp-resumo-box .titulo {
-    font-size: 0.68em; color: var(--text-3);
-    text-transform: uppercase; letter-spacing: 0.6px;
-    margin-bottom: 6px; font-weight: 700;
-  }
-  .comp-resumo-box .valor {
-    font-size: 1.2em; font-weight: 800; color: var(--text);
-    letter-spacing: -0.02em;
-  }
-  .comp-resumo-box .subtitulo {
-    font-size: 0.72em; margin-top: 6px; display: flex; flex-direction: column; gap: 3px;
-  }
-  .comp-resumo-box .subtitulo .quebra-linha {
-    display: flex; justify-content: space-between; gap: 8px;
-  }
-  .comp-resumo-box .subtitulo .quebra-linha .nome-resp { font-weight: 600; }
-  .comp-resumo-box .subtitulo .quebra-linha .valor-resp { font-weight: 700; }
-  .comp-resumo-box .subtitulo .quebra-linha.diego .nome-resp,
-  .comp-resumo-box .subtitulo .quebra-linha.diego .valor-resp { color: var(--diego); }
-  .comp-resumo-box .subtitulo .quebra-linha.eliane .nome-resp,
-  .comp-resumo-box .subtitulo .quebra-linha.eliane .valor-resp { color: var(--eliane); }
-  .comp-resumo-box.atual {
-    background: linear-gradient(135deg, #1e40af, #1e3a8a);
-    border-color: transparent;
-    box-shadow: 0 4px 14px rgba(30,64,175,0.25);
-  }
-  .comp-resumo-box.atual .titulo { color: rgba(255,255,255,0.75); }
-  .comp-resumo-box.atual .valor { color: white; }
-  .comp-resumo-box.atual .subtitulo .quebra-linha .nome-resp,
-  .comp-resumo-box.atual .subtitulo .quebra-linha .valor-resp { color: rgba(255,255,255,0.9); }
-
   .comp-lista { display: flex; flex-direction: column; gap: 12px; }
   .comp-item {
     background: var(--surface-2);
@@ -1734,225 +1684,79 @@
   .comp-item-var.negativo { background: var(--success-soft); color: var(--success); }
   .comp-item-var.neutro { background: var(--surface-3); color: var(--text-3); }
 
-  /* Barras de duas cores (Diego + Eliane) por categoria */
-  .comp-barra-dupla {
-    display: flex;
-    height: 26px;
-    width: 100%;
-    border-radius: 9px;
-    overflow: hidden;
-    background: var(--surface-3);
-    border: 1px solid var(--border);
-    cursor: pointer;
-    position: relative;
-  }
-  .comp-barra-dupla .seg-diego {
-    background: var(--diego);
-    height: 100%;
-    display: flex; align-items: center; justify-content: flex-start;
-    padding-left: 8px;
-    color: white; font-size: 0.72em; font-weight: 700;
-    transition: width 0.5s ease;
-    white-space: nowrap;
-    overflow: hidden;
-    min-width: 0;
-  }
-  .comp-barra-dupla .seg-eliane {
-    background: var(--eliane);
-    height: 100%;
-    display: flex; align-items: center; justify-content: flex-end;
-    padding-right: 8px;
-    color: white; font-size: 0.72em; font-weight: 700;
-    transition: width 0.5s ease;
-    white-space: nowrap;
-    overflow: hidden;
-    min-width: 0;
-  }
-  .comp-barra-dupla.vazia .seg-diego,
-  .comp-barra-dupla.vazia .seg-eliane { display: none; }
-
+  .comp-barras { display: flex; flex-direction: column; gap: 6px; }
   .comp-barra-linha {
     display: flex; align-items: center; gap: 10px;
-    margin-bottom: 6px;
     font-size: 0.8em;
   }
   .comp-barra-rotulo {
-    width: 80px; flex-shrink: 0;
-    color: var(--text-3); font-weight: 700;
-    font-size: 0.85em;
+    width: 90px; flex-shrink: 0;
+    color: var(--text-3); font-weight: 600;
+    font-size: 0.9em;
     text-align: right;
   }
+  .comp-barra-bg {
+    flex: 1; height: 18px; background: var(--surface-3);
+    border-radius: 9px; overflow: hidden;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .comp-barra-fill {
+    height: 100%; border-radius: 8px;
+    transition: width 0.6s ease;
+    display: flex; align-items: center; justify-content: flex-end;
+    padding-right: 6px; color: white;
+    font-size: 0.72em; font-weight: 700;
+    min-width: 0;
+  }
+  .comp-barra-fill.atual { background: var(--primary); }
+  .comp-barra-fill.anterior { background: var(--text-muted); opacity: 0.65; }
   .comp-barra-valor {
     width: 95px; text-align: right; flex-shrink: 0;
     font-weight: 700; color: var(--text);
     font-size: 0.9em;
   }
-  .comp-barra-total {
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 6px;
-    font-size: 0.8em;
-  }
-  .comp-barra-total .comp-barra-rotulo { width: 80px; }
-  .comp-barra-total .barra-total-bg {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .comp-barra-total .barra-total-bg .comp-barra-dupla { flex: 1; }
-  .comp-barra-total .comp-barra-valor { width: 95px; }
-
-  .comp-legenda {
-    display: flex; gap: 16px; flex-wrap: wrap;
-    font-size: 0.76em;
-    padding: 10px 0 4px;
-    color: var(--text-3);
-  }
-  .comp-legenda .item {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-weight: 600;
-  }
-  .comp-legenda .item .cor-bolinha {
-    width: 12px; height: 12px; border-radius: 50%;
-    display: inline-block;
-  }
-
-  /* Subcategorias agrupadas dentro de cada categoria */
-  .comp-sub-toggle {
-    background: none;
-    color: var(--accent);
-    border: none;
-    cursor: pointer;
-    font-size: 0.78em;
-    padding: 10px 0 0;
-    width: auto;
-    font-weight: 700;
-    text-align: left;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: color 0.15s;
-  }
-  .comp-sub-toggle:hover { text-decoration: underline; background: none; color: var(--accent); }
   .comp-sub-lista {
-    margin-top: 10px;
-    padding-left: 12px;
-    border-left: 2px solid var(--border);
-    display: none;
-    flex-direction: column;
-    gap: 12px;
+    margin-top: 12px; padding-top: 12px;
+    border-top: 1px dashed var(--border);
+    display: flex; flex-direction: column; gap: 8px;
   }
-  .comp-sub-lista.aberto { display: flex; }
-  .comp-sub-item {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 12px;
-  }
-  .comp-sub-topo {
-    display: flex; justify-content: space-between; align-items: center;
-    gap: 8px; margin-bottom: 8px;
-  }
-  .comp-sub-nome {
-    font-weight: 700; font-size: 0.82em; color: var(--text-2);
-    word-break: break-word;
-  }
-  .comp-sub-var {
-    font-size: 0.7em; font-weight: 700;
-    padding: 3px 8px; border-radius: 20px;
-    white-space: nowrap;
-  }
-  .comp-sub-var.positivo { background: var(--danger-soft); color: var(--danger); }
-  .comp-sub-var.negativo { background: var(--success-soft); color: var(--success); }
-  .comp-sub-var.neutro { background: var(--surface-3); color: var(--text-3); }
+  .comp-sub-lista .comp-barra-rotulo { width: 90px; font-size: 0.8em; }
+  .comp-sub-lista .comp-barra-bg { height: 14px; }
+  .comp-sub-lista .comp-barra-fill { font-size: 0.65em; padding-right: 4px; }
+  .comp-sub-lista .comp-barra-valor { font-size: 0.8em; width: 85px; }
 
-  .comp-sub-lista .comp-barra-rotulo { width: 70px; font-size: 0.72em; }
-  .comp-sub-lista .comp-barra-dupla { height: 20px; border-radius: 7px; }
-  .comp-sub-lista .comp-barra-dupla .seg-diego,
-  .comp-sub-lista .comp-barra-dupla .seg-eliane {
-    font-size: 0.62em;
-    padding-left: 5px;
-    padding-right: 5px;
+  .comp-resumo-periodo {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    margin-bottom: 16px;
   }
-  .comp-sub-lista .comp-barra-valor { font-size: 0.78em; width: 85px; }
+  .comp-resumo-box {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .comp-resumo-box .titulo {
+    font-size: 0.68em; color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.6px;
+    margin-bottom: 6px; font-weight: 700;
+  }
+  .comp-resumo-box .valor {
+    font-size: 1.2em; font-weight: 800; color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .comp-resumo-box.atual {
+    background: linear-gradient(135deg, #1e40af, #1e3a8a);
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(30,64,175,0.25);
+  }
+  .comp-resumo-box.atual .titulo { color: rgba(255,255,255,0.75); }
+  .comp-resumo-box.atual .valor { color: white; }
 
   .comp-vazio {
     text-align: center; padding: 40px 20px;
     color: var(--text-muted); font-size: 0.9em;
     font-style: italic;
-  }
-
-  /* Tooltip de barra (toque ou hover) */
-  .bar-tooltip {
-    position: fixed;
-    background: rgba(15,23,42,0.96);
-    color: white;
-    padding: 10px 12px;
-    border-radius: 10px;
-    font-size: 0.78em;
-    pointer-events: none;
-    z-index: 9999;
-    box-shadow: var(--shadow-lg);
-    opacity: 0;
-    transition: opacity 0.15s;
-    max-width: 240px;
-    line-height: 1.5;
-    backdrop-filter: blur(6px);
-  }
-  .bar-tooltip.visivel { opacity: 1; }
-  .bar-tooltip .tt-titulo {
-    font-weight: 800;
-    margin-bottom: 6px;
-    font-size: 0.95em;
-    border-bottom: 1px solid rgba(255,255,255,0.18);
-    padding-bottom: 5px;
-  }
-  .bar-tooltip .tt-linha {
-    display: flex; justify-content: space-between;
-    gap: 12px; padding: 2px 0;
-  }
-  .bar-tooltip .tt-linha .tt-resp { display: inline-flex; align-items: center; gap: 6px; }
-  .bar-tooltip .tt-linha .tt-resp .tt-dot {
-    width: 8px; height: 8px; border-radius: 50%; display: inline-block;
-  }
-  .bar-tooltip .tt-linha .tt-valor { font-weight: 700; }
-
-  /* Filtro responsável */
-  .filtro-responsavel-chips {
-    display: flex; flex-wrap: wrap; gap: 6px;
-  }
-  .filtro-responsavel-chips button {
-    padding: 8px 14px;
-    background: var(--surface-2);
-    color: var(--text-2);
-    border: 1.5px solid var(--border);
-    border-radius: 20px;
-    font-size: 0.82em;
-    font-weight: 600;
-    width: auto;
-    display: inline-flex; align-items: center; gap: 6px;
-    transition: all 0.15s;
-  }
-  .filtro-responsavel-chips button.ativa {
-    background: var(--primary);
-    color: white;
-    border-color: var(--primary);
-    box-shadow: 0 4px 10px rgba(30,64,175,0.2);
-  }
-  .filtro-responsavel-chips button:hover:not(.ativa) {
-    background: var(--surface-3);
-    border-color: var(--border-strong);
-    color: var(--text);
-  }
-  .filtro-responsavel-chips button[data-resp="Diego"].ativa {
-    background: var(--diego);
-    border-color: var(--diego);
-    box-shadow: 0 4px 10px rgba(37,99,235,0.25);
-  }
-  .filtro-responsavel-chips button[data-resp="Eliane"].ativa {
-    background: var(--eliane);
-    border-color: var(--eliane);
-    box-shadow: 0 4px 10px rgba(219,39,119,0.25);
   }
 
   @media (min-width: 800px) {
@@ -1961,15 +1765,12 @@
       border-radius: 14px; margin-bottom: 16px;
       border: 1px solid var(--border);
       box-shadow: var(--shadow-xs);
-      overflow-x: visible;
     }
     .bottom-nav button {
-      flex: 1 1 auto;
-      flex-direction: row; padding: 15px 8px;
-      font-size: 0.78em; gap: 6px;
-      min-width: 0;
+      flex-direction: row; padding: 15px 10px;
+      font-size: 0.82em; gap: 7px;
     }
-    .bottom-nav button .icone { font-size: 1.05em; }
+    .bottom-nav button .icone { font-size: 1.1em; }
     .bottom-nav button.ativa::before { display: none; }
     .bottom-nav button.ativa,
     .bottom-nav button.ativa:hover,
@@ -1985,7 +1786,7 @@
     .modal-agenda { align-items: center; padding: 24px; }
     .modal-conteudo { border-radius: 20px; max-height: 88vh; }
     .modal-header { border-radius: 20px 20px 0 0; }
-    .comp-controles { flex-direction: row; align-items: center; flex-wrap: wrap; }
+    .comp-controles { flex-direction: row; align-items: center; }
     .comp-resumo-periodo { grid-template-columns: repeat(4, 1fr); }
   }
 </style>
@@ -2076,6 +1877,7 @@
         <input type="hidden" id="formaPagamento" value="Dinheiro/PIX">
       </div>
 
+      <!-- REEMBOLSO: seletor que aparece só no cartão de crédito -->
       <div class="secao" id="secaoTipoLancamento" style="display:none;">
         <div class="secao-titulo" id="tituloTipoLanc"><span class="num">5</span> Tipo de lançamento</div>
         <div class="toggle-grupo" id="grupoTipoLancamento">
@@ -2319,64 +2121,8 @@
       </h2>
       <div id="graficoCategorias"></div>
     </div>
-  </div>
 
-  <!-- COMPARATIVO (MENU SEPARADO) -->
-  <div class="painel" id="painel-comparativo">
-    <div class="card">
-      <button class="filtros-cabecalho" id="compFiltrosCabecalho" onclick="toggleFiltrosComp()">
-        <span class="ftitulo">🔍 Filtros <span class="filtro-ativo" id="badgeFiltroCompAtivo" style="display:none;">Ativos</span></span>
-        <span class="fseta" id="compFiltrosSeta">▶</span>
-      </button>
-      <div class="filtros-conteudo" id="compFiltrosConteudo">
-        <div class="campo" style="margin-bottom:12px;">
-          <label>📅 Mês de referência (atual)</label>
-          <input type="month" id="compMesReferencia" onchange="renderizarComparativo()">
-        </div>
-        <div class="campo" style="margin-bottom:12px;">
-          <label>Filtrar por</label>
-          <select id="compModoFiltro" onchange="renderizarComparativo()">
-            <option value="compra" selected>🛒 Mês da compra</option>
-            <option value="fatura">📅 Mês da fatura (vencimento)</option>
-          </select>
-        </div>
-        <div class="campo" style="margin-bottom:12px;">
-          <label>Responsável pelo pagamento</label>
-          <div class="filtro-responsavel-chips" id="compFiltroResponsavel">
-            <button type="button" class="ativa" data-resp="" onclick="mudarResponsavelComp('')">👥 Todos</button>
-            <button type="button" data-resp="Diego" onclick="mudarResponsavelComp('Diego')">👨 Diego</button>
-            <button type="button" data-resp="Eliane" onclick="mudarResponsavelComp('Eliane')">👩 Eliane</button>
-          </div>
-        </div>
-        <div class="filtros-globais">
-          <div class="campo-filtro">
-            <label>Categoria</label>
-            <select id="compFiltroCategoria" onchange="renderizarComparativo()"></select>
-          </div>
-          <div class="campo-filtro">
-            <label>Pagamento</label>
-            <select id="compFiltroPagamento" onchange="atualizarFiltroCartaoComp(); renderizarComparativo()">
-              <option value="">Todos</option>
-              <option value="Dinheiro/PIX">💵 Dinheiro/PIX</option>
-              <option value="Cartão Crédito">💳 Cartão Crédito</option>
-              <option value="Cartão Débito">🏦 Cartão Débito</option>
-              <option value="Vale Alimentação">🍽️ Vale Alimentação</option>
-            </select>
-          </div>
-          <div class="campo-filtro" id="compCampoFiltroCartao" style="display:none;">
-            <label>Cartão</label>
-            <select id="compFiltroCartao" onchange="renderizarComparativo()">
-              <option value="">Todos</option>
-            </select>
-          </div>
-          <button class="btn-limpar-filtros" id="btnLimparFiltrosComp" onclick="limparFiltrosComp()">
-            🧹 Limpar filtros
-          </button>
-        </div>
-        <div class="resumo-filtros" id="compResumoFiltros" style="display:none;"></div>
-      </div>
-    </div>
-
+    <!-- NOVO: COMPARATIVO ENTRE PERÍODOS -->
     <div class="card">
       <h2 class="com-filtro">
         📊 Comparativo entre períodos
@@ -2401,13 +2147,7 @@
         </div>
       </div>
 
-      <div class="comp-legenda">
-        <span class="item"><span class="cor-bolinha" style="background:var(--diego);"></span> Diego</span>
-        <span class="item"><span class="cor-bolinha" style="background:var(--eliane);"></span> Eliane</span>
-        <span class="item" style="color:var(--text-muted);">💡 Toque na barra para ver detalhes</span>
-      </div>
-
-      <div id="compResumo" class="comp-resumo-periodo" style="margin-top:14px;"></div>
+      <div id="compResumo" class="comp-resumo-periodo"></div>
       <div id="compLista" class="comp-lista"></div>
     </div>
   </div>
@@ -2653,6 +2393,7 @@
         </select>
       </div>
 
+      <!-- REEMBOLSO: seletor tipo lançamento na edição -->
       <div class="campo" id="editCampoTipoLancamento" style="display:none;">
         <label>Tipo de lançamento</label>
         <select id="editGastoTipoLancamento" onchange="atualizarCamposEdicaoPagamento()">
@@ -2938,9 +2679,6 @@
   </div>
 </div>
 
-<!-- Tooltip para as barras -->
-<div class="bar-tooltip" id="barTooltip"></div>
-
 <nav class="bottom-nav">
   <button class="ativa" data-aba="lancar" onclick="trocarAba('lancar')">
     <span class="icone">➕</span>
@@ -2953,10 +2691,6 @@
   <button data-aba="analise" onclick="trocarAba('analise')">
     <span class="icone">📊</span>
     <span>Análise</span>
-  </button>
-  <button data-aba="comparativo" onclick="trocarAba('comparativo')">
-    <span class="icone">📈</span>
-    <span>Comparar</span>
   </button>
   <button data-aba="faturas" onclick="trocarAba('faturas')">
     <span class="icone">💳</span>
@@ -3069,12 +2803,9 @@
 
   let mesFaturaManualEdit = false;
 
-  // Estado do comparativo
-  let compPeriodo = 'anterior';
-  let compNivel = 'categoria';
-  let compResponsavel = '';
-  const compCatAbertas = new Set();
-  let compFiltrosExpandidos = false;
+  // ============ NOVO: Estado do comparativo ============
+  let compPeriodo = 'anterior';   // 'anterior' | '3meses' | '6meses' | 'ano'
+  let compNivel = 'categoria';    // 'categoria' | 'subcategoria'
 
   function acharCategoria(nome) { return categorias.find(c => c.nome === nome); }
   function acharCartao(nome) { return cartoes.find(c => c.nome === nome); }
@@ -3118,7 +2849,6 @@
     if (nome === 'lancar') renderizarUltimos();
     if (nome === 'lancamentos') renderizarLancamentos();
     if (nome === 'analise') renderizar();
-    if (nome === 'comparativo') renderizarComparativo();
     document.getElementById('tituloApp').textContent = nome === 'agenda'
       ? '📅 Nossa Rotina'
       : '💰 Nossa Rotina';
@@ -3138,12 +2868,6 @@
     filtrosExpandidos = !filtrosExpandidos;
     document.getElementById('filtrosCabecalho').classList.toggle('aberto', filtrosExpandidos);
     document.getElementById('filtrosConteudo').classList.toggle('aberto', filtrosExpandidos);
-  }
-
-  function toggleFiltrosComp() {
-    compFiltrosExpandidos = !compFiltrosExpandidos;
-    document.getElementById('compFiltrosCabecalho').classList.toggle('aberto', compFiltrosExpandidos);
-    document.getElementById('compFiltrosConteudo').classList.toggle('aberto', compFiltrosExpandidos);
   }
 
   function toggleFiltrosLanc() {
@@ -3223,6 +2947,7 @@
     });
   }
 
+  // REEMBOLSO: selecionar tipo lançamento (gasto vs reembolso)
   function selecionarTipoLancamento(tipo) {
     document.getElementById('tipoLancamento').value = tipo;
     document.querySelectorAll('#grupoTipoLancamento button').forEach(b => {
@@ -3244,6 +2969,7 @@
       btnAdicionar.classList.add('reembolso');
       btnAdicionar.textContent = '↩️ Adicionar Reembolso';
       tituloGasto.textContent = '↩️ Novo Reembolso';
+      // Reembolso não parcela
       subCampoParcelas.style.display = 'none';
       document.getElementById('parcelas').value = '1';
     } else {
@@ -3268,7 +2994,7 @@
     if (pag === 'Cartão Crédito') {
       box.classList.add('visivel');
       campoData.style.display = 'none';
-      secaoTipoLanc.style.display = 'block';
+      secaoTipoLanc.style.display = 'block'; // REEMBOLSO: mostrar seletor de tipo
       if (!document.getElementById('dataCompraCredito').value) {
         document.getElementById('dataCompraCredito').value = document.getElementById('data').value;
       }
@@ -3277,6 +3003,7 @@
       box.classList.remove('visivel');
       campoData.style.display = 'block';
       secaoTipoLanc.style.display = 'none';
+      // Se estava como reembolso e trocou de pagamento, reseta para gasto
       if (document.getElementById('tipoLancamento').value === 'reembolso') {
         selecionarTipoLancamento('gasto');
       }
@@ -3424,7 +3151,6 @@
       popularCategorias();
       popularFiltroCartoes();
       popularFiltroCartoesLanc();
-      popularFiltroCartoesComp();
       popularSelectCartoes();
       renderizarConfig();
       renderizarCartoes();
@@ -3434,7 +3160,6 @@
       renderizar();
       renderizarFaturas();
       renderizarLancamentos();
-      renderizarComparativo();
       const inp = document.getElementById('mesFatura');
       if (inp && !inp.dataset.tocado) inp.value = mesFaturaPadrao();
     }, err => console.error('Erro dados casa:', err));
@@ -3527,7 +3252,6 @@
         renderizarFaturas();
         renderizarUltimos();
         renderizarLancamentos();
-        renderizarComparativo();
       },
       erro => { console.error(erro); atualizarStatus('offline', 'Erro'); }
     );
@@ -3551,10 +3275,12 @@
     document.getElementById('statusTexto').textContent = texto;
   }
 
+  // REEMBOLSO: helper para saber se um gasto é reembolso
   function ehReembolso(g) {
     return g && g.tipoLancamento === 'reembolso';
   }
 
+  // REEMBOLSO: valor efetivo (negativo se reembolso)
   function valorEfetivo(g) {
     const base = g._parcelado ? g._valorTotal : (g.valor || 0);
     return ehReembolso(g) ? -base : base;
@@ -4559,7 +4285,7 @@
       const chave = normalizarChave(g.descricao);
       if (!chave) return;
       if (g.parcelaTotal && g.parcelaAtual && g.parcelaAtual > 1) return;
-      if (ehReembolso(g)) return;
+      if (ehReembolso(g)) return; // REEMBOLSO: não entra nas sugestões
       if (!mapa[chave]) {
         mapa[chave] = { nome: g.descricao.trim(), count: 0, catCount: {}, subCount: {}, pagCount: {}, cartaoCount: {}, valores: [], ultimoUso: g.data };
       }
@@ -4765,28 +4491,14 @@
   function popularCategorias() {
     const selCat = document.getElementById('categoria');
     const selFiltro = document.getElementById('filtroCategoria');
-    const selComp = document.getElementById('compFiltroCategoria');
     selCat.innerHTML = categorias.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
     selFiltro.innerHTML = '<option value="">Todas</option>' +
       categorias.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
-    if (selComp) {
-      selComp.innerHTML = '<option value="">Todas</option>' +
-        categorias.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
-    }
     atualizarSubcategorias();
   }
 
   function popularFiltroCartoes() {
     const sel = document.getElementById('filtroCartao');
-    if (!sel) return;
-    const atual = sel.value;
-    sel.innerHTML = '<option value="">Todos</option>' +
-      cartoes.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
-    if (atual && acharCartao(atual)) sel.value = atual;
-  }
-
-  function popularFiltroCartoesComp() {
-    const sel = document.getElementById('compFiltroCartao');
     if (!sel) return;
     const atual = sel.value;
     sel.innerHTML = '<option value="">Todos</option>' +
@@ -4803,18 +4515,6 @@
     } else {
       campo.style.display = 'none';
       document.getElementById('filtroCartao').value = '';
-    }
-  }
-
-  function atualizarFiltroCartaoComp() {
-    const pag = document.getElementById('compFiltroPagamento').value;
-    const campo = document.getElementById('compCampoFiltroCartao');
-    if (pag === 'Cartão Crédito') {
-      campo.style.display = 'flex';
-      popularFiltroCartoesComp();
-    } else {
-      campo.style.display = 'none';
-      document.getElementById('compFiltroCartao').value = '';
     }
   }
 
@@ -4901,19 +4601,6 @@
     renderizar();
   }
 
-  function limparFiltrosComp() {
-    document.getElementById('compFiltroCategoria').value = '';
-    document.getElementById('compFiltroPagamento').value = '';
-    document.getElementById('compFiltroCartao').value = '';
-    document.getElementById('compModoFiltro').value = 'compra';
-    compResponsavel = '';
-    document.querySelectorAll('#compFiltroResponsavel button').forEach(b => {
-      b.classList.toggle('ativa', b.dataset.resp === '');
-    });
-    atualizarFiltroCartaoComp();
-    renderizarComparativo();
-  }
-
   function atualizarIndicadoresFiltro() {
     const ativo = temFiltroAtivo();
     const btnLimpar = document.getElementById('btnLimparFiltros');
@@ -4939,42 +4626,6 @@
     }
   }
 
-  function temFiltroCompAtivo() {
-    return !!(
-      document.getElementById('compFiltroCategoria').value ||
-      document.getElementById('compFiltroPagamento').value ||
-      document.getElementById('compFiltroCartao').value ||
-      document.getElementById('compModoFiltro').value !== 'compra' ||
-      compResponsavel
-    );
-  }
-
-  function atualizarIndicadoresFiltroComp() {
-    const ativo = temFiltroCompAtivo();
-    const btnLimpar = document.getElementById('btnLimparFiltrosComp');
-    const resumo = document.getElementById('compResumoFiltros');
-    const badge = document.getElementById('badgeFiltroCompAtivo');
-    if (badge) badge.style.display = ativo ? 'inline-block' : 'none';
-    if (ativo) {
-      btnLimpar.classList.add('ativo');
-      const partes = [];
-      const cat = document.getElementById('compFiltroCategoria').value;
-      const pag = document.getElementById('compFiltroPagamento').value;
-      const car = document.getElementById('compFiltroCartao').value;
-      const modo = document.getElementById('compModoFiltro').value;
-      if (cat) partes.push(`categoria "<strong>${cat}</strong>"`);
-      if (compResponsavel) partes.push(`responsável "<strong>${compResponsavel}</strong>"`);
-      if (pag) partes.push(`pagamento "<strong>${pag}</strong>"`);
-      if (car) partes.push(`cartão "<strong>${car}</strong>"`);
-      if (modo === 'fatura') partes.push(`mês pela <strong>fatura</strong>`);
-      resumo.style.display = 'block';
-      resumo.innerHTML = `🔍 Mostrando apenas ${partes.join(' · ')}`;
-    } else {
-      btnLimpar.classList.remove('ativo');
-      resumo.style.display = 'none';
-    }
-  }
-
   function renderizar() {
     atualizarIndicadoresFiltro();
     const lista = gastosFiltrados();
@@ -4982,6 +4633,7 @@
     renderizarResumo(listaColapsada);
     renderizarPorPagamento(listaColapsada);
     renderizarGrafico(listaColapsada);
+    renderizarComparativo();
   }
 
   // ============ ABA LANÇAMENTOS ============
@@ -5045,6 +4697,7 @@
     document.getElementById('lancTotalEliane').textContent = formatarMoeda(totalEliane);
     document.getElementById('lancQtd').textContent = colapsado.length;
 
+    // REEMBOLSO: mostrar total de reembolsos se houver
     const itemReembolso = document.getElementById('lancItemReembolso');
     if (totalReembolso > 0) {
       itemReembolso.style.display = 'flex';
@@ -5607,6 +5260,7 @@
     document.getElementById('editGastoData').value = g.data;
     document.getElementById('editGastoObservacao').value = g.observacao || '';
 
+    // REEMBOLSO: campo de tipo na edição
     document.getElementById('editGastoTipoLancamento').value = reemb ? 'reembolso' : 'gasto';
 
     const selCat = document.getElementById('editGastoCategoria');
@@ -5649,12 +5303,14 @@
     if (pag === 'Cartão Crédito') {
       box.style.display = 'block';
       campo_tipo.style.display = 'block';
+      // Se é reembolso, esconder número de parcelas
       const isReemb = document.getElementById('editGastoTipoLancamento').value === 'reembolso';
       if (subCampoParc) subCampoParc.style.display = isReemb ? 'none' : 'block';
     } else {
       box.style.display = 'none';
       campo_tipo.style.display = 'none';
       mesFaturaManualEdit = false;
+      // Se estava reembolso, voltar para gasto
       if (document.getElementById('editGastoTipoLancamento').value === 'reembolso') {
         document.getElementById('editGastoTipoLancamento').value = 'gasto';
       }
@@ -5777,6 +5433,7 @@
       alert('Selecione o mês da fatura.'); return;
     }
 
+    // Se não é crédito, força tipoLancamento gasto
     const tipoFinal = (formaPagamento === 'Cartão Crédito' && isReemb) ? 'reembolso' : 'gasto';
 
     try {
@@ -5921,6 +5578,7 @@
         const mesFaturaInicio = calcularMesFatura(data, cartaoNome);
         const [anoBase, mesBase] = mesFaturaInicio.split('-').map(Number);
         if (isReemb) {
+          // Reembolso: 1 lançamento, tipoLancamento='reembolso'
           lancamentos.push({
             usuario, data, mesFatura: mesFaturaInicio, descricao, categoria, subcategoria, observacao,
             formaPagamento, cartao: cartaoNome, valor,
@@ -5964,6 +5622,7 @@
       document.getElementById('descricao').value = '';
       document.getElementById('observacao').value = '';
       document.getElementById('parcelas').value = '1';
+      // Reset tipo lançamento
       selecionarTipoLancamento('gasto');
       selecionarPagamento('Dinheiro/PIX');
       if (categorias.length > 0) {
@@ -6086,6 +5745,7 @@
         ? `Fecha dia ${c.fechamento} · Vence dia ${c.vencimento}`
         : 'Cartão não cadastrado';
 
+      // REEMBOLSO: total = soma de gastos - soma de reembolsos
       const totalGastosCartao = itens.filter(g => !ehReembolso(g)).reduce((s, g) => s + (g.valor || 0), 0);
       const totalReembolsosCartao = itens.filter(ehReembolso).reduce((s, g) => s + (g.valor || 0), 0);
       const totalCartao = totalGastosCartao - totalReembolsosCartao;
@@ -6118,6 +5778,7 @@
         `;
       }).join('');
 
+      // REEMBOLSO: mostrar info de reembolso no cabeçalho
       const blocoReembolso = totalReembolsosCartao > 0
         ? `<div class="fc-reembolso-info">
              <span class="lbl">↩️ Reembolsos</span>
@@ -6312,7 +5973,7 @@
     link.click();
   }
 
-  // ============ COMPARATIVO ============
+  // ============ COMPARATIVO ENTRE PERÍODOS ============
 
   function mudarPeriodoComparacao(periodo) {
     compPeriodo = periodo;
@@ -6330,30 +5991,31 @@
     renderizarComparativo();
   }
 
-  function mudarResponsavelComp(resp) {
-    compResponsavel = resp;
-    document.querySelectorAll('#compFiltroResponsavel button').forEach(b => {
-      b.classList.toggle('ativa', b.dataset.resp === resp);
-    });
-    renderizarComparativo();
+  // Retorna a lista de meses (YYYY-MM) de um intervalo inclusivo
+  function listarMeses(anoInicio, mesInicio, anoFim, mesFim) {
+    const meses = [];
+    let a = anoInicio, m = mesInicio;
+    while (a < anoFim || (a === anoFim && m <= mesFim)) {
+      meses.push(`${a}-${String(m).padStart(2, '0')}`);
+      m++;
+      if (m > 12) { m = 1; a++; }
+    }
+    return meses;
   }
 
-  function toggleCompCatAberta(cat) {
-    if (compCatAbertas.has(cat)) compCatAbertas.delete(cat);
-    else compCatAbertas.add(cat);
-    renderizarComparativo();
-  }
-
+  // Retorna o mês de referência atual (YYYY-MM) do input da Análise
   function mesReferenciaAtual() {
-    return document.getElementById('compMesReferencia').value || mesAtualISO();
+    return document.getElementById('mesReferencia').value || mesAtualISO();
   }
 
+  // Determina o período de comparação com base na seleção
+  // Retorna { rotulo, meses: [YYYY-MM, ...] } — meses ANTERIORES (sem o mês atual)
   function obterPeriodoComparacao() {
     const mesAtual = mesReferenciaAtual();
     const [anoAtual, mesAtualNum] = mesAtual.split('-').map(Number);
 
     if (compPeriodo === 'anterior') {
-      const d = new Date(anoAtual, mesAtualNum - 2, 1);
+      const d = new Date(anoAtual, mesAtualNum - 2, 1); // mês anterior
       const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
       return { rotulo: nomeMesLongo(iso), meses: [iso] };
     }
@@ -6379,6 +6041,7 @@
     if (compPeriodo === 'ano') {
       const meses = [];
       for (let m = 1; m <= 12; m++) {
+        // Considera apenas meses até o atual (não inclui o mês corrente para não misturar)
         if (m < mesAtualNum) meses.push(`${anoAtual}-${String(m).padStart(2, '0')}`);
       }
       return { rotulo: `Ano ${anoAtual}`, meses };
@@ -6387,73 +6050,37 @@
     return { rotulo: '', meses: [] };
   }
 
-  function gastosDosMesesComp(meses) {
-    const modo = document.getElementById('compModoFiltro').value;
-    const cat = document.getElementById('compFiltroCategoria').value;
-    const pag = document.getElementById('compFiltroPagamento').value;
-    const car = document.getElementById('compFiltroCartao').value;
-
+  // Filtra gastos de um conjunto de meses (YYYY-MM) pelo modo selecionado
+  function gastosDosMeses(meses) {
+    const modo = document.getElementById('modoFiltroMes').value;
+    const f = filtrosAtivos();
     let lista = gastos.filter(g => {
       const ref = (modo === 'fatura')
         ? (g.mesFatura || (g.data || '').substring(0, 7))
         : (g.data || '').substring(0, 7);
       return meses.includes(ref);
     });
-    if (cat) lista = lista.filter(g => g.categoria === cat);
-    if (compResponsavel) lista = lista.filter(g => g.usuario === compResponsavel);
-    if (pag) lista = lista.filter(g => (g.formaPagamento || 'Dinheiro/PIX') === pag);
-    if (car) lista = lista.filter(g => g.cartao === car);
+    if (f.categoria) lista = lista.filter(g => g.categoria === f.categoria);
+    if (f.usuario) lista = lista.filter(g => g.usuario === f.usuario);
+    if (f.pagamento) lista = lista.filter(g => (g.formaPagamento || 'Dinheiro/PIX') === f.pagamento);
+    if (f.cartao) lista = lista.filter(g => g.cartao === f.cartao);
     return lista;
   }
 
-  // Calcula valores por responsável para um conjunto de gastos
-  function totalPorResponsavel(lista) {
-    let diego = 0, eliane = 0;
-    lista.forEach(g => {
-      const v = ehReembolso(g) ? -(g.valor || 0) : (g.valor || 0);
-      if (g.usuario === 'Diego') diego += v;
-      else if (g.usuario === 'Eliane') eliane += v;
-    });
-    return { diego, eliane, total: diego + eliane };
-  }
-
-  // Agrupa por categoria, somando por responsável
-  function agruparPorCategoriaComp(lista) {
+  // Agrupa valores por chave (categoria ou subcategoria), já aplicando sinal de reembolso
+  function agruparPorNivel(lista) {
     const mapa = {};
     lista.forEach(g => {
-      const cat = g.categoria || '(sem categoria)';
-      if (!mapa[cat]) mapa[cat] = { diego: 0, eliane: 0, total: 0, subs: {} };
-      const v = ehReembolso(g) ? -(g.valor || 0) : (g.valor || 0);
-      mapa[cat].total += v;
-      if (g.usuario === 'Diego') mapa[cat].diego += v;
-      else if (g.usuario === 'Eliane') mapa[cat].eliane += v;
-
-      const sub = g.subcategoria || '(sem sub)';
-      if (!mapa[cat].subs[sub]) mapa[cat].subs[sub] = { diego: 0, eliane: 0, total: 0 };
-      mapa[cat].subs[sub].total += v;
-      if (g.usuario === 'Diego') mapa[cat].subs[sub].diego += v;
-      else if (g.usuario === 'Eliane') mapa[cat].subs[sub].eliane += v;
+      const chave = compNivel === 'categoria'
+        ? g.categoria
+        : (g.subcategoria || '(sem sub)');
+      if (!chave) return;
+      if (!mapa[chave]) mapa[chave] = { total: 0, itens: 0, catOrigem: g.categoria };
+      const valor = ehReembolso(g) ? -(g.valor || 0) : (g.valor || 0);
+      mapa[chave].total += valor;
+      mapa[chave].itens++;
     });
     return mapa;
-  }
-
-  function agruparPorSubcategoriaComp(lista) {
-    const mapa = {};
-    lista.forEach(g => {
-      const sub = g.subcategoria || '(sem sub)';
-      if (!mapa[sub]) mapa[sub] = { diego: 0, eliane: 0, total: 0, catOrigem: g.categoria };
-      const v = ehReembolso(g) ? -(g.valor || 0) : (g.valor || 0);
-      mapa[sub].total += v;
-      if (g.usuario === 'Diego') mapa[sub].diego += v;
-      else if (g.usuario === 'Eliane') mapa[sub].eliane += v;
-    });
-    return mapa;
-  }
-
-  function formatarMoedaCurta(v) {
-    const abs = Math.abs(v);
-    if (abs >= 1000) return (v/1000).toFixed(1).replace('.', ',') + 'k';
-    return v.toFixed(0);
   }
 
   function renderizarComparativo() {
@@ -6462,55 +6089,35 @@
     const badge = document.getElementById('badgeComparativo');
 
     if (badge) badge.style.display = 'inline-block';
-    atualizarIndicadoresFiltroComp();
 
     const mesAtual = mesReferenciaAtual();
     const mesesAtual = [mesAtual];
     const periodo = obterPeriodoComparacao();
 
+    // Sem dados de comparação (ex: ano sem meses anteriores)
     if (periodo.meses.length === 0) {
       wrapResumo.innerHTML = '';
       wrapLista.innerHTML = `<div class="comp-vazio">Nenhum mês anterior para comparar em "${periodo.rotulo}".</div>`;
       return;
     }
 
-    const listaAtual = colapsarParcelas(gastosDosMesesComp(mesesAtual));
-    const listaAnterior = colapsarParcelas(gastosDosMesesComp(periodo.meses));
+    const listaAtual = colapsarParcelas(gastosDosMeses(mesesAtual));
+    const listaAnterior = colapsarParcelas(gastosDosMeses(periodo.meses));
 
-    const resAtual = totalPorResponsavel(listaAtual);
-    const resAnterior = totalPorResponsavel(listaAnterior);
-    const diff = resAtual.total - resAnterior.total;
-    const pct = resAnterior.total !== 0 ? (diff / Math.abs(resAnterior.total)) * 100 : null;
+    const totalAtual = listaAtual.reduce((s, g) => s + valorEfetivo(g), 0);
+    const totalAnterior = listaAnterior.reduce((s, g) => s + valorEfetivo(g), 0);
+    const diff = totalAtual - totalAnterior;
+    const pct = totalAnterior !== 0 ? (diff / Math.abs(totalAnterior)) * 100 : null;
 
-    // Resumo
+    // Resumo no topo
     let resumoHTML = `
       <div class="comp-resumo-box atual">
         <div class="titulo">${nomeMesLongo(mesAtual)}</div>
-        <div class="valor">${formatarMoeda(resAtual.total)}</div>
-        <div class="subtitulo">
-          <div class="quebra-linha diego">
-            <span class="nome-resp">👨 Diego</span>
-            <span class="valor-resp">${formatarMoeda(resAtual.diego)}</span>
-          </div>
-          <div class="quebra-linha eliane">
-            <span class="nome-resp">👩 Eliane</span>
-            <span class="valor-resp">${formatarMoeda(resAtual.eliane)}</span>
-          </div>
-        </div>
+        <div class="valor">${formatarMoeda(totalAtual)}</div>
       </div>
       <div class="comp-resumo-box">
         <div class="titulo">${periodo.rotulo}</div>
-        <div class="valor">${formatarMoeda(resAnterior.total)}</div>
-        <div class="subtitulo">
-          <div class="quebra-linha diego">
-            <span class="nome-resp">👨 Diego</span>
-            <span class="valor-resp">${formatarMoeda(resAnterior.diego)}</span>
-          </div>
-          <div class="quebra-linha eliane">
-            <span class="nome-resp">👩 Eliane</span>
-            <span class="valor-resp">${formatarMoeda(resAnterior.eliane)}</span>
-          </div>
-        </div>
+        <div class="valor">${formatarMoeda(totalAnterior)}</div>
       </div>
     `;
     if (pct !== null) {
@@ -6528,343 +6135,130 @@
     }
     wrapResumo.innerHTML = resumoHTML;
 
-    // Agrupa
-    if (compNivel === 'categoria') {
-      const mapAtual = agruparPorCategoriaComp(listaAtual);
-      const mapAnterior = agruparPorCategoriaComp(listaAnterior);
-      const chaves = new Set([...Object.keys(mapAtual), ...Object.keys(mapAnterior)]);
+    // Mapa de categorias/subcategorias do mês atual
+    const mapaAtual = agruparPorNivel(listaAtual);
+    const mapaAnterior = agruparPorNivel(listaAnterior);
 
-      if (chaves.size === 0) {
-        wrapLista.innerHTML = '<div class="comp-vazio">Sem dados para exibir no período selecionado.</div>';
-        return;
-      }
+    // União das chaves
+    const chaves = new Set([...Object.keys(mapaAtual), ...Object.keys(mapaAnterior)]);
+    if (chaves.size === 0) {
+      wrapLista.innerHTML = '<div class="comp-vazio">Sem dados para exibir no período selecionado.</div>';
+      return;
+    }
 
-      const chavesOrdenadas = [...chaves].sort((a, b) => {
-        const sa = (mapAtual[a]?.total || 0) + (mapAnterior[a]?.total || 0);
-        const sb = (mapAtual[b]?.total || 0) + (mapAnterior[b]?.total || 0);
-        return sb - sa;
-      });
+    // Ordena pela soma (atual + anterior) decrescente para dar prioridade aos maiores
+    const chavesOrdenadas = [...chaves].sort((a, b) => {
+      const sa = (mapaAtual[a]?.total || 0) + (mapaAnterior[a]?.total || 0);
+      const sb = (mapaAtual[b]?.total || 0) + (mapaAnterior[b]?.total || 0);
+      return sb - sa;
+    });
 
-      // Máximo para dimensionar as barras (considerando o maior valor entre atual e anterior, qualquer responsável)
-      let maxValor = 0;
-      chavesOrdenadas.forEach(ch => {
-        const a = mapAtual[ch] || {diego:0, eliane:0};
-        const b = mapAnterior[ch] || {diego:0, eliane:0};
-        maxValor = Math.max(maxValor,
-          Math.abs(a.diego), Math.abs(a.eliane),
-          Math.abs(b.diego), Math.abs(b.eliane)
-        );
-      });
-      if (maxValor === 0) maxValor = 1;
+    // Calcula o máximo global para dimensionar as barras
+    let maxValor = 0;
+    chavesOrdenadas.forEach(ch => {
+      maxValor = Math.max(maxValor, Math.abs(mapaAtual[ch]?.total || 0), Math.abs(mapaAnterior[ch]?.total || 0));
+    });
 
-      wrapLista.innerHTML = chavesOrdenadas.map(ch => {
-        const a = mapAtual[ch] || {diego:0, eliane:0, total:0, subs:{}};
-        const b = mapAnterior[ch] || {diego:0, eliane:0, total:0, subs:{}};
-        const d = a.total - b.total;
-        const p = b.total !== 0 ? (d / Math.abs(b.total)) * 100 : null;
-        const classeVar = d > 0 ? 'positivo' : (d < 0 ? 'negativo' : 'neutro');
-        const seta = d > 0 ? '▲' : (d < 0 ? '▼' : '●');
-        const cor = corDa(ch);
+    wrapLista.innerHTML = chavesOrdenadas.map(ch => {
+      const vAtual = mapaAtual[ch]?.total || 0;
+      const vAnt = mapaAnterior[ch]?.total || 0;
+      const d = vAtual - vAnt;
+      const p = vAnt !== 0 ? (d / Math.abs(vAnt)) * 100 : null;
+      const classeVar = d > 0 ? 'positivo' : (d < 0 ? 'negativo' : 'neutro');
+      const seta = d > 0 ? '▲' : (d < 0 ? '▼' : '●');
+      const cor = (compNivel === 'categoria') ? corDa(ch) : corDa(mapaAtual[ch]?.catOrigem || mapaAnterior[ch]?.catOrigem);
 
-        // Percentuais de cada responsável em relação ao total da categoria (atual)
-        const pctDiegoAtual = a.total !== 0 ? (a.diego / a.total) * 100 : 0;
-        const pctElianeAtual = a.total !== 0 ? (a.eliane / a.total) * 100 : 0;
+      const pctAtual = maxValor > 0 ? (Math.abs(vAtual) / maxValor) * 100 : 0;
+      const pctAnt = maxValor > 0 ? (Math.abs(vAnt) / maxValor) * 100 : 0;
 
-        // Largura das barras (proporcional ao maxValor global)
-        const larguraDiegoAtual = (Math.abs(a.diego) / maxValor) * 100;
-        const larguraElianeAtual = (Math.abs(a.eliane) / maxValor) * 100;
-        const larguraDiegoAnt = (Math.abs(b.diego) / maxValor) * 100;
-        const larguraElianeAnt = (Math.abs(b.eliane) / maxValor) * 100;
+      // Texto de variação
+      const txtVar = p === null
+        ? (d !== 0 ? `${d > 0 ? '+' : ''}${formatarMoeda(d)}` : '—')
+        : `${seta} ${d > 0 ? '+' : ''}${p.toFixed(0)}%`;
 
-        const txtVar = p === null
-          ? (d !== 0 ? `${d > 0 ? '+' : ''}${formatarMoeda(d)}` : '—')
-          : `${seta} ${d > 0 ? '+' : ''}${p.toFixed(0)}%`;
+      // Se for subcategoria, agrupar por categoria de origem para exibir a cor
+      const nomeExibir = ch;
 
-        // Subcategorias agrupadas
-        const todasSubs = new Set([...Object.keys(a.subs || {}), ...Object.keys(b.subs || {})]);
-        let subsHTML = '';
-        if (todasSubs.size > 0) {
-          const subsOrdenadas = [...todasSubs].sort((s1, s2) => {
-            const t1 = (a.subs[s1]?.total || 0) + (b.subs[s1]?.total || 0);
-            const t2 = (a.subs[s2]?.total || 0) + (b.subs[s2]?.total || 0);
-            return t2 - t1;
-          });
-          const chaveAberta = 'comp_' + ch;
-          const aberta = compCatAbertas.has(chaveAberta);
-          const subsHTMLInterno = subsOrdenadas.map(sub => {
-            const sa = a.subs[sub] || {diego:0, eliane:0, total:0};
-            const sb = b.subs[sub] || {diego:0, eliane:0, total:0};
-            const dd = sa.total - sb.total;
-            const pp = sb.total !== 0 ? (dd / Math.abs(sb.total)) * 100 : null;
-            const classeSubVar = dd > 0 ? 'positivo' : (dd < 0 ? 'negativo' : 'neutro');
-            const setaSub = dd > 0 ? '▲' : (dd < 0 ? '▼' : '●');
-            const txtVarSub = pp === null
-              ? (dd !== 0 ? `${dd > 0 ? '+' : ''}${formatarMoeda(dd)}` : '—')
-              : `${setaSub} ${dd > 0 ? '+' : ''}${pp.toFixed(0)}%`;
-
-            const lDiegoA = (Math.abs(sa.diego) / maxValor) * 100;
-            const lElianeA = (Math.abs(sa.eliane) / maxValor) * 100;
-            const lDiegoB = (Math.abs(sb.diego) / maxValor) * 100;
-            const lElianeB = (Math.abs(sb.eliane) / maxValor) * 100;
-
-            return `
-              <div class="comp-sub-item">
-                <div class="comp-sub-topo">
-                  <div class="comp-sub-nome">${escaparHTML(sub)}</div>
-                  <span class="comp-sub-var ${classeSubVar}">${txtVarSub}</span>
-                </div>
-                <div class="comp-barra-total" style="margin-bottom:4px;">
-                  <div class="comp-barra-rotulo">${nomeMesLongo(mesAtual)}</div>
-                  <div class="barra-total-bg">
-                    <div class="comp-barra-dupla"
-                         data-tip='${escaparHTML(JSON.stringify({titulo: ch + ' → ' + sub, atual: sa, anterior: sb, rotuloAtual: nomeMesLongo(mesAtual), rotuloAnterior: periodo.rotulo, totalAtual: sa.total, totalAnterior: sb.total}))}'>
-                      ${sa.diego !== 0 ? `<div class="seg-diego" style="width:${(Math.abs(sa.diego)/(Math.abs(sa.diego)+Math.abs(sa.eliane)||1))*100}%;">${formatarMoedaCurta(sa.diego)}</div>` : ''}
-                      ${sa.eliane !== 0 ? `<div class="seg-eliane" style="width:${(Math.abs(sa.eliane)/(Math.abs(sa.diego)+Math.abs(sa.eliane)||1))*100}%;">${formatarMoedaCurta(sa.eliane)}</div>` : ''}
-                    </div>
-                  </div>
-                  <div class="comp-barra-valor">${formatarMoeda(sa.total)}</div>
-                </div>
-                <div class="comp-barra-total">
-                  <div class="comp-barra-rotulo">${periodo.rotulo.length > 12 ? 'Anterior' : periodo.rotulo}</div>
-                  <div class="barra-total-bg">
-                    <div class="comp-barra-dupla"
-                         data-tip='${escaparHTML(JSON.stringify({titulo: ch + ' → ' + sub, atual: sb, anterior: sa, rotuloAtual: periodo.rotulo, rotuloAnterior: nomeMesLongo(mesAtual), totalAtual: sb.total, totalAnterior: sa.total, invertido: true}))}'>
-                      ${sb.diego !== 0 ? `<div class="seg-diego" style="width:${(Math.abs(sb.diego)/(Math.abs(sb.diego)+Math.abs(sb.eliane)||1))*100}%;">${formatarMoedaCurta(sb.diego)}</div>` : ''}
-                      ${sb.eliane !== 0 ? `<div class="seg-eliane" style="width:${(Math.abs(sb.eliane)/(Math.abs(sb.diego)+Math.abs(sb.eliane)||1))*100}%;">${formatarMoedaCurta(sb.eliane)}</div>` : ''}
-                    </div>
-                  </div>
-                  <div class="comp-barra-valor">${formatarMoeda(sb.total)}</div>
-                </div>
-              </div>
-            `;
-          }).join('');
-
+      // Sub-linhas por subcategoria dentro de cada categoria (quando nível = categoria)
+      let subsHTML = '';
+      if (compNivel === 'categoria') {
+        const subsAtual = {};
+        const subsAnt = {};
+        listaAtual.filter(g => g.categoria === ch).forEach(g => {
+          const s = g.subcategoria || '(sem sub)';
+          subsAtual[s] = (subsAtual[s] || 0) + (ehReembolso(g) ? -(g.valor || 0) : (g.valor || 0));
+        });
+        listaAnterior.filter(g => g.categoria === ch).forEach(g => {
+          const s = g.subcategoria || '(sem sub)';
+          subsAnt[s] = (subsAnt[s] || 0) + (ehReembolso(g) ? -(g.valor || 0) : (g.valor || 0));
+        });
+        const todasSubs = new Set([...Object.keys(subsAtual), ...Object.keys(subsAnt)]);
+        if (todasSubs.size > 0 && (vAtual > 0 || vAnt > 0)) {
+          const subsOrdenadas = [...todasSubs].sort((a, b) =>
+            ((subsAtual[b] || 0) + (subsAnt[b] || 0)) - ((subsAtual[a] || 0) + (subsAnt[a] || 0))
+          );
+          const maxSub = Math.max(...subsOrdenadas.map(s => Math.max(Math.abs(subsAtual[s] || 0), Math.abs(subsAnt[s] || 0))), 0);
           subsHTML = `
-            <button class="comp-sub-toggle" onclick="toggleCompCatAberta('${chaveAberta.replace(/'/g, "\\'")}')">
-              ${aberta ? '▾' : '▸'} Subcategorias (${subsOrdenadas.length})
-            </button>
-            <div class="comp-sub-lista ${aberta ? 'aberto' : ''}">
-              ${subsHTMLInterno}
+            <div class="comp-sub-lista">
+              ${subsOrdenadas.map(s => {
+                const sa = subsAtual[s] || 0;
+                const sn = subsAnt[s] || 0;
+                const pctSa = maxSub > 0 ? (Math.abs(sa) / maxSub) * 100 : 0;
+                const pctSn = maxSub > 0 ? (Math.abs(sn) / maxSub) * 100 : 0;
+                const dd = sa - sn;
+                const setaSub = dd > 0 ? '▲' : (dd < 0 ? '▼' : '●');
+                const classeSub = dd > 0 ? 'positivo' : (dd < 0 ? 'negativo' : 'neutro');
+                return `
+                  <div class="comp-barra-linha">
+                    <div class="comp-barra-rotulo">${escaparHTML(s)}</div>
+                    <div style="flex:1; display:flex; flex-direction:column; gap:2px;">
+                      <div class="comp-barra-bg" style="height:12px;">
+                        <div class="comp-barra-fill atual" style="width:${pctSa}%; font-size:0.62em; padding-right:3px;">${sa > 0 ? formatarMoeda(sa).replace('R$ ','') : ''}</div>
+                      </div>
+                      <div class="comp-barra-bg" style="height:12px;">
+                        <div class="comp-barra-fill anterior" style="width:${pctSn}%; font-size:0.62em; padding-right:3px;">${sn > 0 ? formatarMoeda(sn).replace('R$ ','') : ''}</div>
+                      </div>
+                    </div>
+                    <div class="comp-barra-valor" style="font-size:0.78em;">
+                      <span style="color:${dd > 0 ? 'var(--danger)' : dd < 0 ? 'var(--success)' : 'var(--text-3)'}; font-weight:700;">${setaSub}</span>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
             </div>
           `;
         }
-
-        return `
-          <div class="comp-item">
-            <div class="comp-item-topo">
-              <div class="comp-item-nome">
-                <span class="cor-bolinha" style="background:${cor};"></span>
-                ${escaparHTML(ch)}
-              </div>
-              <span class="comp-item-var ${classeVar}">${txtVar}</span>
-            </div>
-
-            <!-- Barra atual -->
-            <div class="comp-barra-total">
-              <div class="comp-barra-rotulo">${nomeMesLongo(mesAtual)}</div>
-              <div class="barra-total-bg">
-                <div class="comp-barra-dupla"
-                     data-tip='${escaparHTML(JSON.stringify({titulo: ch, atual: a, anterior: b, rotuloAtual: nomeMesLongo(mesAtual), rotuloAnterior: periodo.rotulo, totalAtual: a.total, totalAnterior: b.total}))}'>
-                  ${a.diego !== 0 ? `<div class="seg-diego" style="width:${(Math.abs(a.diego)/(Math.abs(a.diego)+Math.abs(a.eliane)||1))*100}%;">${formatarMoedaCurta(a.diego)}</div>` : ''}
-                  ${a.eliane !== 0 ? `<div class="seg-eliane" style="width:${(Math.abs(a.eliane)/(Math.abs(a.diego)+Math.abs(a.eliane)||1))*100}%;">${formatarMoedaCurta(a.eliane)}</div>` : ''}
-                </div>
-              </div>
-              <div class="comp-barra-valor">${formatarMoeda(a.total)}</div>
-            </div>
-
-            <!-- Barra anterior -->
-            <div class="comp-barra-total">
-              <div class="comp-barra-rotulo">${periodo.rotulo.length > 12 ? 'Anterior' : periodo.rotulo}</div>
-              <div class="barra-total-bg">
-                <div class="comp-barra-dupla"
-                     data-tip='${escaparHTML(JSON.stringify({titulo: ch, atual: b, anterior: a, rotuloAtual: periodo.rotulo, rotuloAnterior: nomeMesLongo(mesAtual), totalAtual: b.total, totalAnterior: a.total, invertido: true}))}'>
-                  ${b.diego !== 0 ? `<div class="seg-diego" style="width:${(Math.abs(b.diego)/(Math.abs(b.diego)+Math.abs(b.eliane)||1))*100}%;">${formatarMoedaCurta(b.diego)}</div>` : ''}
-                  ${b.eliane !== 0 ? `<div class="seg-eliane" style="width:${(Math.abs(b.eliane)/(Math.abs(b.diego)+Math.abs(b.eliane)||1))*100}%;">${formatarMoedaCurta(b.eliane)}</div>` : ''}
-                </div>
-              </div>
-              <div class="comp-barra-valor">${formatarMoeda(b.total)}</div>
-            </div>
-
-            ${subsHTML}
-          </div>
-        `;
-      }).join('');
-    } else {
-      // Nível subcategoria
-      const mapAtual = agruparPorSubcategoriaComp(listaAtual);
-      const mapAnterior = agruparPorSubcategoriaComp(listaAnterior);
-      const chaves = new Set([...Object.keys(mapAtual), ...Object.keys(mapAnterior)]);
-
-      if (chaves.size === 0) {
-        wrapLista.innerHTML = '<div class="comp-vazio">Sem dados para exibir no período selecionado.</div>';
-        return;
       }
 
-      const chavesOrdenadas = [...chaves].sort((a, b) => {
-        const sa = (mapAtual[a]?.total || 0) + (mapAnterior[a]?.total || 0);
-        const sb = (mapAtual[b]?.total || 0) + (mapAnterior[b]?.total || 0);
-        return sb - sa;
-      });
-
-      let maxValor = 0;
-      chavesOrdenadas.forEach(ch => {
-        const a = mapAtual[ch] || {diego:0, eliane:0};
-        const b = mapAnterior[ch] || {diego:0, eliane:0};
-        maxValor = Math.max(maxValor,
-          Math.abs(a.diego), Math.abs(a.eliane),
-          Math.abs(b.diego), Math.abs(b.eliane)
-        );
-      });
-      if (maxValor === 0) maxValor = 1;
-
-      wrapLista.innerHTML = chavesOrdenadas.map(ch => {
-        const a = mapAtual[ch] || {diego:0, eliane:0, total:0, catOrigem:''};
-        const b = mapAnterior[ch] || {diego:0, eliane:0, total:0, catOrigem:''};
-        const d = a.total - b.total;
-        const p = b.total !== 0 ? (d / Math.abs(b.total)) * 100 : null;
-        const classeVar = d > 0 ? 'positivo' : (d < 0 ? 'negativo' : 'neutro');
-        const seta = d > 0 ? '▲' : (d < 0 ? '▼' : '●');
-        const cor = corDa(a.catOrigem || b.catOrigem);
-
-        const txtVar = p === null
-          ? (d !== 0 ? `${d > 0 ? '+' : ''}${formatarMoeda(d)}` : '—')
-          : `${seta} ${d > 0 ? '+' : ''}${p.toFixed(0)}%`;
-
-        return `
-          <div class="comp-item">
-            <div class="comp-item-topo">
-              <div class="comp-item-nome">
-                <span class="cor-bolinha" style="background:${cor};"></span>
-                ${escaparHTML(ch)}
-                ${a.catOrigem && a.catOrigem !== ch ? `<span style="font-size:0.72em; color:var(--text-3); font-weight:500;">· ${escaparHTML(a.catOrigem)}</span>` : ''}
-              </div>
-              <span class="comp-item-var ${classeVar}">${txtVar}</span>
+      return `
+        <div class="comp-item">
+          <div class="comp-item-topo">
+            <div class="comp-item-nome">
+              ${compNivel === 'categoria' ? `<span class="cor-bolinha" style="background:${cor};"></span>` : ''}
+              ${escaparHTML(nomeExibir)}
             </div>
-
-            <div class="comp-barra-total">
+            <span class="comp-item-var ${classeVar}">${txtVar}</span>
+          </div>
+          <div class="comp-barras">
+            <div class="comp-barra-linha">
               <div class="comp-barra-rotulo">${nomeMesLongo(mesAtual)}</div>
-              <div class="barra-total-bg">
-                <div class="comp-barra-dupla"
-                     data-tip='${escaparHTML(JSON.stringify({titulo: ch, atual: a, anterior: b, rotuloAtual: nomeMesLongo(mesAtual), rotuloAnterior: periodo.rotulo, totalAtual: a.total, totalAnterior: b.total}))}'>
-                  ${a.diego !== 0 ? `<div class="seg-diego" style="width:${(Math.abs(a.diego)/(Math.abs(a.diego)+Math.abs(a.eliane)||1))*100}%;">${formatarMoedaCurta(a.diego)}</div>` : ''}
-                  ${a.eliane !== 0 ? `<div class="seg-eliane" style="width:${(Math.abs(a.eliane)/(Math.abs(a.diego)+Math.abs(a.eliane)||1))*100}%;">${formatarMoedaCurta(a.eliane)}</div>` : ''}
-                </div>
+              <div class="comp-barra-bg">
+                <div class="comp-barra-fill atual" style="width:${pctAtual}%;">${vAtual !== 0 ? formatarMoeda(vAtual).replace('R$ ','') : ''}</div>
               </div>
-              <div class="comp-barra-valor">${formatarMoeda(a.total)}</div>
+              <div class="comp-barra-valor">${formatarMoeda(vAtual)}</div>
             </div>
-
-            <div class="comp-barra-total">
-              <div class="comp-barra-rotulo">${periodo.rotulo.length > 12 ? 'Anterior' : periodo.rotulo}</div>
-              <div class="barra-total-bg">
-                <div class="comp-barra-dupla"
-                     data-tip='${escaparHTML(JSON.stringify({titulo: ch, atual: b, anterior: a, rotuloAtual: periodo.rotulo, rotuloAnterior: nomeMesLongo(mesAtual), totalAtual: b.total, totalAnterior: a.total, invertido: true}))}'>
-                  ${b.diego !== 0 ? `<div class="seg-diego" style="width:${(Math.abs(b.diego)/(Math.abs(b.diego)+Math.abs(b.eliane)||1))*100}%;">${formatarMoedaCurta(b.diego)}</div>` : ''}
-                  ${b.eliane !== 0 ? `<div class="seg-eliane" style="width:${(Math.abs(b.eliane)/(Math.abs(b.diego)+Math.abs(b.eliane)||1))*100}%;">${formatarMoedaCurta(b.eliane)}</div>` : ''}
-                </div>
+            <div class="comp-barra-linha">
+              <div class="comp-barra-rotulo">${periodo.rotulo}</div>
+              <div class="comp-barra-bg">
+                <div class="comp-barra-fill anterior" style="width:${pctAnt}%;">${vAnt !== 0 ? formatarMoeda(vAnt).replace('R$ ','') : ''}</div>
               </div>
-              <div class="comp-barra-valor">${formatarMoeda(b.total)}</div>
+              <div class="comp-barra-valor">${formatarMoeda(vAnt)}</div>
             </div>
           </div>
-        `;
-      }).join('');
-    }
-
-    ativarTooltipBarras();
-  }
-
-  // ============ TOOLTIP DAS BARRAS ============
-  let tooltipTimeout = null;
-  function ativarTooltipBarras() {
-    const tooltip = document.getElementById('barTooltip');
-    if (!tooltip) return;
-
-    document.querySelectorAll('.comp-barra-dupla').forEach(barra => {
-      barra.addEventListener('mouseenter', (e) => {
-        mostrarTooltip(e.currentTarget, e.clientX, e.clientY);
-      });
-      barra.addEventListener('mousemove', (e) => {
-        moverTooltip(e.clientX, e.clientY);
-      });
-      barra.addEventListener('mouseleave', () => esconderTooltip());
-      // Touch: mostra ao tocar, esconde ao soltar
-      barra.addEventListener('touchstart', (e) => {
-        const t = e.touches[0];
-        mostrarTooltip(e.currentTarget, t.clientX, t.clientY);
-        if (tooltipTimeout) clearTimeout(tooltipTimeout);
-        tooltipTimeout = setTimeout(() => esconderTooltip(), 3500);
-      }, { passive: true });
-      barra.addEventListener('touchmove', (e) => {
-        const t = e.touches[0];
-        moverTooltip(t.clientX, t.clientY);
-      }, { passive: true });
-      barra.addEventListener('touchend', () => {
-        if (tooltipTimeout) clearTimeout(tooltipTimeout);
-        tooltipTimeout = setTimeout(() => esconderTooltip(), 1200);
-      });
-    });
-  }
-
-  function mostrarTooltip(barra, x, y) {
-    const tooltip = document.getElementById('barTooltip');
-    let dados;
-    try { dados = JSON.parse(barra.dataset.tip); } catch { return; }
-    const { titulo, atual, anterior, rotuloAtual, rotuloAnterior, totalAtual, totalAnterior } = dados;
-
-    const pctDe = (v, total) => {
-      if (!total) return '0%';
-      return ((Math.abs(v) / Math.abs(total)) * 100).toFixed(1) + '%';
-    };
-
-    tooltip.innerHTML = `
-      <div class="tt-titulo">${escaparHTML(titulo)}</div>
-      <div style="font-weight:700; margin-bottom:4px; opacity:0.85; font-size:0.92em;">${escaparHTML(rotuloAtual)}</div>
-      <div class="tt-linha">
-        <span class="tt-resp"><span class="tt-dot" style="background:var(--diego);"></span> Diego</span>
-        <span class="tt-valor">${formatarMoeda(atual.diego)} · ${pctDe(atual.diego, totalAtual)}</span>
-      </div>
-      <div class="tt-linha">
-        <span class="tt-resp"><span class="tt-dot" style="background:var(--eliane);"></span> Eliane</span>
-        <span class="tt-valor">${formatarMoeda(atual.eliane)} · ${pctDe(atual.eliane, totalAtual)}</span>
-      </div>
-      <div class="tt-linha" style="border-top:1px solid rgba(255,255,255,0.18); margin-top:5px; padding-top:5px;">
-        <span class="tt-resp">Total</span>
-        <span class="tt-valor">${formatarMoeda(totalAtual)}</span>
-      </div>
-      <div style="font-weight:700; margin:8px 0 4px; opacity:0.85; font-size:0.92em;">${escaparHTML(rotuloAnterior)}</div>
-      <div class="tt-linha">
-        <span class="tt-resp"><span class="tt-dot" style="background:var(--diego);"></span> Diego</span>
-        <span class="tt-valor">${formatarMoeda(anterior.diego)} · ${pctDe(anterior.diego, totalAnterior)}</span>
-      </div>
-      <div class="tt-linha">
-        <span class="tt-resp"><span class="tt-dot" style="background:var(--eliane);"></span> Eliane</span>
-        <span class="tt-valor">${formatarMoeda(anterior.eliane)} · ${pctDe(anterior.eliane, totalAnterior)}</span>
-      </div>
-      <div class="tt-linha" style="border-top:1px solid rgba(255,255,255,0.18); margin-top:5px; padding-top:5px;">
-        <span class="tt-resp">Total</span>
-        <span class="tt-valor">${formatarMoeda(totalAnterior)}</span>
-      </div>
-    `;
-    tooltip.classList.add('visivel');
-    moverTooltip(x, y);
-  }
-
-  function moverTooltip(x, y) {
-    const tooltip = document.getElementById('barTooltip');
-    if (!tooltip.classList.contains('visivel')) return;
-    const rect = tooltip.getBoundingClientRect();
-    let px = x + 12;
-    let py = y + 12;
-    if (px + rect.width > window.innerWidth - 10) px = window.innerWidth - rect.width - 10;
-    if (px < 10) px = 10;
-    if (py + rect.height > window.innerHeight - 10) py = y - rect.height - 12;
-    if (py < 10) py = 10;
-    tooltip.style.left = px + 'px';
-    tooltip.style.top = py + 'px';
-  }
-
-  function esconderTooltip() {
-    const tooltip = document.getElementById('barTooltip');
-    if (tooltip) tooltip.classList.remove('visivel');
+          ${subsHTML}
+        </div>
+      `;
+    }).join('');
   }
 
   // ============ INICIALIZAÇÃO ============
@@ -6875,15 +6269,10 @@
     const mesAtual = hojeISO.substring(0, 7);
     document.getElementById('mesReferencia').value = mesAtual;
     document.getElementById('mesFatura').value = mesAtual;
-    document.getElementById('compMesReferencia').value = mesAtual;
     mesLancamentos = mesAtual;
     document.getElementById('mesFatura').addEventListener('change', function() {
       this.dataset.tocado = '1';
     });
-
-    // Esconder tooltip ao rolar a página
-    window.addEventListener('scroll', esconderTooltip, { passive: true });
-
     iniciarFirebase();
   };
 </script>
