@@ -2430,7 +2430,6 @@
   </div>
 
   <!-- AJUSTES -->
-    <!-- AJUSTES -->
   <div class="painel" id="painel-ajustes">
     <div class="card" id="cardNotificacoes">
       <h2>🔔 Lembretes</h2>
@@ -2460,6 +2459,47 @@
     </div>
 
     <div class="sub-abas">
+      <button class="sub-aba ativa" data-sub="cartoes" onclick="trocarSubAba('cartoes')">💳 Cartões</button>
+      <button class="sub-aba" data-sub="categorias" onclick="trocarSubAba('categorias')">📂 Categorias</button>
+      <button class="sub-aba" data-sub="pessoas" onclick="trocarSubAba('pessoas')">👥 Pessoas</button>
+      <button class="sub-aba" data-sub="veiculos" onclick="trocarSubAba('veiculos')">🚗 Veículos</button>
+    </div>
+
+    <div class="sub-painel ativo" id="sub-cartoes">
+      <div class="card">
+        <h2>💳 Meus Cartões</h2>
+        <div id="cartoesLista"></div>
+      </div>
+      <div class="card">
+        <h2>➕ Novo Cartão</h2>
+        <div class="nova-cat-form">
+          <div>
+            <label>Nome do cartão</label>
+            <input type="text" id="novoCartaoNome" placeholder="Ex: Nubank Diego">
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div>
+              <label>Dia fechamento</label>
+              <input type="number" id="novoCartaoFechamento" min="1" max="31" placeholder="5">
+            </div>
+            <div>
+              <label>Dia vencimento</label>
+              <input type="number" id="novoCartaoVencimento" min="1" max="31" placeholder="12">
+            </div>
+          </div>
+          <button onclick="criarCartao()" class="btn-grande" style="margin-top:10px;">+ Adicionar Cartão</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>🔧 Manutenção</h2>
+        <div class="manutencao-card">
+          <p style="color:var(--text-2); font-size:0.85em; margin-bottom:14px; line-height:1.6;">
+            Se você renomeou cartões antes, alguns lançamentos podem estar apontando para nomes antigos. Use este botão para verificar e corrigir.
+          </p>
+          <button class="btn-grande" onclick="verificarLancamentosOrfaos()">🔍 Verificar lançamentos órfãos</button>
+        </div>
+      </div>
+    </div>
 
     <div class="sub-painel" id="sub-categorias">
       <div class="card">
@@ -2997,7 +3037,7 @@
   const compCatAbertas = new Set();
   let compFiltrosExpandidos = false;
 
-  // NOVOS estados
+  // Estados modo rápido / undo / toast
   let modoLancamento = 'rapido';
   let undoState = null;
   let toastTimeout = null;
@@ -3076,7 +3116,6 @@
     document.querySelector(`.bottom-nav button[data-aba="${nome}"]`).classList.add('ativa');
     document.getElementById('painel-' + nome).classList.add('ativo');
 
-    // FAB: mostra em todas as abas exceto Lançar
     const fab = document.getElementById('fabNovo');
     if (fab) {
       if (nome === 'lancar') fab.classList.remove('visivel');
@@ -3094,7 +3133,7 @@
     if (nome === 'lancamentos') renderizarLancamentos();
     if (nome === 'analise') renderizar();
     if (nome === 'comparativo') renderizarComparativo();
-	    if (nome === 'ajustes' && typeof atualizarStatusNotificacaoUI === 'function') {
+    if (nome === 'ajustes' && typeof atualizarStatusNotificacaoUI === 'function') {
       atualizarStatusNotificacaoUI();
     }
 
@@ -3105,7 +3144,7 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-    function trocarSubAba(nome) {
+  function trocarSubAba(nome) {
     document.querySelectorAll('.sub-aba').forEach(b => b.classList.remove('ativa'));
     document.querySelectorAll('.sub-painel').forEach(p => p.classList.remove('ativo'));
     document.querySelector(`.sub-aba[data-sub="${nome}"]`).classList.add('ativa');
@@ -3499,7 +3538,7 @@
       erro => { console.error(erro); atualizarStatus('offline', 'Erro'); }
     );
   }
-    function ouvirEventos() {
+  function ouvirEventos() {
     colecaoEventos().orderBy('data', 'asc').onSnapshot(
       snapshot => {
         eventos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -4085,15 +4124,14 @@
           batch.set(ref, { ...base, data: d, serieId: sid, recorrencia: rec, diasSemana: (rec === 'semanal' || rec === 'quinzenal') ? [...diasSemanaSelecionados] : null, dataFim: dataFim || null, criadoEm: firebase.firestore.FieldValue.serverTimestamp() });
         });
         await batch.commit();
-		        await batch.commit();
 
         // Reagenda todas as notificações (a série criou muitos eventos)
         if (typeof reagendarNotificacoesPendentes === 'function') {
           setTimeout(() => reagendarNotificacoesPendentes(), 800);
         }
 
-        fecharFormEvento(); return;
-        fecharFormEvento(); return;
+        fecharFormEvento();
+        return;
       }
       const novoDoc = await colecaoEventos().add({ ...base, data, criadoEm: firebase.firestore.FieldValue.serverTimestamp() });
 
@@ -4787,7 +4825,6 @@
     if (!data || !descricao || isNaN(valor) || valor <= 0) { alert('Preencha valor, local e data!'); return; }
     if (ehCredito && (!cartaoNome || !acharCartao(cartaoNome))) { alert('Selecione um cartão de crédito cadastrado!'); return; }
 
-    // Modo rápido: se não preencheu categoria/pagamento, tenta do histórico
     if (modoLancamento === 'rapido') {
       if (!categoria || categoria === '') {
         const est = estabelecimentosCache[normalizarChave(descricao)];
@@ -5703,7 +5740,6 @@
       </div>
     </div>`;
     if (pct !== null) {
-      const cl = diff > 0 ? 'positivo' : (diff < 0 ? 'negativo' : 'neutro');
       const s = diff > 0 ? '▲' : (diff < 0 ? '▼' : '●');
       const sg = diff > 0 ? '+' : '';
       rh += `<div class="comp-resumo-box" style="grid-column: span 2;">
@@ -5719,13 +5755,6 @@
       const chaves = new Set([...Object.keys(mAtG), ...Object.keys(mAnG)]);
       if (chaves.size === 0) { wl.innerHTML = '<div class="comp-vazio">Sem dados para exibir no período selecionado.</div>'; return; }
       const ord = [...chaves].sort((a, b) => ((mAtG[a]?.total||0)+(mAnG[a]?.total||0)) < ((mAtG[b]?.total||0)+(mAnG[b]?.total||0)) ? 1 : -1);
-      let mx = 0;
-      ord.forEach(c => {
-        const a = mAtG[c] || {diego:0, eliane:0};
-        const b = mAnG[c] || {diego:0, eliane:0};
-        mx = Math.max(mx, Math.abs(a.diego), Math.abs(a.eliane), Math.abs(b.diego), Math.abs(b.eliane));
-      });
-      if (mx === 0) mx = 1;
       wl.innerHTML = ord.map(c => {
         const a = mAtG[c] || {diego:0, eliane:0, total:0, subs:{}};
         const b = mAnG[c] || {diego:0, eliane:0, total:0, subs:{}};
@@ -5909,7 +5938,7 @@
     renderizarGrafico(lc);
   }
 
-  // ============ CARTOES (renderizarCartoes) ============
+  // ============ CARTÕES ============
   function renderizarCartoes() {
     const wrap = document.getElementById('cartoesLista'); if (!wrap) return;
     if (cartoes.length === 0) { wrap.innerHTML = '<div class="vazio">Nenhum cartão cadastrado</div>'; return; }
@@ -5996,22 +6025,21 @@
     const nomes = [...new Set(orfaos.map(g => g.cartao))];
     alert(`⚠️ Encontrados ${orfaos.length} lançamentos com cartões que não existem mais:\n\n${nomes.join('\n')}\n\nEdite-os para escolher um cartão válido.`);
   }
+
   // ============================================================
   // ============ NOTIFICAÇÕES ==================================
   // ============================================================
 
-  const NOTIF_ANTECEDENCIA_MIN = 30;   // minutos antes do evento
-  const NOTIF_JANELA_REAGENDAMENTO_H = 48; // reagenda notificações das próximas 48h
+  const NOTIF_ANTECEDENCIA_MIN = 30;
+  const NOTIF_JANELA_REAGENDAMENTO_H = 48;
   const NOTIF_STORAGE_KEY = 'nossa-rotina-notif-pendentes';
 
   let swRegistration = null;
 
-  // ---- Verificação de suporte ----
   function notificacoesSuportadas() {
     return 'Notification' in window && 'serviceWorker' in navigator;
   }
 
-  // ---- Inicializar SW ----
   async function iniciarServiceWorker() {
     if (!('serviceWorker' in navigator)) return null;
     try {
@@ -6025,7 +6053,6 @@
     }
   }
 
-  // ---- Atualizar UI do card ----
   function atualizarStatusNotificacaoUI() {
     const icone = document.getElementById('notifIcone');
     const texto = document.getElementById('notifTexto');
@@ -6082,7 +6109,6 @@
     }
   }
 
-  // ---- Ativar permissão ----
   async function ativarNotificacoes() {
     if (!notificacoesSuportadas()) {
       alert('Seu navegador não suporta notificações.');
@@ -6095,7 +6121,6 @@
 
       if (perm === 'granted') {
         await reagendarNotificacoesPendentes();
-        // Boas-vindas
         setTimeout(() => {
           enviarNotificacao(
             '✅ Lembretes ativados!',
@@ -6112,7 +6137,6 @@
     }
   }
 
-  // ---- Enviar notificação via SW ----
   async function enviarNotificacao(titulo, opcoes) {
     if (!notificacoesSuportadas()) return false;
     if (Notification.permission !== 'granted') return false;
@@ -6136,7 +6160,6 @@
     }
   }
 
-  // ---- Testar ----
   async function testarNotificacao() {
     const ok = await enviarNotificacao(
       '🧪 Teste do Nossa Rotina',
@@ -6149,9 +6172,6 @@
     if (!ok) alert('Não foi possível enviar. Ative as notificações primeiro.');
   }
 
-  // ---- Fila de notificações pendentes (persistência local) ----
-  // Como setTimeout morre ao fechar o app, guardamos o que precisa
-  // ser disparado e reagendamos a cada abertura.
   function lerPendentes() {
     try {
       const raw = localStorage.getItem(NOTIF_STORAGE_KEY);
@@ -6168,7 +6188,6 @@
     }
   }
 
-  // ---- Agendar uma notificação de compromisso ----
   function agendarNotificacaoEvento(evento) {
     if (!evento || !evento.data || !evento.hora) return;
     if (Notification.permission !== 'granted') return;
@@ -6178,7 +6197,6 @@
     const delay = dispararEm - Date.now();
     if (delay <= 0) return;
 
-    // 1. Guarda na fila de pendentes
     const pendentes = lerPendentes().filter(p => p.id !== evento.id);
     pendentes.push({
       id: evento.id,
@@ -6191,8 +6209,6 @@
     });
     salvarPendentes(pendentes);
 
-    // 2. Se delay for muito grande (> 30min), não usa setTimeout agora;
-    //    será agendado quando o app reabrir. Se for curto, agenda já.
     if (delay < 30 * 60 * 1000) {
       setTimeout(() => dispararNotificacaoEvento(evento), delay);
     }
@@ -6215,26 +6231,22 @@
       }
     );
 
-    // Remove da fila
     const pendentes = lerPendentes().filter(p => p.id !== evento.id);
     salvarPendentes(pendentes);
   }
 
-  // ---- Reagendar tudo (chamado ao abrir o app) ----
   async function reagendarNotificacoesPendentes() {
     if (Notification.permission !== 'granted') return;
 
     const agora = Date.now();
     const limite = agora + NOTIF_JANELA_REAGENDAMENTO_H * 60 * 60 * 1000;
 
-    // Pega eventos das próximas 48h que têm hora definida
     const candidatos = eventos.filter(e => {
       if (!e.hora) return false;
       const t = new Date(`${e.data}T${e.hora}:00`).getTime();
       return t > agora && t < limite;
     });
 
-    // Limpa fila antiga e regrava
     const fila = [];
     candidatos.forEach(e => {
       const quando = new Date(`${e.data}T${e.hora}:00`);
@@ -6253,7 +6265,6 @@
     });
     salvarPendentes(fila);
 
-    // Agenda via setTimeout os que disparam nas próximas 12h
     const limiteCurto = agora + 12 * 60 * 60 * 1000;
     fila.forEach(p => {
       if (p.dispararEm > limiteCurto) return;
@@ -6269,17 +6280,6 @@
     });
   }
 
-  // ---- Detectar eventos que vão vencer em breve (para aviso in-app) ----
-  function proximoEventoProximo(minutos) {
-    const agora = Date.now();
-    const limite = agora + minutos * 60 * 1000;
-    return eventos
-      .filter(e => e.hora && new Date(`${e.data}T${e.hora}:00`).getTime() <= limite)
-      .filter(e => new Date(`${e.data}T${e.hora}:00`).getTime() > agora)
-      .sort((a, b) => `${a.data}${a.hora}`.localeCompare(`${b.data}${b.hora}`))[0];
-  }
-
-  // ---- Listener: clique em notificação com app aberto ----
   navigator.serviceWorker?.addEventListener('message', (event) => {
     const data = event.data || {};
     if (data.type === 'open-evento' && data.eventoId) {
@@ -6310,18 +6310,16 @@
         setTimeout(() => document.getElementById('valor').focus(), 300);
       }, 400);
     }
-        window.addEventListener('scroll', esconderTooltip, { passive: true });
+    window.addEventListener('scroll', esconderTooltip, { passive: true });
     iniciarFirebase();
 
     // Notificações
     iniciarServiceWorker().then(() => {
       atualizarStatusNotificacaoUI();
-      // Se já tem permissão, reagenda ao abrir
       if (Notification.permission === 'granted') {
         setTimeout(() => reagendarNotificacoesPendentes(), 1500);
       }
     });
-  };
   };
 </script>
 <script>
