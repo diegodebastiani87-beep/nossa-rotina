@@ -2427,7 +2427,7 @@
     <div class="card" id="cardNotificacoes">
       <h2>🔔 Lembretes</h2>
       <p style="color:var(--text-2); font-size:0.85em; margin-bottom:14px; line-height:1.6;">
-        Ative as notificações para receber um aviso <strong>30 minutos antes</strong> de cada compromisso da agenda.
+        Ative as notificações para receber um aviso <strong>30 minutos antes</strong> de cada compromisso e um <strong>resumo diário às 8h</strong> nos dias úteis.
       </p>
       <div id="statusNotificacao" style="
         background:var(--surface-2);
@@ -2448,6 +2448,9 @@
       </button>
       <button class="btn-grande secundario" id="btnTestarNotif" onclick="testarNotificacao()" style="margin-top:8px; display:none;">
         🧪 Enviar notificação de teste
+      </button>
+      <button class="btn-grande secundario" id="btnTestarDiaria" onclick="testarDiaria()" style="margin-top:8px; display:none;">
+        📅 Testar resumo diário
       </button>
     </div>
 
@@ -5992,6 +5995,11 @@
   const NOTIF_JANELA_REAGENDAMENTO_H = 48;
   const NOTIF_STORAGE_KEY = 'nossa-rotina-notif-pendentes';
 
+  // Notificação diária matinal
+  const NOTIF_DIARIA_HORA = 8;
+  const NOTIF_DIARIA_MINUTO = 0;
+  const NOTIF_DIARIA_STORAGE_KEY = 'nossa-rotina-diaria-ultima';
+
   let swRegistration = null;
 
   function notificacoesSuportadas() {
@@ -6037,6 +6045,8 @@
         btnAtivar.style.background = 'var(--success)';
       }
       if (btnTestar) btnTestar.style.display = 'block';
+      const btnDiaria = document.getElementById('btnTestarDiaria');
+      if (btnDiaria) btnDiaria.style.display = 'block';
     } else if (perm === 'denied') {
       icone.textContent = '🚫';
       texto.innerHTML = '<strong style="color:var(--danger);">Bloqueado</strong> — reative nas configurações do navegador (cadeado ao lado da URL)';
@@ -6054,6 +6064,8 @@
         };
       }
       if (btnTestar) btnTestar.style.display = 'none';
+      const btnDiaria = document.getElementById('btnTestarDiaria');
+      if (btnDiaria) btnDiaria.style.display = 'none';
     } else {
       icone.textContent = '⚪';
       texto.textContent = 'Ainda não ativado. Toque no botão abaixo para permitir.';
@@ -6064,6 +6076,8 @@
         btnAtivar.style.background = '';
       }
       if (btnTestar) btnTestar.style.display = 'none';
+      const btnDiaria = document.getElementById('btnTestarDiaria');
+      if (btnDiaria) btnDiaria.style.display = 'none';
     }
   }
 
@@ -6079,11 +6093,12 @@
 
       if (perm === 'granted') {
         await reagendarNotificacoesPendentes();
+        reagendarNotificacaoDiaria();
         setTimeout(() => {
           enviarNotificacao(
             '✅ Lembretes ativados!',
             {
-              body: 'Você será avisado 30 minutos antes de cada compromisso.',
+              body: 'Você será avisado 30 min antes de cada compromisso e receberá um resumo às 8h nos dias úteis.',
               tag: 'boas-vindas',
               icon: './icon-192.png'
             }
@@ -6238,6 +6253,160 @@
     });
   }
 
+  // ============================================================
+  // ============ NOTIFICAÇÃO DIÁRIA MATINAL ====================
+  // ============================================================
+
+  function proximoHorarioDiario() {
+    const agora = new Date();
+    const hoje = new Date(agora);
+    hoje.setHours(NOTIF_DIARIA_HORA, NOTIF_DIARIA_MINUTO, 0, 0);
+
+    const diaSemana = hoje.getDay();
+    const ehUtil = diaSemana >= 1 && diaSemana <= 5;
+
+    if (ehUtil && hoje.getTime() > agora.getTime()) {
+      return hoje.getTime();
+    }
+
+    const proximo = new Date(agora);
+    proximo.setDate(proximo.getDate() + 1);
+    proximo.setHours(NOTIF_DIARIA_HORA, NOTIF_DIARIA_MINUTO, 0, 0);
+    while (true) {
+      const dw = proximo.getDay();
+      if (dw >= 1 && dw <= 5) break;
+      proximo.setDate(proximo.getDate() + 1);
+    }
+    return proximo.getTime();
+  }
+
+  function montarNotificacaoDiaria() {
+    const hoje = dataHojeISO();
+    const daquiA7Dias = dataLocalISO(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
+
+    const deHoje = eventos
+      .filter(e => e.data === hoje)
+      .sort((a, b) => (a.hora || '99:99').localeCompare(b.hora || '99:99'));
+
+    const proximos = eventos
+      .filter(e => e.data > hoje && e.data <= daquiA7Dias)
+      .sort((a, b) => a.data.localeCompare(b.data) || (a.hora || '').localeCompare(b.hora || ''));
+
+    const diaSemana = new Date().toLocaleDateString('pt-BR', { weekday: 'long' });
+    const dataLonga = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
+
+    let titulo = '';
+    let corpo = '';
+
+    if (deHoje.length === 0) {
+      titulo = `☕ Bom dia! Agenda livre hoje`;
+      corpo = `${diaSemana.charAt(0).toUpperCase() + diaSemana.slice(1)}, ${dataLonga} — nada marcado 🎉`;
+
+      if (proximos.length > 0) {
+        const p = proximos[0];
+        const diasAte = Math.round((new Date(p.data + 'T00:00:00') - new Date(hoje + 'T00:00:00')) / (24 * 60 * 60 * 1000));
+        const quando = diasAte === 1 ? 'amanhã' : `em ${diasAte} dias`;
+        corpo += `\n📅 Próximo: ${p.titulo} (${quando}${p.hora ? ', ' + p.hora : ''})`;
+      }
+    } else {
+      const plural = deHoje.length === 1 ? '1 compromisso' : `${deHoje.length} compromissos`;
+      titulo = `☀️ Bom dia! ${plural} hoje`;
+
+      const mostrar = deHoje.slice(0, 3);
+      const linhas = mostrar.map(e => {
+        const hora = e.hora ? e.hora : '--:--';
+        const quem = e.pessoa ? ` · ${e.pessoa}` : '';
+        return `• ${hora} — ${e.titulo}${quem}`;
+      });
+      corpo = linhas.join('\n');
+
+      if (deHoje.length > 3) {
+        corpo += `\n... e mais ${deHoje.length - 3}`;
+      }
+
+      if (proximos.length > 0 && deHoje.length <= 2) {
+        const p = proximos[0];
+        const diasAte = Math.round((new Date(p.data + 'T00:00:00') - new Date(hoje + 'T00:00:00')) / (24 * 60 * 60 * 1000));
+        const quando = diasAte === 1 ? 'amanhã' : `em ${diasAte} dias`;
+        corpo += `\n\n📅 Próximo: ${p.titulo} (${quando}${p.hora ? ', ' + p.hora : ''})`;
+      }
+    }
+
+    return { titulo, corpo };
+  }
+
+  async function dispararNotificacaoDiaria() {
+    if (Notification.permission !== 'granted') return;
+
+    const { titulo, corpo } = montarNotificacaoDiaria();
+
+    await enviarNotificacao(titulo, {
+      body: corpo,
+      tag: 'diaria-' + dataHojeISO(),
+      icon: './icon-192.png',
+      badge: './icon-192.png',
+      vibrate: [200, 100, 200],
+      requireInteraction: false,
+      data: { tipo: 'diaria' }
+    });
+
+    localStorage.setItem(NOTIF_DIARIA_STORAGE_KEY, dataHojeISO());
+
+    setTimeout(() => agendarNotificacaoDiaria(), 60 * 1000);
+  }
+
+  function agendarNotificacaoDiaria() {
+    if (Notification.permission !== 'granted') return;
+
+    const agora = Date.now();
+    const proximo = proximoHorarioDiario();
+    const delay = proximo - agora;
+
+    if (delay <= 0) return;
+    if (delay > 8 * 24 * 60 * 60 * 1000) return;
+
+    if (window._notifDiariaTimer) clearTimeout(window._notifDiariaTimer);
+
+    if (delay < 24 * 60 * 60 * 1000) {
+      window._notifDiariaTimer = setTimeout(() => dispararNotificacaoDiaria(), delay);
+      console.log(`[Notif] Diária agendada para daqui ${Math.round(delay / 60000)} min`);
+    }
+  }
+
+  function reagendarNotificacaoDiaria() {
+    if (Notification.permission !== 'granted') return;
+    const ultima = localStorage.getItem(NOTIF_DIARIA_STORAGE_KEY);
+    const hoje = dataHojeISO();
+
+    if (ultima === hoje) {
+      const amanha = new Date();
+      amanha.setDate(amanha.getDate() + 1);
+      amanha.setHours(NOTIF_DIARIA_HORA, NOTIF_DIARIA_MINUTO, 0, 0);
+      while (amanha.getDay() === 0 || amanha.getDay() === 6) {
+        amanha.setDate(amanha.getDate() + 1);
+      }
+      const delay = amanha.getTime() - Date.now();
+      if (window._notifDiariaTimer) clearTimeout(window._notifDiariaTimer);
+      window._notifDiariaTimer = setTimeout(() => dispararNotificacaoDiaria(), delay);
+      return;
+    }
+
+    agendarNotificacaoDiaria();
+  }
+
+  async function testarDiaria() {
+    if (Notification.permission !== 'granted') {
+      alert('Ative as notificações primeiro.');
+      return;
+    }
+    const { titulo, corpo } = montarNotificacaoDiaria();
+    await enviarNotificacao('🧪 ' + titulo, {
+      body: corpo,
+      tag: 'teste-diaria-' + Date.now(),
+      icon: './icon-192.png'
+    });
+  }
+
   navigator.serviceWorker?.addEventListener('message', (event) => {
     const data = event.data || {};
     if (data.type === 'open-evento' && data.eventoId) {
@@ -6247,6 +6416,15 @@
           abrirDetalhesEvento(data.eventoId);
         }
       }, 300);
+    }
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      if (Notification.permission === 'granted') {
+        reagendarNotificacaoDiaria();
+        reagendarNotificacoesPendentes();
+      }
     }
   });
 
@@ -6274,6 +6452,7 @@
       atualizarStatusNotificacaoUI();
       if (Notification.permission === 'granted') {
         setTimeout(() => reagendarNotificacoesPendentes(), 1500);
+        setTimeout(() => reagendarNotificacaoDiaria(), 2000);
       }
     });
   };
