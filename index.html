@@ -646,18 +646,6 @@
     font-weight: 600; white-space: nowrap; flex-shrink: 0;
   }
 
-  .parcelas-box {
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 14px;
-    display: none;
-  }
-  .parcelas-box.visivel { display: block; }
-  .sub-campo { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
-  .sub-campo:first-child { margin-top: 0; padding-top: 0; border-top: none; }
-
   .dica { font-size: 0.74em; color: var(--text-3); margin-top: 5px; font-style: italic; display: block; }
   .dica-reembolso {
     background: var(--success-soft);
@@ -1126,6 +1114,7 @@
   .veiculo-view .btn-excluir-veiculo { color: var(--danger); }
   .veiculo-view .btn-excluir-veiculo:hover { background: var(--danger-soft); border-color: #fecaca; }
 
+  /* ====== SUB-ABAS ====== */
   .sub-abas {
     display: flex; gap: 4px;
     background: var(--surface-3); padding: 4px;
@@ -1143,8 +1132,14 @@
     transition: all 0.15s;
   }
   .sub-aba.ativa { background: var(--surface); color: var(--text); box-shadow: var(--shadow-xs); }
-  .sub-painel { display: none; }
-  .sub-painel.ativo { display: block; }
+
+  /* Sub-painéis com escopo restrito para não colidir */
+  #painel-analise > .sub-painel,
+  #painel-ajustes > .sub-painel,
+  #painel-agenda > .sub-painel { display: none; }
+  #painel-analise > .sub-painel.ativo,
+  #painel-ajustes > .sub-painel.ativo,
+  #painel-agenda > .sub-painel.ativo { display: block; }
 
   .cat-accordion {
     border: 1px solid var(--border); border-radius: 12px;
@@ -1905,20 +1900,9 @@
   .comp-legenda .item { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
   .comp-legenda .item .cor-bolinha { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
 
-  .comp-sub-toggle {
-    background: none; color: var(--accent); border: none;
-    cursor: pointer; font-size: 0.78em; padding: 10px 0 0;
-    width: auto; font-weight: 700; text-align: left;
-    display: inline-flex; align-items: center; gap: 6px;
-    transition: color 0.15s;
-  }
-  .comp-sub-toggle:hover { text-decoration: underline; background: none; color: var(--accent); }
   .comp-sub-lista {
-    margin-top: 10px; padding-left: 12px;
-    border-left: 2px solid var(--border);
-    display: none; flex-direction: column; gap: 12px;
+    display: flex; flex-direction: column; gap: 12px;
   }
-  .comp-sub-lista.aberto { display: flex; }
   .comp-sub-item {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: 10px; padding: 10px 12px;
@@ -3199,6 +3183,7 @@
   let undoState = null;
   let toastTimeout = null;
   let ultimoLancamentoSessao = null;
+  let abaAtual = 'inicio';
 
   function acharCategoria(nome) { return categorias.find(c => c.nome === nome); }
   function acharCartao(nome) { return cartoes.find(c => c.nome === nome); }
@@ -3269,19 +3254,28 @@
   }
 
   /* ============================================================
-     NAVEGAÇÃO ENTRE ABAS
+     NAVEGAÇÃO
      ============================================================ */
   function trocarAba(nome) {
     document.querySelectorAll('.bottom-nav button').forEach(b => b.classList.remove('ativa'));
     document.querySelectorAll('.painel').forEach(p => p.classList.remove('ativo'));
-    document.querySelector(`.bottom-nav button[data-aba="${nome}"]`).classList.add('ativa');
-    document.getElementById('painel-' + nome).classList.add('ativo');
+
+    const btnNav = document.querySelector(`.bottom-nav button[data-aba="${nome}"]`);
+    const painel = document.getElementById('painel-' + nome);
+    if (painel) painel.classList.add('ativo');
+    if (btnNav) btnNav.classList.add('ativa');
 
     atualizarFab(nome);
 
     if (nome === 'inicio') renderizarInicio();
     if (nome === 'agenda') renderizarAgenda();
     if (nome === 'lancamentos') renderizarLancamentos();
+    if (nome === 'lancar') {
+      setTimeout(() => {
+        const v = document.getElementById('valor');
+        if (v) v.focus();
+      }, 200);
+    }
     if (nome === 'analise') {
       const subAtiva = document.querySelector('#analiseSubAbas .sub-aba.ativa');
       const sub = subAtiva ? subAtiva.dataset.subAna : 'resumo';
@@ -3289,7 +3283,7 @@
       if (sub === 'comparativo') renderizarComparativo();
       if (sub === 'faturas') {
         const inp = document.getElementById('mesFatura');
-        if (!inp.value || !inp.dataset.tocado) inp.value = mesFaturaPadrao();
+        if (inp && (!inp.value || !inp.dataset.tocado)) inp.value = mesFaturaPadrao();
         renderizarFaturas();
       }
     }
@@ -3302,24 +3296,25 @@
 
   function trocarSubAbaAnalise(sub) {
     document.querySelectorAll('#analiseSubAbas .sub-aba').forEach(b => b.classList.toggle('ativa', b.dataset.subAna === sub));
-    document.querySelectorAll('#painel-analise .sub-painel').forEach(p => p.classList.remove('ativo'));
-    document.getElementById('sub-ana-' + sub).classList.add('ativo');
+    document.querySelectorAll('#painel-analise > .sub-painel').forEach(p => p.classList.remove('ativo'));
+    const alvo = document.getElementById('sub-ana-' + sub);
+    if (alvo) alvo.classList.add('ativo');
 
     if (sub === 'resumo') renderizar();
     if (sub === 'comparativo') renderizarComparativo();
     if (sub === 'faturas') {
       const inp = document.getElementById('mesFatura');
-      if (!inp.value || !inp.dataset.tocado) inp.value = mesFaturaPadrao();
+      if (inp && (!inp.value || !inp.dataset.tocado)) inp.value = mesFaturaPadrao();
       renderizarFaturas();
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function trocarSubAba(nome) {
-    document.querySelectorAll('#ajustesSubAbas .sub-aba').forEach(b => b.classList.remove('ativa'));
+    document.querySelectorAll('#ajustesSubAbas .sub-aba').forEach(b => b.classList.toggle('ativa', b.dataset.sub === nome));
     document.querySelectorAll('#painel-ajustes > .sub-painel').forEach(p => p.classList.remove('ativo'));
-    document.querySelector(`#ajustesSubAbas .sub-aba[data-sub="${nome}"]`).classList.add('ativa');
-    document.getElementById('sub-' + nome).classList.add('ativo');
+    const alvo = document.getElementById('sub-' + nome);
+    if (alvo) alvo.classList.add('ativo');
     if (nome === 'pessoas') renderizarPessoas();
     if (nome === 'veiculos') renderizarVeiculos();
     if (typeof atualizarStatusNotificacaoUI === 'function') atualizarStatusNotificacaoUI();
@@ -3328,13 +3323,12 @@
   /* ============================================================
      FAB CONTEXTUAL
      ============================================================ */
-  let abaAtual = 'inicio';
   function atualizarFab(nome) {
     abaAtual = nome;
     const fab = document.getElementById('fabNovo');
     if (!fab) return;
 
-    if (nome === 'inicio') {
+    if (nome === 'lancar') {
       fab.classList.remove('visivel', 'agenda');
       return;
     }
@@ -3362,7 +3356,10 @@
 
   function fabNovoGasto() {
     trocarAba('lancar');
-    setTimeout(() => document.getElementById('valor').focus(), 250);
+    setTimeout(() => {
+      const v = document.getElementById('valor');
+      if (v) v.focus();
+    }, 250);
   }
   function atalhoNovoGasto() { fabNovoGasto(); }
   function atalhoNovoCompromisso() {
@@ -3375,6 +3372,7 @@
      ============================================================ */
   function lerValorCentavos() {
     const el = document.getElementById('valor');
+    if (!el) return 0;
     const raw = el.dataset.centavos || '0';
     return parseInt(raw, 10) || 0;
   }
@@ -3404,6 +3402,7 @@
   function setValorNumerico(reais) {
     const centavos = Math.max(0, Math.round((reais || 0) * 100));
     const v = document.getElementById('valor');
+    if (!v) return;
     v.dataset.centavos = String(centavos);
     v.value = escreverValorCentavos(centavos);
   }
@@ -3508,7 +3507,9 @@
   let sugestaoSelecionadaIdx = -1;
   let sugestoesAtuais = [];
   function mostrarSugestoes() {
-    const termo = document.getElementById('descricao').value.trim();
+    const el = document.getElementById('descricao');
+    if (!el) return;
+    const termo = el.value.trim();
     const box = document.getElementById('sugestoesBox');
     if (termo.length < 1) { box.classList.remove('visivel'); sugestoesAtuais = []; return; }
     const lista = buscarSugestoes(termo);
@@ -3534,7 +3535,11 @@
     if (idx >= 0) return escaparHTML(nome.substring(0, idx)) + '<em>' + escaparHTML(nome.substring(idx, idx + t.length)) + '</em>' + escaparHTML(nome.substring(idx + t.length));
     return escaparHTML(nome);
   }
-  function fecharSugestoes() { document.getElementById('sugestoesBox').classList.remove('visivel'); sugestaoSelecionadaIdx = -1; }
+  function fecharSugestoes() {
+    const box = document.getElementById('sugestoesBox');
+    if (box) box.classList.remove('visivel');
+    sugestaoSelecionadaIdx = -1;
+  }
   function navegarSugestoes(event) {
     const box = document.getElementById('sugestoesBox');
     if (!box.classList.contains('visivel')) return;
@@ -3591,8 +3596,10 @@
     wrap.style.display = 'none';
   }
   function esconderBadgeCategoriaAuto() {
-    document.getElementById('badgeCategoriaAuto').style.display = 'none';
-    document.getElementById('categoriaSelectWrap').style.display = 'block';
+    const badge = document.getElementById('badgeCategoriaAuto');
+    const wrap = document.getElementById('categoriaSelectWrap');
+    if (badge) badge.style.display = 'none';
+    if (wrap) wrap.style.display = 'block';
   }
   function trocarParaSelectCategoria() {
     badgeCategoriaForcada = true;
@@ -3959,7 +3966,7 @@
   function trocarVisaoAgenda(v) {
     visaoAgenda = v;
     document.querySelectorAll('.agenda-visao-chips button').forEach(b => b.classList.toggle('ativa', b.dataset.visao === v));
-    document.querySelectorAll('#painel-agenda .sub-painel').forEach(p => p.classList.toggle('ativo', p.id === 'visao-' + v));
+    document.querySelectorAll('#painel-agenda > .sub-painel').forEach(p => p.classList.toggle('ativo', p.id === 'visao-' + v));
     renderizarAgenda();
   }
   function irParaHoje() { semanaOffset = 0; renderizarAgenda(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
@@ -4019,8 +4026,8 @@
     evs.forEach(e => { if (!porDia[e.data]) porDia[e.data] = []; porDia[e.data].push(e); });
     if (Object.keys(porDia).length === 0) {
       const msg = filtroPessoaAgenda
-        ? `Nenhum compromisso para <strong>${escaparHTML(filtroPessoaAgenda)}</strong>.<br><br>Toque em "+ Novo compromisso" ou troque o filtro.`
-        : 'Nenhum compromisso agendado.<br><br>Toque em "+ Novo compromisso" para criar.';
+        ? `Nenhum compromisso para <strong>${escaparHTML(filtroPessoaAgenda)}</strong>.<br><br>Toque no botão flutuante "+" ou troque o filtro.`
+        : 'Nenhum compromisso agendado.<br><br>Toque no botão flutuante "+" para criar.';
       wrap.innerHTML = `<div class="vazio">${msg}</div>`;
       return;
     }
@@ -4768,6 +4775,7 @@
 
   function popularSelectCartoes() {
     const sel = document.getElementById('cartaoSelecionado');
+    if (!sel) return;
     if (cartoes.length === 0) { sel.innerHTML = '<option value="">⚠️ Cadastre um cartão em Ajustes</option>'; return; }
     const a = sel.value;
     sel.innerHTML = cartoes.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
@@ -4867,9 +4875,9 @@
 
     const partes = [];
     partes.push(escaparHTML(g.usuario));
-    partes.push(`<span class="ul-valor">${re ? '-' : ''}${formatarMoeda(g.valor)}</span>`);
+    partes.push(`<strong>${re ? '-' : ''}${formatarMoeda(g.valor)}</strong>`);
     if (parc) partes.push(parc);
-    partes.push(`<span class="ul-tag" style="border-color:${cor}33; background:${cor}15; color:${cor};">${escaparHTML(g.categoria)}</span>`);
+    partes.push(`<span class="ul-tag" style="border-color:${cor}44; background:${cor}18; color:${cor};">${escaparHTML(g.categoria)}</span>`);
 
     wrap.innerHTML = `
       <span class="ul-icone">${re ? '↩️' : '🕐'}</span>
@@ -4936,7 +4944,6 @@
       lancamentos.forEach(l => { const r = colecaoGastos().doc(); batch.set(r, l); refs.push(r); });
       await batch.commit();
 
-      // Atualiza o "último lançamento da sessão" para o rodapé
       const primeiroLanc = { ...lancamentos[0], id: refs[0].id };
       ultimoLancamentoSessao = primeiroLanc;
       renderizarUltimoLancamentoRodape();
@@ -5143,7 +5150,7 @@
     const st = sub ? `<span class="tag-sub">${escaparHTML(sub)}</span>` : '';
     const re = ehReembolso(g);
     let vh, pt = '';
-    if (g._parcelado) { pt = `<span class="tag-parcela">${g._numParcelas}x ${formatarMoeda(g._valorParcela)}</span>`; vh = formatarMoeda(g._valorTotal); }
+    if (g._parcelado) { pt = `${g._numParcelas}x ${formatarMoeda(g._valorParcela)}`; vh = formatarMoeda(g._valorTotal); }
     else vh = (re ? '-' : '') + formatarMoeda(g.valor);
     if (re) vh = '-' + formatarMoeda(g._parcelado ? g._valorTotal : g.valor);
     const ct = (g.formaPagamento === 'Cartão Crédito' && g.cartao) ? `<span class="tag-fatura">${escaparHTML(g.cartao)}</span>` : '';
@@ -5179,7 +5186,7 @@
           </div>
           <div class="valor-linha">
             <div class="valor-num">${vh}</div>
-            ${g._parcelado ? `<div style="font-size:0.7em; color:var(--text-muted); font-weight:600;">${pt.replace(/<[^>]+>/g, '')}</div>` : ''}
+            ${g._parcelado ? `<div style="font-size:0.7em; color:var(--text-muted); font-weight:600;">${pt}</div>` : ''}
           </div>
         </div>
       </div>`;
@@ -5787,7 +5794,6 @@
     return v.toFixed(0);
   }
 
-  /* ---- Barras duplas Diego/Eliane (reaproveitadas no detalhe expandido) ---- */
   function htmlBarrasComp(titulo, a, b, rotA, rotB) {
     const ti = escaparHTML(JSON.stringify({titulo, atual: a, anterior: b, rotuloAtual: rotA, rotuloAnterior: rotB, totalAtual: a.total, totalAnterior: b.total}));
     const tiB = escaparHTML(JSON.stringify({titulo, atual: b, anterior: a, rotuloAtual: rotB, rotuloAnterior: rotA, totalAtual: b.total, totalAnterior: a.total, invertido: true}));
@@ -5864,7 +5870,6 @@
     }
     wr.innerHTML = rh;
 
-    /* ====== NÍVEL: CATEGORIA (colapsável) ====== */
     if (compNivel === 'categoria') {
       const mAtG = agruparPorCatComp(lAt);
       const mAnG = agruparPorCatComp(lAn);
@@ -5887,10 +5892,10 @@
         if (p === null) pctTxt = d !== 0 ? `${d > 0 ? '+' : ''}${formatarMoeda(d)}` : '—';
         else pctTxt = `${seta} ${d > 0 ? '+' : ''}${p.toFixed(0)}%`;
 
-        // Subcategorias (só renderiza no detalhe expandido)
-        let sh = '';
+        let detalheHTML = '';
         if (ab) {
           const todasS = new Set([...Object.keys(a.subs || {}), ...Object.keys(b.subs || {})]);
+          let sh = '';
           if (todasS.size > 0) {
             const so = [...todasS].sort((x, y) => ((a.subs[x]?.total||0)+(b.subs[x]?.total||0)) < ((a.subs[y]?.total||0)+(b.subs[y]?.total||0)) ? 1 : -1);
             const shi = so.map(sb => {
@@ -5906,17 +5911,16 @@
                 ${htmlBarrasComp(c + ' → ' + sb, sa, ssb, nomeMesLongo(ma), per.rotulo)}
               </div>`;
             }).join('');
-            sh = `<div class="comp-sub-lista aberto" style="margin-top:12px; padding-left:0; border-left:none;">${shi}</div>`;
+            sh = `<div class="comp-sub-lista" style="margin-top:12px; padding-left:0; border-left:none;">${shi}</div>`;
           } else {
             sh = `<div style="font-size:0.82em; color:var(--text-3); font-style:italic; padding:6px 0;">Sem subcategorias</div>`;
           }
+          detalheHTML = `
+            <div class="comp-item" style="margin:0; background:var(--surface); border:1px solid var(--border); border-radius:10px;">
+              ${htmlBarrasComp(c, a, b, nomeMesLongo(ma), per.rotulo)}
+              ${sh}
+            </div>`;
         }
-
-        const detalheHTML = ab ? `
-          <div class="comp-item" style="margin:0; background:var(--surface); border:1px solid var(--border); border-radius:10px;">
-            ${htmlBarrasComp(c, a, b, nomeMesLongo(ma), per.rotulo)}
-            ${sh}
-          </div>` : '';
 
         return `
           <div class="comp-cat-colapsavel ${ab ? 'aberto' : ''}">
@@ -5933,7 +5937,6 @@
           </div>`;
       }).join('');
     } else {
-      /* ====== NÍVEL: SUBCATEGORIA (colapsável também) ====== */
       const mAtG = agruparPorSubComp(lAt);
       const mAnG = agruparPorSubComp(lAn);
       const chaves = new Set([...Object.keys(mAtG), ...Object.keys(mAnG)]);
@@ -6744,12 +6747,10 @@
     if (window.location.hash === '#lancar') {
       setTimeout(() => {
         trocarAba('lancar');
-        setTimeout(() => document.getElementById('valor').focus(), 300);
       }, 400);
     }
     window.addEventListener('scroll', esconderTooltip, { passive: true });
 
-    // Inicializa FAB
     atualizarFab('inicio');
 
     iniciarFirebase();
