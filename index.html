@@ -49,7 +49,7 @@
     background: var(--bg);
     color: var(--text);
     padding: 14px;
-    padding-bottom: 110px;
+    padding-bottom: 130px;
     min-height: 100vh;
     font-size: 15px;
     line-height: 1.5;
@@ -128,14 +128,74 @@
   .painel.ativo { display: block; animation: fadeIn 0.25s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* ====== BOTTOM NAV ====== */
-  .bottom-nav {
+  /* ====== MENU INFERIOR (2 linhas) ====== */
+  .bottom-nav-wrap {
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
     bottom: calc(12px + env(safe-area-inset-bottom));
-    width: auto;
-    max-width: calc(100% - 20px);
+    width: calc(100% - 20px);
+    max-width: 760px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 100;
+    pointer-events: none;
+  }
+  .sub-nav-contextual {
+    display: none;
+    gap: 4px;
+    padding: 6px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: 18px;
+    box-shadow:
+      0 4px 6px -2px rgba(15, 23, 42, 0.08),
+      0 14px 34px -12px rgba(15, 23, 42, 0.22);
+    pointer-events: auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sub-nav-contextual::-webkit-scrollbar { display: none; }
+  .sub-nav-contextual.visivel { display: flex; }
+  .sub-nav-contextual button {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 10px 8px;
+    background: transparent;
+    color: var(--text-3);
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.78em;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.15s;
+    text-align: center;
+    letter-spacing: -0.01em;
+  }
+  .sub-nav-contextual button:hover { color: var(--text-2); background: rgba(15, 23, 42, 0.04); }
+  .sub-nav-contextual button.ativa {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 10px rgba(30,64,175,0.25);
+  }
+  .sub-nav-contextual.ajustes button.ativa {
+    background: var(--accent);
+    box-shadow: 0 4px 10px rgba(79,70,229,0.25);
+  }
+  /* Ajustes tem 5 itens — deixa rolar horizontalmente */
+  .sub-nav-contextual.ajustes button {
+    flex: 0 0 auto;
+    padding: 10px 14px;
+  }
+
+  .bottom-nav {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -149,13 +209,11 @@
     box-shadow:
       0 4px 6px -2px rgba(15, 23, 42, 0.08),
       0 14px 34px -12px rgba(15, 23, 42, 0.22);
-    z-index: 100;
+    pointer-events: auto;
     overflow: hidden;
-    transition: box-shadow 0.2s ease;
   }
   .bottom-nav button {
-    flex: 0 0 auto;
-    width: 46px;
+    flex: 1 1 0;
     height: 46px;
     padding: 0;
     background: transparent;
@@ -205,7 +263,7 @@
   /* ====== FAB ====== */
   .fab {
     position: fixed;
-    bottom: calc(84px + env(safe-area-inset-bottom));
+    bottom: calc(78px + env(safe-area-inset-bottom));
     right: 20px;
     width: 56px;
     height: 56px;
@@ -223,7 +281,7 @@
       0 6px 16px -4px rgba(30, 64, 175, 0.45),
       0 12px 28px -8px rgba(30, 64, 175, 0.35);
     z-index: 99;
-    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.25s ease;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.25s ease, bottom 0.2s ease;
     padding: 0;
     line-height: 1;
   }
@@ -235,6 +293,9 @@
     box-shadow:
       0 6px 16px -4px rgba(99, 102, 241, 0.5),
       0 12px 28px -8px rgba(99, 102, 241, 0.4);
+  }
+  .fab.sub-nav-visivel {
+    bottom: calc(136px + env(safe-area-inset-bottom));
   }
 
   /* ====== TOAST ====== */
@@ -558,7 +619,6 @@
     background: transparent;
   }
 
-  /* ====== ÚLTIMO LANÇAMENTO (rodapé lançar) ====== */
   .ultimo-lanc-rodape {
     display: flex;
     align-items: center;
@@ -605,7 +665,6 @@
     color: var(--text-2);
   }
 
-  /* ====== SUGESTÕES ====== */
   .sugestoes-box {
     position: absolute; top: 100%; left: 0; right: 0;
     background: var(--surface);
@@ -1114,32 +1173,9 @@
   .veiculo-view .btn-excluir-veiculo { color: var(--danger); }
   .veiculo-view .btn-excluir-veiculo:hover { background: var(--danger-soft); border-color: #fecaca; }
 
-  /* ====== SUB-ABAS ====== */
-  .sub-abas {
-    display: flex; gap: 4px;
-    background: var(--surface-3); padding: 4px;
-    border-radius: 12px; margin-bottom: 14px;
-    overflow-x: auto; border: 1px solid var(--border);
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .sub-abas::-webkit-scrollbar { display: none; }
-  .sub-aba {
-    flex: 1 0 auto; padding: 10px 14px;
-    background: transparent; color: var(--text-3);
-    border: none; border-radius: 9px;
-    font-weight: 600; font-size: 0.8em; cursor: pointer; white-space: nowrap;
-    transition: all 0.15s;
-  }
-  .sub-aba.ativa { background: var(--surface); color: var(--text); box-shadow: var(--shadow-xs); }
-
-  /* Sub-painéis com escopo restrito para não colidir */
-  #painel-analise > .sub-painel,
-  #painel-ajustes > .sub-painel,
-  #painel-agenda > .sub-painel { display: none; }
-  #painel-analise > .sub-painel.ativo,
-  #painel-ajustes > .sub-painel.ativo,
-  #painel-agenda > .sub-painel.ativo { display: block; }
+  /* Sub-painéis escondidos por padrão */
+  .sub-painel { display: none; }
+  .sub-painel.ativo { display: block; }
 
   .cat-accordion {
     border: 1px solid var(--border); border-radius: 12px;
@@ -1781,7 +1817,6 @@
 
   .comp-lista { display: flex; flex-direction: column; gap: 8px; }
 
-  /* ====== CATEGORIA COLAPSÁVEL DO COMPARATIVO ====== */
   .comp-cat-colapsavel {
     background: var(--surface-2);
     border: 1px solid var(--border);
@@ -1964,19 +1999,34 @@
   }
 
   @media (min-width: 800px) {
-    .bottom-nav {
-      position: sticky; left: auto; transform: none;
+    .bottom-nav-wrap {
+      position: sticky;
+      left: auto; transform: none;
       bottom: auto; top: 0;
       width: 100%; max-width: 100%;
-      margin-bottom: 16px; padding: 8px;
-      border-radius: 16px;
+      margin-bottom: 16px;
+      pointer-events: auto;
+    }
+    .sub-nav-contextual {
+      border-radius: 14px;
+      margin-bottom: 0;
+      background: rgba(255,255,255,0.95);
+      box-shadow: var(--shadow-xs);
+      border: 1px solid var(--border);
+    }
+    .bottom-nav {
+      position: static;
+      width: 100%;
+      max-width: 100%;
+      padding: 8px;
+      border-radius: 14px;
       background: rgba(255, 255, 255, 0.9);
       box-shadow: var(--shadow-xs);
       border: 1px solid var(--border);
       gap: 6px;
     }
     .bottom-nav button {
-      flex: 1 1 0; width: auto; height: 46px; border-radius: 12px;
+      flex: 1 1 0; height: 46px; border-radius: 12px;
     }
     .bottom-nav button .icone { font-size: 1.35em; }
     .bottom-nav button.ativa::after { display: none; }
@@ -1993,6 +2043,7 @@
     .comp-controles { flex-direction: row; align-items: center; flex-wrap: wrap; }
     .comp-resumo-periodo { grid-template-columns: repeat(4, 1fr); }
     .fab { bottom: 24px; right: 24px; }
+    .fab.sub-nav-visivel { bottom: 82px; }
     .toast { bottom: 24px; }
   }
 </style>
@@ -2044,11 +2095,11 @@
         <span class="icone-at">📅</span>
         <span>Agenda</span>
       </button>
-      <button onclick="trocarAba('analise'); trocarSubAbaAnalise('comparativo')">
+      <button onclick="irParaAnalise('comparativo')">
         <span class="icone-at">📈</span>
         <span>Comparar</span>
       </button>
-      <button onclick="trocarAba('analise'); trocarSubAbaAnalise('faturas')">
+      <button onclick="irParaAnalise('faturas')">
         <span class="icone-at">💳</span>
         <span>Faturas</span>
       </button>
@@ -2075,7 +2126,6 @@
     <div class="card">
       <h2 id="tituloNovoGasto">➕ Novo Gasto</h2>
 
-      <!-- 1. QUEM -->
       <div class="secao">
         <div class="secao-titulo"><span class="num">1</span> Quem gastou</div>
         <div class="quem-grid" id="grupoUsuario">
@@ -2091,7 +2141,6 @@
         <input type="hidden" id="usuario" value="Diego">
       </div>
 
-      <!-- 2. QUANTO -->
       <div class="secao">
         <div class="secao-titulo"><span class="num">2</span> Quanto</div>
         <div class="campo valor-destaque" id="valorDestaqueBox" style="margin-bottom:0;">
@@ -2099,7 +2148,6 @@
         </div>
       </div>
 
-      <!-- 3. ONDE -->
       <div class="secao">
         <div class="secao-titulo"><span class="num">3</span> Onde foi</div>
         <div class="campo">
@@ -2113,7 +2161,6 @@
         </div>
       </div>
 
-      <!-- 4. COMO PAGOU -->
       <div class="secao" id="secaoPagamento">
         <div class="secao-titulo"><span class="num">4</span> Como pagou</div>
         <div class="pag-grid" id="grupoPagamento">
@@ -2137,7 +2184,6 @@
         <input type="hidden" id="formaPagamento" value="Dinheiro/PIX">
       </div>
 
-      <!-- 5. CATEGORIA -->
       <div class="secao" id="secaoCategoria">
         <div class="secao-titulo"><span class="num">5</span> Categoria</div>
         <div class="badge-cat-auto" id="badgeCategoriaAuto" style="display:none;">
@@ -2155,7 +2201,6 @@
         </div>
       </div>
 
-      <!-- 6. QUANDO -->
       <div class="secao" id="secaoQuando">
         <div class="secao-titulo"><span class="num">6</span> <span id="tituloQuando">Quando</span></div>
 
@@ -2194,7 +2239,6 @@
         </div>
       </div>
 
-      <!-- DETALHES -->
       <div class="campo-inline">
         <span class="campo-icone">📝</span>
         <input type="text" id="observacao" placeholder="Detalhes — opcional (ex: presente pra Vó)" autocomplete="off">
@@ -2217,7 +2261,6 @@
       <input type="hidden" id="tipoLancamento" value="gasto">
     </div>
 
-    <!-- ÚLTIMO LANÇAMENTO (discreto) -->
     <div class="card" id="cardUltimoLanc" style="display:none; padding: 12px 18px;">
       <div class="ultimo-lanc-rodape" id="ultimoLancRodape" onclick="abrirDetalhesGastoUltimo()"></div>
     </div>
@@ -2307,11 +2350,6 @@
 
   <!-- ANÁLISE -->
   <div class="painel" id="painel-analise">
-    <div class="sub-abas" id="analiseSubAbas">
-      <button class="sub-aba ativa" data-sub-ana="resumo" onclick="trocarSubAbaAnalise('resumo')">📊 Resumo</button>
-      <button class="sub-aba" data-sub-ana="comparativo" onclick="trocarSubAbaAnalise('comparativo')">📈 Comparativo</button>
-      <button class="sub-aba" data-sub-ana="faturas" onclick="trocarSubAbaAnalise('faturas')">💳 Faturas</button>
-    </div>
 
     <!-- SUB: RESUMO -->
     <div class="sub-painel ativo" id="sub-ana-resumo">
@@ -2577,14 +2615,6 @@
 
   <!-- AJUSTES -->
   <div class="painel" id="painel-ajustes">
-    <div class="sub-abas" id="ajustesSubAbas">
-      <button class="sub-aba ativa" data-sub="cartoes" onclick="trocarSubAba('cartoes')">💳 Cartões</button>
-      <button class="sub-aba" data-sub="categorias" onclick="trocarSubAba('categorias')">📂 Categorias</button>
-      <button class="sub-aba" data-sub="pessoas" onclick="trocarSubAba('pessoas')">👥 Pessoas</button>
-      <button class="sub-aba" data-sub="veiculos" onclick="trocarSubAba('veiculos')">🚗 Veículos</button>
-      <button class="sub-aba" data-sub="lembretes" onclick="trocarSubAba('lembretes')">🔔 Lembretes</button>
-    </div>
-
     <div class="sub-painel ativo" id="sub-cartoes">
       <div class="card">
         <h2>💳 Meus Cartões</h2>
@@ -3074,23 +3104,27 @@
 
 <div class="bar-tooltip" id="barTooltip"></div>
 
-<nav class="bottom-nav">
-  <button class="ativa" data-aba="inicio" onclick="trocarAba('inicio')" title="Início">
-    <span class="icone">🏠</span>
-  </button>
-  <button data-aba="lancamentos" onclick="trocarAba('lancamentos')" title="Lançamentos">
-    <span class="icone">📋</span>
-  </button>
-  <button data-aba="analise" onclick="trocarAba('analise')" title="Análise">
-    <span class="icone">📊</span>
-  </button>
-  <button data-aba="agenda" onclick="trocarAba('agenda')" title="Agenda">
-    <span class="icone">📅</span>
-  </button>
-  <button data-aba="ajustes" onclick="trocarAba('ajustes')" title="Ajustes">
-    <span class="icone">⚙️</span>
-  </button>
-</nav>
+<!-- ============ MENU INFERIOR (2 LINHAS) ============ -->
+<div class="bottom-nav-wrap">
+  <div class="sub-nav-contextual" id="subNavContextual"></div>
+  <nav class="bottom-nav">
+    <button class="ativa" data-aba="inicio" onclick="trocarAba('inicio')" title="Início">
+      <span class="icone">🏠</span>
+    </button>
+    <button data-aba="lancamentos" onclick="trocarAba('lancamentos')" title="Lançamentos">
+      <span class="icone">📋</span>
+    </button>
+    <button data-aba="analise" onclick="trocarAba('analise')" title="Análise">
+      <span class="icone">📊</span>
+    </button>
+    <button data-aba="agenda" onclick="trocarAba('agenda')" title="Agenda">
+      <span class="icone">📅</span>
+    </button>
+    <button data-aba="ajustes" onclick="trocarAba('ajustes')" title="Ajustes">
+      <span class="icone">⚙️</span>
+    </button>
+  </nav>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -3184,6 +3218,8 @@
   let toastTimeout = null;
   let ultimoLancamentoSessao = null;
   let abaAtual = 'inicio';
+  let subAbaAnaliseAtual = 'resumo';
+  let subAbaAjustesAtual = 'cartoes';
 
   function acharCategoria(nome) { return categorias.find(c => c.nome === nome); }
   function acharCartao(nome) { return cartoes.find(c => c.nome === nome); }
@@ -3265,8 +3301,15 @@
     if (painel) painel.classList.add('ativo');
     if (btnNav) btnNav.classList.add('ativa');
 
+    abaAtual = nome;
+
+    // Atualiza sub-nav contextual
+    atualizarSubNav(nome);
+
+    // Atualiza FAB
     atualizarFab(nome);
 
+    // Renderiza conteúdo
     if (nome === 'inicio') renderizarInicio();
     if (nome === 'agenda') renderizarAgenda();
     if (nome === 'lancamentos') renderizarLancamentos();
@@ -3277,47 +3320,69 @@
       }, 200);
     }
     if (nome === 'analise') {
-      const subAtiva = document.querySelector('#analiseSubAbas .sub-aba.ativa');
-      const sub = subAtiva ? subAtiva.dataset.subAna : 'resumo';
-      if (sub === 'resumo') renderizar();
-      if (sub === 'comparativo') renderizarComparativo();
-      if (sub === 'faturas') {
-        const inp = document.getElementById('mesFatura');
-        if (inp && (!inp.value || !inp.dataset.tocado)) inp.value = mesFaturaPadrao();
-        renderizarFaturas();
-      }
+      trocarSubAbaAnalise(subAbaAnaliseAtual);
     }
-    if (nome === 'ajustes' && typeof atualizarStatusNotificacaoUI === 'function') {
-      atualizarStatusNotificacaoUI();
+    if (nome === 'ajustes') {
+      trocarSubAbaAjustes(subAbaAjustesAtual);
+      if (typeof atualizarStatusNotificacaoUI === 'function') atualizarStatusNotificacaoUI();
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function trocarSubAbaAnalise(sub) {
-    document.querySelectorAll('#analiseSubAbas .sub-aba').forEach(b => b.classList.toggle('ativa', b.dataset.subAna === sub));
-    document.querySelectorAll('#painel-analise > .sub-painel').forEach(p => p.classList.remove('ativo'));
-    const alvo = document.getElementById('sub-ana-' + sub);
-    if (alvo) alvo.classList.add('ativo');
-
-    if (sub === 'resumo') renderizar();
-    if (sub === 'comparativo') renderizarComparativo();
-    if (sub === 'faturas') {
-      const inp = document.getElementById('mesFatura');
-      if (inp && (!inp.value || !inp.dataset.tocado)) inp.value = mesFaturaPadrao();
-      renderizarFaturas();
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  /* Atalho para ir direto para uma sub-aba da Análise (usado pela Início) */
+  function irParaAnalise(sub) {
+    subAbaAnaliseAtual = sub;
+    trocarAba('analise');
   }
 
-  function trocarSubAba(nome) {
-    document.querySelectorAll('#ajustesSubAbas .sub-aba').forEach(b => b.classList.toggle('ativa', b.dataset.sub === nome));
-    document.querySelectorAll('#painel-ajustes > .sub-painel').forEach(p => p.classList.remove('ativo'));
-    const alvo = document.getElementById('sub-' + nome);
-    if (alvo) alvo.classList.add('ativo');
-    if (nome === 'pessoas') renderizarPessoas();
-    if (nome === 'veiculos') renderizarVeiculos();
-    if (typeof atualizarStatusNotificacaoUI === 'function') atualizarStatusNotificacaoUI();
+  /* ============================================================
+     SUB-NAV CONTEXTUAL (2ª linha do menu inferior)
+     ============================================================ */
+  function atualizarSubNav(nome) {
+    const el = document.getElementById('subNavContextual');
+    if (!el) return;
+
+    // Se não for Análise nem Ajustes, some
+    if (nome !== 'analise' && nome !== 'ajustes') {
+      el.classList.remove('visivel', 'ajustes');
+      el.innerHTML = '';
+      atualizarPosicaoFab();
+      return;
+    }
+
+    if (nome === 'analise') {
+      el.classList.remove('ajustes');
+      el.classList.add('visivel');
+      el.innerHTML = `
+        <button data-sub-ana="resumo" onclick="trocarSubAbaAnalise('resumo')" class="${subAbaAnaliseAtual === 'resumo' ? 'ativa' : ''}">📊 Resumo</button>
+        <button data-sub-ana="comparativo" onclick="trocarSubAbaAnalise('comparativo')" class="${subAbaAnaliseAtual === 'comparativo' ? 'ativa' : ''}">📈 Comparativo</button>
+        <button data-sub-ana="faturas" onclick="trocarSubAbaAnalise('faturas')" class="${subAbaAnaliseAtual === 'faturas' ? 'ativa' : ''}">💳 Faturas</button>
+      `;
+    }
+    if (nome === 'ajustes') {
+      el.classList.add('ajustes');
+      el.classList.add('visivel');
+      el.innerHTML = `
+        <button data-sub-aj="cartoes" onclick="trocarSubAbaAjustes('cartoes')" class="${subAbaAjustesAtual === 'cartoes' ? 'ativa' : ''}">💳 Cartões</button>
+        <button data-sub-aj="categorias" onclick="trocarSubAbaAjustes('categorias')" class="${subAbaAjustesAtual === 'categorias' ? 'ativa' : ''}">📂 Categorias</button>
+        <button data-sub-aj="pessoas" onclick="trocarSubAbaAjustes('pessoas')" class="${subAbaAjustesAtual === 'pessoas' ? 'ativa' : ''}">👥 Pessoas</button>
+        <button data-sub-aj="veiculos" onclick="trocarSubAbaAjustes('veiculos')" class="${subAbaAjustesAtual === 'veiculos' ? 'ativa' : ''}">🚗 Veículos</button>
+        <button data-sub-aj="lembretes" onclick="trocarSubAbaAjustes('lembretes')" class="${subAbaAjustesAtual === 'lembretes' ? 'ativa' : ''}">🔔 Lembretes</button>
+      `;
+    }
+    atualizarPosicaoFab();
+  }
+
+  function atualizarPosicaoFab() {
+    const fab = document.getElementById('fabNovo');
+    const subNav = document.getElementById('subNavContextual');
+    if (!fab) return;
+    if (subNav && subNav.classList.contains('visivel')) {
+      fab.classList.add('sub-nav-visivel');
+    } else {
+      fab.classList.remove('sub-nav-visivel');
+    }
   }
 
   /* ============================================================
@@ -3344,6 +3409,7 @@
       fab.textContent = '+';
       fab.title = 'Novo gasto';
     }
+    atualizarPosicaoFab();
   }
 
   function fabAcaoAtual() {
@@ -3365,6 +3431,59 @@
   function atalhoNovoCompromisso() {
     trocarAba('agenda');
     setTimeout(() => abrirFormEvento(), 250);
+  }
+
+  /* ============================================================
+     SUB-ABAS
+     ============================================================ */
+  function trocarSubAbaAnalise(sub) {
+    subAbaAnaliseAtual = sub;
+
+    // Atualiza botões da sub-nav
+    document.querySelectorAll('#subNavContextual button[data-sub-ana]').forEach(b => {
+      b.classList.toggle('ativa', b.dataset.subAna === sub);
+    });
+
+    // Esconde todos os sub-painéis de Análise
+    ['resumo', 'comparativo', 'faturas'].forEach(s => {
+      const el = document.getElementById('sub-ana-' + s);
+      if (el) el.classList.remove('ativo');
+    });
+
+    // Mostra o alvo
+    const alvo = document.getElementById('sub-ana-' + sub);
+    if (alvo) alvo.classList.add('ativo');
+
+    // Renderiza conteúdo
+    if (sub === 'resumo') renderizar();
+    if (sub === 'comparativo') renderizarComparativo();
+    if (sub === 'faturas') {
+      const inp = document.getElementById('mesFatura');
+      if (inp && (!inp.value || !inp.dataset.tocado)) inp.value = mesFaturaPadrao();
+      renderizarFaturas();
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function trocarSubAbaAjustes(sub) {
+    subAbaAjustesAtual = sub;
+
+    document.querySelectorAll('#subNavContextual button[data-sub-aj]').forEach(b => {
+      b.classList.toggle('ativa', b.dataset.subAj === sub);
+    });
+
+    ['cartoes', 'categorias', 'pessoas', 'veiculos', 'lembretes'].forEach(s => {
+      const el = document.getElementById('sub-' + s);
+      if (el) el.classList.remove('ativo');
+    });
+
+    const alvo = document.getElementById('sub-' + sub);
+    if (alvo) alvo.classList.add('ativo');
+
+    if (sub === 'pessoas') renderizarPessoas();
+    if (sub === 'veiculos') renderizarVeiculos();
+    if (typeof atualizarStatusNotificacaoUI === 'function') atualizarStatusNotificacaoUI();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   /* ============================================================
@@ -6222,9 +6341,9 @@
   }
 
   function irParaFatura(mesISO) {
+    subAbaAnaliseAtual = 'faturas';
     trocarAba('analise');
     setTimeout(() => {
-      trocarSubAbaAnalise('faturas');
       document.getElementById('mesFatura').value = mesISO;
       document.getElementById('mesFatura').dataset.tocado = '1';
       renderizarFaturas();
@@ -6752,6 +6871,7 @@
     window.addEventListener('scroll', esconderTooltip, { passive: true });
 
     atualizarFab('inicio');
+    atualizarSubNav('inicio');
 
     iniciarFirebase();
 
