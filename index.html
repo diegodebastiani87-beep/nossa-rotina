@@ -49,7 +49,7 @@
     background: var(--bg);
     color: var(--text);
     padding: 14px;
-    padding-bottom: 130px;
+    padding-bottom: 170px;
     min-height: 100vh;
     font-size: 15px;
     line-height: 1.5;
@@ -155,14 +155,10 @@
       0 4px 6px -2px rgba(15, 23, 42, 0.08),
       0 14px 34px -12px rgba(15, 23, 42, 0.22);
     pointer-events: auto;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
   }
-  .sub-nav-contextual::-webkit-scrollbar { display: none; }
-  .sub-nav-contextual.visivel { display: flex; }
+  .sub-nav-contextual.visivel { display: flex; flex-wrap: wrap; }
   .sub-nav-contextual button {
-    flex: 1 1 0;
+    flex: 1 1 calc(33.333% - 4px);
     min-width: 0;
     padding: 10px 8px;
     background: transparent;
@@ -185,14 +181,15 @@
     color: white;
     box-shadow: 0 4px 10px rgba(30,64,175,0.25);
   }
+  /* Ajustes: 5 itens quebram em 2 linhas (2 + 2 + 1) */
+  .sub-nav-contextual.ajustes button {
+    flex: 1 1 calc(50% - 2px);
+    padding: 9px 8px;
+    font-size: 0.76em;
+  }
   .sub-nav-contextual.ajustes button.ativa {
     background: var(--accent);
     box-shadow: 0 4px 10px rgba(79,70,229,0.25);
-  }
-  /* Ajustes tem 5 itens — deixa rolar horizontalmente */
-  .sub-nav-contextual.ajustes button {
-    flex: 0 0 auto;
-    padding: 10px 14px;
   }
 
   .bottom-nav {
@@ -295,7 +292,7 @@
       0 12px 28px -8px rgba(99, 102, 241, 0.4);
   }
   .fab.sub-nav-visivel {
-    bottom: calc(136px + env(safe-area-inset-bottom));
+    bottom: calc(150px + env(safe-area-inset-bottom));
   }
 
   /* ====== TOAST ====== */
@@ -1173,7 +1170,6 @@
   .veiculo-view .btn-excluir-veiculo { color: var(--danger); }
   .veiculo-view .btn-excluir-veiculo:hover { background: var(--danger-soft); border-color: #fecaca; }
 
-  /* Sub-painéis escondidos por padrão */
   .sub-painel { display: none; }
   .sub-painel.ativo { display: block; }
 
@@ -2014,6 +2010,16 @@
       box-shadow: var(--shadow-xs);
       border: 1px solid var(--border);
     }
+    .sub-nav-contextual button {
+      flex: 1 1 0;
+      padding: 10px 14px;
+      font-size: 0.82em;
+    }
+    .sub-nav-contextual.ajustes button {
+      flex: 1 1 0;
+      padding: 10px 14px;
+      font-size: 0.82em;
+    }
     .bottom-nav {
       position: static;
       width: 100%;
@@ -2032,7 +2038,7 @@
     .bottom-nav button.ativa::after { display: none; }
     .bottom-nav button.ativa { background: var(--primary); color: white; }
     .bottom-nav button.ativa .icone { filter: none; opacity: 1; transform: none; }
-    body { padding-bottom: 24px; }
+    body { padding-bottom: 140px; }
     .resumo { grid-template-columns: repeat(4, 1fr); }
     .resumo-item.total { grid-column: span 1; }
     .filtros-globais { grid-template-columns: 1fr 1fr 1fr 1fr; }
@@ -2351,7 +2357,6 @@
   <!-- ANÁLISE -->
   <div class="painel" id="painel-analise">
 
-    <!-- SUB: RESUMO -->
     <div class="sub-painel ativo" id="sub-ana-resumo">
       <div class="card">
         <button class="filtros-cabecalho" id="filtrosCabecalho" onclick="toggleFiltros()">
@@ -2452,7 +2457,6 @@
       </div>
     </div>
 
-    <!-- SUB: COMPARATIVO -->
     <div class="sub-painel" id="sub-ana-comparativo">
       <div class="card">
         <button class="filtros-cabecalho" id="compFiltrosCabecalho" onclick="toggleFiltrosComp()">
@@ -2543,7 +2547,6 @@
       </div>
     </div>
 
-    <!-- SUB: FATURAS -->
     <div class="sub-painel" id="sub-ana-faturas">
       <div class="card">
         <h2>📅 Mês de vencimento da fatura</h2>
@@ -3303,13 +3306,9 @@
 
     abaAtual = nome;
 
-    // Atualiza sub-nav contextual
     atualizarSubNav(nome);
-
-    // Atualiza FAB
     atualizarFab(nome);
 
-    // Renderiza conteúdo
     if (nome === 'inicio') renderizarInicio();
     if (nome === 'agenda') renderizarAgenda();
     if (nome === 'lancamentos') renderizarLancamentos();
@@ -3330,20 +3329,18 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  /* Atalho para ir direto para uma sub-aba da Análise (usado pela Início) */
   function irParaAnalise(sub) {
     subAbaAnaliseAtual = sub;
     trocarAba('analise');
   }
 
   /* ============================================================
-     SUB-NAV CONTEXTUAL (2ª linha do menu inferior)
+     SUB-NAV CONTEXTUAL
      ============================================================ */
   function atualizarSubNav(nome) {
     const el = document.getElementById('subNavContextual');
     if (!el) return;
 
-    // Se não for Análise nem Ajustes, some
     if (nome !== 'analise' && nome !== 'ajustes') {
       el.classList.remove('visivel', 'ajustes');
       el.innerHTML = '';
@@ -3439,22 +3436,18 @@
   function trocarSubAbaAnalise(sub) {
     subAbaAnaliseAtual = sub;
 
-    // Atualiza botões da sub-nav
     document.querySelectorAll('#subNavContextual button[data-sub-ana]').forEach(b => {
       b.classList.toggle('ativa', b.dataset.subAna === sub);
     });
 
-    // Esconde todos os sub-painéis de Análise
     ['resumo', 'comparativo', 'faturas'].forEach(s => {
       const el = document.getElementById('sub-ana-' + s);
       if (el) el.classList.remove('ativo');
     });
 
-    // Mostra o alvo
     const alvo = document.getElementById('sub-ana-' + sub);
     if (alvo) alvo.classList.add('ativo');
 
-    // Renderiza conteúdo
     if (sub === 'resumo') renderizar();
     if (sub === 'comparativo') renderizarComparativo();
     if (sub === 'faturas') {
@@ -3531,7 +3524,7 @@
   }
 
   /* ============================================================
-     SELEÇÃO DE USUÁRIO / PAGAMENTO / REEMBOLSO
+     SELEÇÃO
      ============================================================ */
   function selecionarUsuario(nome) {
     document.getElementById('usuario').value = nome;
@@ -3703,7 +3696,7 @@
   }
 
   /* ============================================================
-     BADGE DE CATEGORIA AUTO-DETECTADA
+     BADGE
      ============================================================ */
   function mostrarBadgeCategoriaAuto(cat, sub) {
     if (badgeCategoriaForcada) return;
@@ -4975,7 +4968,7 @@
   }
 
   /* ============================================================
-     ÚLTIMO LANÇAMENTO (rodapé)
+     ÚLTIMO LANÇAMENTO
      ============================================================ */
   function renderizarUltimoLancamentoRodape() {
     const card = document.getElementById('cardUltimoLanc');
