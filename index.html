@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="theme-color" content="#0f172a">
-<title>Nossa Rotina</title>
+<title>Mapa da Casa</title>
 <link rel="manifest" href="manifest.json">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -58,41 +58,68 @@
   }
   .container { max-width: 760px; margin: 0 auto; }
 
+  /* ====== HEADER ====== */
   header {
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     color: white;
-    padding: 22px 24px;
+    padding: 18px 20px;
     border-radius: var(--radius-xl);
     margin-bottom: 16px;
     box-shadow: var(--shadow-md);
-    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    display: flex; align-items: center; gap: 14px;
     position: relative;
     overflow: hidden;
   }
   header::after {
     content: '';
     position: absolute; top: -50%; right: -20%;
-    width: 200px; height: 200px;
-    background: radial-gradient(circle, rgba(79,70,229,0.35), transparent 70%);
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(99,102,241,0.35), transparent 70%);
     border-radius: 50%;
     pointer-events: none;
   }
-  header h1 { font-size: 1.1em; font-weight: 700; margin-bottom: 3px; letter-spacing: -0.02em; position: relative; z-index: 1; }
-  header p { color: rgba(255,255,255,0.65); font-size: 0.78em; position: relative; z-index: 1; font-weight: 500; }
-  .status {
-    display: inline-flex; align-items: center; gap: 7px;
-    background: rgba(255,255,255,0.1);
-    color: rgba(255,255,255,0.9);
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.72em;
-    font-weight: 600;
-    white-space: nowrap;
-    border: 1px solid rgba(255,255,255,0.12);
-    backdrop-filter: blur(8px);
+  .header-badge {
+    width: 44px; height: 44px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4em;
+    box-shadow: 0 4px 12px rgba(99,102,241,0.4), inset 0 1px 0 rgba(255,255,255,0.25);
+    flex-shrink: 0;
     position: relative; z-index: 1;
   }
-  .status .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--warning); animation: pulse 1.5s infinite; }
+  .header-info { flex: 1; min-width: 0; position: relative; z-index: 1; }
+  .header-info h1 {
+    font-size: 0.98em; font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+    background: linear-gradient(135deg, #ffffff, #c7d2fe);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .header-info p {
+    color: rgba(255,255,255,0.62);
+    font-size: 0.72em;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  .status {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.88);
+    padding: 5px 11px;
+    border-radius: 20px;
+    font-size: 0.68em;
+    font-weight: 600;
+    white-space: nowrap;
+    border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(8px);
+    position: relative; z-index: 1;
+    flex-shrink: 0;
+  }
+  .status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--warning); animation: pulse 1.5s infinite; }
   .status.online .dot { background: #10b981; animation: none; box-shadow: 0 0 8px #10b981; }
   .status.offline .dot { background: #ef4444; animation: none; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
@@ -101,6 +128,7 @@
   .painel.ativo { display: block; animation: fadeIn 0.25s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
+  /* ====== BOTTOM NAV ====== */
   .bottom-nav {
     position: fixed;
     left: 50%;
@@ -111,9 +139,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 2px;
-    padding: 7px;
-    background: rgba(255, 255, 255, 0.82);
+    gap: 4px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid rgba(15, 23, 42, 0.06);
@@ -127,27 +155,27 @@
   }
   .bottom-nav button {
     flex: 0 0 auto;
-    width: 40px;
-    height: 40px;
+    width: 46px;
+    height: 46px;
     padding: 0;
     background: transparent;
     border: none;
     color: var(--text-3);
-    font-size: 1.25em;
+    font-size: 1.35em;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: color 0.2s ease, background 0.2s ease, transform 0.15s ease;
     position: relative;
-    border-radius: 13px;
+    border-radius: 14px;
     line-height: 1;
     -webkit-tap-highlight-color: transparent;
   }
   .bottom-nav button .icone {
     line-height: 1;
     filter: grayscale(0.3);
-    opacity: 0.85;
+    opacity: 0.82;
     transition: transform 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
   }
   .bottom-nav button:hover { color: var(--text-2); background: rgba(15, 23, 42, 0.05); }
@@ -164,20 +192,20 @@
   .bottom-nav button.ativa::after {
     content: '';
     position: absolute;
-    bottom: 3px;
+    bottom: 4px;
     left: 50%;
     transform: translateX(-50%);
-    width: 12px;
+    width: 14px;
     height: 3px;
     background: var(--primary);
     border-radius: 3px;
     opacity: 0.9;
   }
-  .bottom-nav button::before { content: none !important; }
 
+  /* ====== FAB ====== */
   .fab {
     position: fixed;
-    bottom: calc(80px + env(safe-area-inset-bottom));
+    bottom: calc(84px + env(safe-area-inset-bottom));
     right: 20px;
     width: 56px;
     height: 56px;
@@ -195,14 +223,21 @@
       0 6px 16px -4px rgba(30, 64, 175, 0.45),
       0 12px 28px -8px rgba(30, 64, 175, 0.35);
     z-index: 99;
-    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.25s ease;
     padding: 0;
     line-height: 1;
   }
   .fab.visivel { display: flex; }
   .fab:hover { transform: scale(1.06); }
   .fab:active { transform: scale(0.94); }
+  .fab.agenda {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    box-shadow:
+      0 6px 16px -4px rgba(99, 102, 241, 0.5),
+      0 12px 28px -8px rgba(99, 102, 241, 0.4);
+  }
 
+  /* ====== TOAST ====== */
   .toast {
     position: fixed;
     left: 50%;
@@ -346,8 +381,6 @@
     border: 1.5px solid var(--border-strong);
   }
   button.secundario:hover { background: var(--surface-3); color: var(--text); border-color: var(--text-muted); }
-  button.perigo { background: var(--danger); padding: 6px 12px; width: auto; font-size: 0.82em; border-radius: 8px; }
-  button.perigo:hover { background: #b91c1c; }
 
   .btn-grande {
     padding: 15px !important;
@@ -360,7 +393,6 @@
   .btn-grande.reembolso { background: var(--success); }
   .btn-grande.reembolso:hover { background: #047857; }
 
-  /* ====== NOVO: campo valor com máscara ====== */
   .valor-destaque input {
     font-size: 1.7em !important;
     font-weight: 700;
@@ -383,7 +415,6 @@
   }
   .valor-destaque.reembolso input:focus { box-shadow: 0 0 0 3px rgba(5,150,105,0.15); }
 
-  /* ====== NOVO: Quem gastou - avatares ====== */
   .quem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .quem-btn {
     display: flex; align-items: center; gap: 10px;
@@ -417,7 +448,6 @@
   .quem-btn[data-user="Diego"] .avatar-quem { background: var(--diego); }
   .quem-btn[data-user="Eliane"] .avatar-quem { background: var(--eliane); }
 
-  /* ====== NOVO: pagamento em 1 linha ====== */
   .pag-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
   .pag-btn {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -439,7 +469,6 @@
     line-height: 1;
   }
 
-  /* ====== NOVO: campo inline com ícone ====== */
   .campo-inline {
     display: flex; align-items: center; gap: 8px;
     border: 1.5px solid var(--border); border-radius: 10px;
@@ -465,7 +494,6 @@
     background: transparent;
   }
 
-  /* ====== NOVO: badge de categoria auto-detectada ====== */
   .badge-cat-auto {
     display: flex; align-items: center; gap: 8px;
     padding: 9px 12px; margin-top: -6px; margin-bottom: 14px;
@@ -484,15 +512,12 @@
   }
   .badge-cat-auto .badge-cat-edit:hover { background: rgba(5,150,105,0.12); }
 
-  /* ====== NOVO: quando (data + parcelas em linha) ====== */
   .quando-linha {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
   }
-  .quando-linha.sem-parcelas { grid-template-columns: 1fr; }
 
-  /* ====== NOVO: preview compacto ====== */
   .preview-compacto {
     margin-top: -4px;
     margin-bottom: 14px;
@@ -517,7 +542,6 @@
   }
   .preview-compacto.reembolso .preview-principal .preview-destaque { color: var(--success); }
 
-  /* ====== NOVO: link reembolso discreto ====== */
   .link-reembolso {
     display: block; width: 100%;
     background: transparent; border: none;
@@ -534,7 +558,54 @@
     background: transparent;
   }
 
-  /* ====== Sugestões (dropdown) ====== */
+  /* ====== ÚLTIMO LANÇAMENTO (rodapé lançar) ====== */
+  .ultimo-lanc-rodape {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 4px 2px;
+    margin-top: 12px;
+    border-top: 1px dashed var(--border);
+    font-size: 0.78em;
+    color: var(--text-3);
+    cursor: pointer;
+    transition: color 0.15s;
+    overflow: hidden;
+  }
+  .ultimo-lanc-rodape:hover { color: var(--text-2); }
+  .ultimo-lanc-rodape .ul-icone {
+    font-size: 1em;
+    flex-shrink: 0;
+    opacity: 0.8;
+  }
+  .ultimo-lanc-rodape .ul-desc {
+    font-weight: 700;
+    color: var(--text-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 40%;
+    flex-shrink: 0;
+  }
+  .ultimo-lanc-rodape .ul-resto {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
+  }
+  .ultimo-lanc-rodape .ul-resto .sep { color: var(--border-strong); margin: 0 3px; }
+  .ultimo-lanc-rodape .ul-tag {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--text-2);
+  }
+
+  /* ====== SUGESTÕES ====== */
   .sugestoes-box {
     position: absolute; top: 100%; left: 0; right: 0;
     background: var(--surface);
@@ -584,7 +655,6 @@
     display: none;
   }
   .parcelas-box.visivel { display: block; }
-  .parcelas-box label { color: var(--text-2); }
   .sub-campo { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
   .sub-campo:first-child { margin-top: 0; padding-top: 0; border-top: none; }
 
@@ -1061,9 +1131,12 @@
     background: var(--surface-3); padding: 4px;
     border-radius: 12px; margin-bottom: 14px;
     overflow-x: auto; border: 1px solid var(--border);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
+  .sub-abas::-webkit-scrollbar { display: none; }
   .sub-aba {
-    flex: 1; padding: 10px 12px;
+    flex: 1 0 auto; padding: 10px 14px;
     background: transparent; color: var(--text-3);
     border: none; border-radius: 9px;
     font-weight: 600; font-size: 0.8em; cursor: pointer; white-space: nowrap;
@@ -1279,6 +1352,7 @@
 
   .lanc-vazio { text-align: center; padding: 44px 20px; color: var(--text-muted); font-size: 0.9em; }
 
+  /* AGENDA */
   .agenda-visao-chips {
     display: flex; gap: 4px; background: var(--surface-3);
     padding: 4px; border-radius: 12px; margin-bottom: 14px;
@@ -1710,9 +1784,72 @@
   .comp-resumo-box.atual .subtitulo .quebra-linha .nome-resp,
   .comp-resumo-box.atual .subtitulo .quebra-linha .valor-resp { color: rgba(255,255,255,0.9); }
 
-  .comp-lista { display: flex; flex-direction: column; gap: 12px; }
+  .comp-lista { display: flex; flex-direction: column; gap: 8px; }
+
+  /* ====== CATEGORIA COLAPSÁVEL DO COMPARATIVO ====== */
+  .comp-cat-colapsavel {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+  .comp-cat-colapsavel.aberto {
+    box-shadow: var(--shadow-xs);
+    border-color: var(--border-strong);
+  }
+  .comp-cat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 14px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    transition: background 0.15s;
+  }
+  .comp-cat-header:hover { background: var(--surface-3); }
+  .comp-cat-header .cor-bolinha {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  }
+  .comp-cat-header .cat-nome {
+    flex: 1; font-weight: 700; font-size: 0.9em; color: var(--text);
+    letter-spacing: -0.01em;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .comp-cat-header .cat-pct {
+    font-size: 0.78em; font-weight: 800;
+    padding: 3px 10px; border-radius: 20px;
+    white-space: nowrap;
+  }
+  .comp-cat-header .cat-pct.positivo { background: var(--danger-soft); color: var(--danger); }
+  .comp-cat-header .cat-pct.negativo { background: var(--success-soft); color: var(--success); }
+  .comp-cat-header .cat-pct.neutro { background: var(--surface-3); color: var(--text-3); }
+  .comp-cat-header .cat-valor {
+    font-size: 0.85em; font-weight: 800; color: var(--text);
+    letter-spacing: -0.01em; white-space: nowrap;
+  }
+  .comp-cat-header .cat-seta {
+    font-size: 0.72em; color: var(--text-muted);
+    transition: transform 0.25s; flex-shrink: 0;
+  }
+  .comp-cat-colapsavel.aberto .comp-cat-header .cat-seta {
+    transform: rotate(90deg);
+  }
+  .comp-cat-corpo {
+    display: none;
+    padding: 0 14px 14px;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+  .comp-cat-colapsavel.aberto .comp-cat-corpo {
+    display: block;
+  }
+
   .comp-item {
-    background: var(--surface-2); border: 1px solid var(--border);
+    background: var(--surface); border: 1px solid var(--border);
     border-radius: 12px; padding: 14px 16px; transition: box-shadow 0.2s;
   }
   .comp-item:hover { box-shadow: var(--shadow-xs); }
@@ -1880,9 +2017,10 @@
 <div class="container">
 
   <header>
-    <div>
-      <h1 id="tituloApp">🏠 Nossa Rotina</h1>
-      <p>Diego &amp; Eliane</p>
+    <div class="header-badge">🧭</div>
+    <div class="header-info">
+      <h1>Mapa da Casa</h1>
+      <p>Finanças e Rotinas da Família</p>
     </div>
     <div class="status" id="statusConexao">
       <span class="dot"></span>
@@ -1922,11 +2060,11 @@
         <span class="icone-at">📅</span>
         <span>Agenda</span>
       </button>
-      <button onclick="trocarAba('comparativo')">
+      <button onclick="trocarAba('analise'); trocarSubAbaAnalise('comparativo')">
         <span class="icone-at">📈</span>
         <span>Comparar</span>
       </button>
-      <button onclick="trocarAba('faturas')">
+      <button onclick="trocarAba('analise'); trocarSubAbaAnalise('faturas')">
         <span class="icone-at">💳</span>
         <span>Faturas</span>
       </button>
@@ -2037,7 +2175,6 @@
       <div class="secao" id="secaoQuando">
         <div class="secao-titulo"><span class="num">6</span> <span id="tituloQuando">Quando</span></div>
 
-        <!-- Cartão de crédito: data compra + parcelas -->
         <div id="blocoCredito" style="display:none;">
           <div class="quando-linha">
             <input type="date" id="dataCompraCredito" onchange="atualizarPreviewParcelas()">
@@ -2066,7 +2203,6 @@
           </div>
         </div>
 
-        <!-- Outros pagamentos: só data -->
         <div id="blocoDataSimples">
           <div class="campo" style="margin-bottom:0;">
             <input type="date" id="data">
@@ -2095,6 +2231,11 @@
       </button>
 
       <input type="hidden" id="tipoLancamento" value="gasto">
+    </div>
+
+    <!-- ÚLTIMO LANÇAMENTO (discreto) -->
+    <div class="card" id="cardUltimoLanc" style="display:none; padding: 12px 18px;">
+      <div class="ultimo-lanc-rodape" id="ultimoLancRodape" onclick="abrirDetalhesGastoUltimo()"></div>
     </div>
   </div>
 
@@ -2182,206 +2323,215 @@
 
   <!-- ANÁLISE -->
   <div class="painel" id="painel-analise">
-    <div class="card">
-      <button class="filtros-cabecalho" id="filtrosCabecalho" onclick="toggleFiltros()">
-        <span class="ftitulo">🔍 Filtros <span class="filtro-ativo" id="badgeFiltroAtivo" style="display:none;">Ativos</span></span>
-        <span class="fseta" id="filtrosSeta">▶</span>
-      </button>
-      <div class="filtros-conteudo" id="filtrosConteudo">
-        <div class="campo" style="margin-bottom:12px;">
-          <label>📅 Mês</label>
-          <div class="mes-selector" style="gap:8px;">
-            <input type="month" id="mesReferencia" onchange="renderizar()">
-            <button class="secundario" onclick="exportarCSV()" style="width:auto; padding:11px 16px; font-size:0.85em;">⬇️ CSV</button>
+    <div class="sub-abas" id="analiseSubAbas">
+      <button class="sub-aba ativa" data-sub-ana="resumo" onclick="trocarSubAbaAnalise('resumo')">📊 Resumo</button>
+      <button class="sub-aba" data-sub-ana="comparativo" onclick="trocarSubAbaAnalise('comparativo')">📈 Comparativo</button>
+      <button class="sub-aba" data-sub-ana="faturas" onclick="trocarSubAbaAnalise('faturas')">💳 Faturas</button>
+    </div>
+
+    <!-- SUB: RESUMO -->
+    <div class="sub-painel ativo" id="sub-ana-resumo">
+      <div class="card">
+        <button class="filtros-cabecalho" id="filtrosCabecalho" onclick="toggleFiltros()">
+          <span class="ftitulo">🔍 Filtros <span class="filtro-ativo" id="badgeFiltroAtivo" style="display:none;">Ativos</span></span>
+          <span class="fseta" id="filtrosSeta">▶</span>
+        </button>
+        <div class="filtros-conteudo" id="filtrosConteudo">
+          <div class="campo" style="margin-bottom:12px;">
+            <label>📅 Mês</label>
+            <div class="mes-selector" style="gap:8px;">
+              <input type="month" id="mesReferencia" onchange="renderizar()">
+              <button class="secundario" onclick="exportarCSV()" style="width:auto; padding:11px 16px; font-size:0.85em;">⬇️ CSV</button>
+            </div>
           </div>
-        </div>
-        <div class="campo" style="margin-bottom:12px;">
-          <label>Filtrar mês por</label>
-          <select id="modoFiltroMes" onchange="renderizar()">
-            <option value="compra" selected>🛒 Mês da compra</option>
-            <option value="fatura">📅 Mês da fatura (vencimento)</option>
-          </select>
-        </div>
-        <div class="filtros-globais">
-          <div class="campo-filtro">
-            <label>Categoria</label>
-            <select id="filtroCategoria" onchange="renderizar()"></select>
-          </div>
-          <div class="campo-filtro">
-            <label>Pessoa</label>
-            <select id="filtroUsuario" onchange="renderizar()">
-              <option value="">Todos</option>
-              <option value="Diego">👨 Diego</option>
-              <option value="Eliane">👩 Eliane</option>
+          <div class="campo" style="margin-bottom:12px;">
+            <label>Filtrar mês por</label>
+            <select id="modoFiltroMes" onchange="renderizar()">
+              <option value="compra" selected>🛒 Mês da compra</option>
+              <option value="fatura">📅 Mês da fatura (vencimento)</option>
             </select>
           </div>
-          <div class="campo-filtro">
-            <label>Pagamento</label>
-            <select id="filtroPagamento" onchange="atualizarFiltroCartao(); renderizar()">
-              <option value="">Todos</option>
-              <option value="Dinheiro/PIX">💵 Dinheiro/PIX</option>
-              <option value="Cartão Crédito">💳 Cartão Crédito</option>
-              <option value="Cartão Débito">🏦 Cartão Débito</option>
-              <option value="Vale Alimentação">🍽️ Vale Alimentação</option>
+          <div class="filtros-globais">
+            <div class="campo-filtro">
+              <label>Categoria</label>
+              <select id="filtroCategoria" onchange="renderizar()"></select>
+            </div>
+            <div class="campo-filtro">
+              <label>Pessoa</label>
+              <select id="filtroUsuario" onchange="renderizar()">
+                <option value="">Todos</option>
+                <option value="Diego">👨 Diego</option>
+                <option value="Eliane">👩 Eliane</option>
+              </select>
+            </div>
+            <div class="campo-filtro">
+              <label>Pagamento</label>
+              <select id="filtroPagamento" onchange="atualizarFiltroCartao(); renderizar()">
+                <option value="">Todos</option>
+                <option value="Dinheiro/PIX">💵 Dinheiro/PIX</option>
+                <option value="Cartão Crédito">💳 Cartão Crédito</option>
+                <option value="Cartão Débito">🏦 Cartão Débito</option>
+                <option value="Vale Alimentação">🍽️ Vale Alimentação</option>
+              </select>
+            </div>
+            <div class="campo-filtro" id="campoFiltroCartao" style="display:none;">
+              <label>Cartão</label>
+              <select id="filtroCartao" onchange="renderizar()">
+                <option value="">Todos</option>
+              </select>
+            </div>
+            <button class="btn-limpar-filtros" id="btnLimparFiltros" onclick="limparFiltros()">
+              🧹 Limpar todos os filtros
+            </button>
+          </div>
+          <div class="resumo-filtros" id="resumoFiltros" style="display:none;"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="com-filtro">
+          📊 Resumo
+          <span class="filtro-ativo" id="badgeResumo" style="display:none;">Filtrado</span>
+        </h2>
+        <div class="resumo">
+          <div class="resumo-item">
+            <div class="label">Diego</div>
+            <div class="valor" id="totalDiego">R$ 0,00</div>
+          </div>
+          <div class="resumo-item">
+            <div class="label">Eliane</div>
+            <div class="valor" id="totalEliane">R$ 0,00</div>
+          </div>
+          <div class="resumo-item">
+            <div class="label">Média Diária</div>
+            <div class="valor" id="mediaDiaria">R$ 0,00</div>
+          </div>
+          <div class="resumo-item total">
+            <div class="label">Total</div>
+            <div class="valor" id="totalGastos">R$ 0,00</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="com-filtro">
+          💳 Por Forma de Pagamento
+          <span class="filtro-ativo" id="badgePagamento" style="display:none;">Filtrado</span>
+        </h2>
+        <div id="porPagamento" class="por-pagamento"></div>
+      </div>
+
+      <div class="card">
+        <h2 class="com-filtro">
+          📈 Por Categoria
+          <span class="filtro-ativo" id="badgeCategoria" style="display:none;">Filtrado</span>
+        </h2>
+        <div id="graficoCategorias"></div>
+      </div>
+    </div>
+
+    <!-- SUB: COMPARATIVO -->
+    <div class="sub-painel" id="sub-ana-comparativo">
+      <div class="card">
+        <button class="filtros-cabecalho" id="compFiltrosCabecalho" onclick="toggleFiltrosComp()">
+          <span class="ftitulo">🔍 Filtros <span class="filtro-ativo" id="badgeFiltroCompAtivo" style="display:none;">Ativos</span></span>
+          <span class="fseta" id="compFiltrosSeta">▶</span>
+        </button>
+        <div class="filtros-conteudo" id="compFiltrosConteudo">
+          <div class="campo" style="margin-bottom:12px;">
+            <label>📅 Mês de referência (atual)</label>
+            <input type="month" id="compMesReferencia" onchange="renderizarComparativo()">
+          </div>
+          <div class="campo" style="margin-bottom:12px;">
+            <label>Filtrar por</label>
+            <select id="compModoFiltro" onchange="renderizarComparativo()">
+              <option value="compra" selected>🛒 Mês da compra</option>
+              <option value="fatura">📅 Mês da fatura (vencimento)</option>
             </select>
           </div>
-          <div class="campo-filtro" id="campoFiltroCartao" style="display:none;">
-            <label>Cartão</label>
-            <select id="filtroCartao" onchange="renderizar()">
-              <option value="">Todos</option>
-            </select>
+          <div class="campo" style="margin-bottom:12px;">
+            <label>Responsável pelo pagamento</label>
+            <div class="filtro-responsavel-chips" id="compFiltroResponsavel">
+              <button type="button" class="ativa" data-resp="" onclick="mudarResponsavelComp('')">👥 Todos</button>
+              <button type="button" data-resp="Diego" onclick="mudarResponsavelComp('Diego')">👨 Diego</button>
+              <button type="button" data-resp="Eliane" onclick="mudarResponsavelComp('Eliane')">👩 Eliane</button>
+            </div>
           </div>
-          <button class="btn-limpar-filtros" id="btnLimparFiltros" onclick="limparFiltros()">
-            🧹 Limpar todos os filtros
-          </button>
-        </div>
-        <div class="resumo-filtros" id="resumoFiltros" style="display:none;"></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2 class="com-filtro">
-        📊 Resumo
-        <span class="filtro-ativo" id="badgeResumo" style="display:none;">Filtrado</span>
-      </h2>
-      <div class="resumo">
-        <div class="resumo-item">
-          <div class="label">Diego</div>
-          <div class="valor" id="totalDiego">R$ 0,00</div>
-        </div>
-        <div class="resumo-item">
-          <div class="label">Eliane</div>
-          <div class="valor" id="totalEliane">R$ 0,00</div>
-        </div>
-        <div class="resumo-item">
-          <div class="label">Média Diária</div>
-          <div class="valor" id="mediaDiaria">R$ 0,00</div>
-        </div>
-        <div class="resumo-item total">
-          <div class="label">Total</div>
-          <div class="valor" id="totalGastos">R$ 0,00</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2 class="com-filtro">
-        💳 Por Forma de Pagamento
-        <span class="filtro-ativo" id="badgePagamento" style="display:none;">Filtrado</span>
-      </h2>
-      <div id="porPagamento" class="por-pagamento"></div>
-    </div>
-
-    <div class="card">
-      <h2 class="com-filtro">
-        📈 Por Categoria
-        <span class="filtro-ativo" id="badgeCategoria" style="display:none;">Filtrado</span>
-      </h2>
-      <div id="graficoCategorias"></div>
-    </div>
-  </div>
-
-  <!-- COMPARATIVO -->
-  <div class="painel" id="painel-comparativo">
-    <div class="card">
-      <button class="filtros-cabecalho" id="compFiltrosCabecalho" onclick="toggleFiltrosComp()">
-        <span class="ftitulo">🔍 Filtros <span class="filtro-ativo" id="badgeFiltroCompAtivo" style="display:none;">Ativos</span></span>
-        <span class="fseta" id="compFiltrosSeta">▶</span>
-      </button>
-      <div class="filtros-conteudo" id="compFiltrosConteudo">
-        <div class="campo" style="margin-bottom:12px;">
-          <label>📅 Mês de referência (atual)</label>
-          <input type="month" id="compMesReferencia" onchange="renderizarComparativo()">
-        </div>
-        <div class="campo" style="margin-bottom:12px;">
-          <label>Filtrar por</label>
-          <select id="compModoFiltro" onchange="renderizarComparativo()">
-            <option value="compra" selected>🛒 Mês da compra</option>
-            <option value="fatura">📅 Mês da fatura (vencimento)</option>
-          </select>
-        </div>
-        <div class="campo" style="margin-bottom:12px;">
-          <label>Responsável pelo pagamento</label>
-          <div class="filtro-responsavel-chips" id="compFiltroResponsavel">
-            <button type="button" class="ativa" data-resp="" onclick="mudarResponsavelComp('')">👥 Todos</button>
-            <button type="button" data-resp="Diego" onclick="mudarResponsavelComp('Diego')">👨 Diego</button>
-            <button type="button" data-resp="Eliane" onclick="mudarResponsavelComp('Eliane')">👩 Eliane</button>
+          <div class="filtros-globais">
+            <div class="campo-filtro">
+              <label>Categoria</label>
+              <select id="compFiltroCategoria" onchange="renderizarComparativo()"></select>
+            </div>
+            <div class="campo-filtro">
+              <label>Pagamento</label>
+              <select id="compFiltroPagamento" onchange="atualizarFiltroCartaoComp(); renderizarComparativo()">
+                <option value="">Todos</option>
+                <option value="Dinheiro/PIX">💵 Dinheiro/PIX</option>
+                <option value="Cartão Crédito">💳 Cartão Crédito</option>
+                <option value="Cartão Débito">🏦 Cartão Débito</option>
+                <option value="Vale Alimentação">🍽️ Vale Alimentação</option>
+              </select>
+            </div>
+            <div class="campo-filtro" id="compCampoFiltroCartao" style="display:none;">
+              <label>Cartão</label>
+              <select id="compFiltroCartao" onchange="renderizarComparativo()">
+                <option value="">Todos</option>
+              </select>
+            </div>
+            <button class="btn-limpar-filtros" id="btnLimparFiltrosComp" onclick="limparFiltrosComp()">
+              🧹 Limpar filtros
+            </button>
           </div>
-        </div>
-        <div class="filtros-globais">
-          <div class="campo-filtro">
-            <label>Categoria</label>
-            <select id="compFiltroCategoria" onchange="renderizarComparativo()"></select>
-          </div>
-          <div class="campo-filtro">
-            <label>Pagamento</label>
-            <select id="compFiltroPagamento" onchange="atualizarFiltroCartaoComp(); renderizarComparativo()">
-              <option value="">Todos</option>
-              <option value="Dinheiro/PIX">💵 Dinheiro/PIX</option>
-              <option value="Cartão Crédito">💳 Cartão Crédito</option>
-              <option value="Cartão Débito">🏦 Cartão Débito</option>
-              <option value="Vale Alimentação">🍽️ Vale Alimentação</option>
-            </select>
-          </div>
-          <div class="campo-filtro" id="compCampoFiltroCartao" style="display:none;">
-            <label>Cartão</label>
-            <select id="compFiltroCartao" onchange="renderizarComparativo()">
-              <option value="">Todos</option>
-            </select>
-          </div>
-          <button class="btn-limpar-filtros" id="btnLimparFiltrosComp" onclick="limparFiltrosComp()">
-            🧹 Limpar filtros
-          </button>
-        </div>
-        <div class="resumo-filtros" id="compResumoFiltros" style="display:none;"></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2 class="com-filtro">
-        📊 Comparativo entre períodos
-        <span class="filtro-ativo" id="badgeComparativo" style="display:none;">Ativo</span>
-      </h2>
-      <div class="comp-controles">
-        <div class="comp-linha">
-          <label>Comparar com:</label>
-          <div class="comp-toggle" id="compPeriodoToggle">
-            <button class="ativo" data-periodo="anterior" onclick="mudarPeriodoComparacao('anterior')">📅 Mês anterior</button>
-            <button data-periodo="3meses" onclick="mudarPeriodoComparacao('3meses')">📆 Últimos 3 meses</button>
-            <button data-periodo="6meses" onclick="mudarPeriodoComparacao('6meses')">📅 Últimos 6 meses</button>
-            <button data-periodo="ano" onclick="mudarPeriodoComparacao('ano')">📅 Este ano</button>
-          </div>
-        </div>
-        <div class="comp-linha">
-          <label>Detalhar por:</label>
-          <div class="comp-toggle" id="compNivelToggle">
-            <button class="ativo" data-nivel="categoria" onclick="mudarNivelComparacao('categoria')">📂 Categoria</button>
-            <button data-nivel="subcategoria" onclick="mudarNivelComparacao('subcategoria')">📁 Subcategoria</button>
-          </div>
+          <div class="resumo-filtros" id="compResumoFiltros" style="display:none;"></div>
         </div>
       </div>
 
-      <div class="comp-legenda">
-        <span class="item"><span class="cor-bolinha" style="background:var(--diego);"></span> Diego</span>
-        <span class="item"><span class="cor-bolinha" style="background:var(--eliane);"></span> Eliane</span>
-        <span class="item" style="color:var(--text-muted);">💡 Toque na barra para ver detalhes</span>
-      </div>
+      <div class="card">
+        <h2 class="com-filtro">
+          📊 Comparativo entre períodos
+          <span class="filtro-ativo" id="badgeComparativo" style="display:none;">Ativo</span>
+        </h2>
+        <div class="comp-controles">
+          <div class="comp-linha">
+            <label>Comparar com:</label>
+            <div class="comp-toggle" id="compPeriodoToggle">
+              <button class="ativo" data-periodo="anterior" onclick="mudarPeriodoComparacao('anterior')">📅 Mês anterior</button>
+              <button data-periodo="3meses" onclick="mudarPeriodoComparacao('3meses')">📆 Últimos 3 meses</button>
+              <button data-periodo="6meses" onclick="mudarPeriodoComparacao('6meses')">📅 Últimos 6 meses</button>
+              <button data-periodo="ano" onclick="mudarPeriodoComparacao('ano')">📅 Este ano</button>
+            </div>
+          </div>
+          <div class="comp-linha">
+            <label>Detalhar por:</label>
+            <div class="comp-toggle" id="compNivelToggle">
+              <button class="ativo" data-nivel="categoria" onclick="mudarNivelComparacao('categoria')">📂 Categoria</button>
+              <button data-nivel="subcategoria" onclick="mudarNivelComparacao('subcategoria')">📁 Subcategoria</button>
+            </div>
+          </div>
+        </div>
 
-      <div id="compResumo" class="comp-resumo-periodo" style="margin-top:14px;"></div>
-      <div id="compLista" class="comp-lista"></div>
-    </div>
-  </div>
+        <div class="comp-legenda">
+          <span class="item"><span class="cor-bolinha" style="background:var(--diego);"></span> Diego</span>
+          <span class="item"><span class="cor-bolinha" style="background:var(--eliane);"></span> Eliane</span>
+          <span class="item" style="color:var(--text-muted);">💡 Toque em uma categoria para expandir</span>
+        </div>
 
-  <!-- FATURAS -->
-  <div class="painel" id="painel-faturas">
-    <div class="card">
-      <h2>📅 Mês de vencimento da fatura</h2>
-      <div class="mes-selector">
-        <input type="month" id="mesFatura" onchange="renderizarFaturas()">
-        <button class="secundario" onclick="irParaMesAtualFatura()">Hoje</button>
+        <div id="compResumo" class="comp-resumo-periodo" style="margin-top:14px;"></div>
+        <div id="compLista" class="comp-lista"></div>
       </div>
     </div>
-    <div id="faturasLista"></div>
+
+    <!-- SUB: FATURAS -->
+    <div class="sub-painel" id="sub-ana-faturas">
+      <div class="card">
+        <h2>📅 Mês de vencimento da fatura</h2>
+        <div class="mes-selector">
+          <input type="month" id="mesFatura" onchange="renderizarFaturas()">
+          <button class="secundario" onclick="irParaMesAtualFatura()">Hoje</button>
+        </div>
+      </div>
+      <div id="faturasLista"></div>
+    </div>
   </div>
 
   <!-- AGENDA -->
@@ -2443,41 +2593,12 @@
 
   <!-- AJUSTES -->
   <div class="painel" id="painel-ajustes">
-    <div class="card" id="cardNotificacoes">
-      <h2>🔔 Lembretes</h2>
-      <p style="color:var(--text-2); font-size:0.85em; margin-bottom:14px; line-height:1.6;">
-        Ative as notificações para receber um aviso <strong>30 minutos antes</strong> de cada compromisso e um <strong>resumo diário às 8h</strong> nos dias úteis.
-      </p>
-      <div id="statusNotificacao" style="
-        background:var(--surface-2);
-        border:1px solid var(--border);
-        border-radius:10px;
-        padding:12px 14px;
-        font-size:0.85em;
-        margin-bottom:12px;
-        display:flex;
-        align-items:center;
-        gap:10px;
-      ">
-        <span id="notifIcone">⚪</span>
-        <span id="notifTexto" style="flex:1;">Verificando status...</span>
-      </div>
-      <button class="btn-grande" id="btnAtivarNotif" onclick="ativarNotificacoes()">
-        🔔 Ativar lembretes
-      </button>
-      <button class="btn-grande secundario" id="btnTestarNotif" onclick="testarNotificacao()" style="margin-top:8px; display:none;">
-        🧪 Enviar notificação de teste
-      </button>
-      <button class="btn-grande secundario" id="btnTestarDiaria" onclick="testarDiaria()" style="margin-top:8px; display:none;">
-        📅 Testar resumo diário
-      </button>
-    </div>
-
-    <div class="sub-abas">
+    <div class="sub-abas" id="ajustesSubAbas">
       <button class="sub-aba ativa" data-sub="cartoes" onclick="trocarSubAba('cartoes')">💳 Cartões</button>
       <button class="sub-aba" data-sub="categorias" onclick="trocarSubAba('categorias')">📂 Categorias</button>
       <button class="sub-aba" data-sub="pessoas" onclick="trocarSubAba('pessoas')">👥 Pessoas</button>
       <button class="sub-aba" data-sub="veiculos" onclick="trocarSubAba('veiculos')">🚗 Veículos</button>
+      <button class="sub-aba" data-sub="lembretes" onclick="trocarSubAba('lembretes')">🔔 Lembretes</button>
     </div>
 
     <div class="sub-painel ativo" id="sub-cartoes">
@@ -2580,6 +2701,38 @@
           </div>
           <button onclick="criarVeiculo()" class="btn-grande" style="margin-top:6px;">+ Adicionar Veículo</button>
         </div>
+      </div>
+    </div>
+
+    <div class="sub-painel" id="sub-lembretes">
+      <div class="card" id="cardNotificacoes">
+        <h2>🔔 Lembretes</h2>
+        <p style="color:var(--text-2); font-size:0.85em; margin-bottom:14px; line-height:1.6;">
+          Ative as notificações para receber um aviso <strong>30 minutos antes</strong> de cada compromisso e um <strong>resumo diário às 8h</strong> nos dias úteis.
+        </p>
+        <div id="statusNotificacao" style="
+          background:var(--surface-2);
+          border:1px solid var(--border);
+          border-radius:10px;
+          padding:12px 14px;
+          font-size:0.85em;
+          margin-bottom:12px;
+          display:flex;
+          align-items:center;
+          gap:10px;
+        ">
+          <span id="notifIcone">⚪</span>
+          <span id="notifTexto" style="flex:1;">Verificando status...</span>
+        </div>
+        <button class="btn-grande" id="btnAtivarNotif" onclick="ativarNotificacoes()">
+          🔔 Ativar lembretes
+        </button>
+        <button class="btn-grande secundario" id="btnTestarNotif" onclick="testarNotificacao()" style="margin-top:8px; display:none;">
+          🧪 Enviar notificação de teste
+        </button>
+        <button class="btn-grande secundario" id="btnTestarDiaria" onclick="testarDiaria()" style="margin-top:8px; display:none;">
+          📅 Testar resumo diário
+        </button>
       </div>
     </div>
   </div>
@@ -2928,7 +3081,7 @@
   </div>
 </div>
 
-<button class="fab" id="fabNovo" onclick="fabNovoGasto()" title="Novo gasto">+</button>
+<button class="fab" id="fabNovo" onclick="fabAcaoAtual()" title="Novo">+</button>
 
 <div class="toast" id="toast">
   <span class="toast-msg" id="toastMsg"></span>
@@ -2941,20 +3094,11 @@
   <button class="ativa" data-aba="inicio" onclick="trocarAba('inicio')" title="Início">
     <span class="icone">🏠</span>
   </button>
-  <button data-aba="lancar" onclick="trocarAba('lancar')" title="Lançar">
-    <span class="icone">➕</span>
-  </button>
   <button data-aba="lancamentos" onclick="trocarAba('lancamentos')" title="Lançamentos">
     <span class="icone">📋</span>
   </button>
   <button data-aba="analise" onclick="trocarAba('analise')" title="Análise">
     <span class="icone">📊</span>
-  </button>
-  <button data-aba="comparativo" onclick="trocarAba('comparativo')" title="Comparar">
-    <span class="icone">📈</span>
-  </button>
-  <button data-aba="faturas" onclick="trocarAba('faturas')" title="Faturas">
-    <span class="icone">💳</span>
   </button>
   <button data-aba="agenda" onclick="trocarAba('agenda')" title="Agenda">
     <span class="icone">📅</span>
@@ -3033,6 +3177,7 @@
   const diasAgendaAbertos = new Set();
   const diasLancAbertos = new Set();
   const faturasAbertas = new Set();
+  const compCatAbertas = new Set();
   let estabelecimentosCache = {};
 
   let visaoAgenda = 'dia';
@@ -3048,12 +3193,12 @@
   let compPeriodo = 'anterior';
   let compNivel = 'categoria';
   let compResponsavel = '';
-  const compCatAbertas = new Set();
   let compFiltrosExpandidos = false;
 
-  let badgeCategoriaForcada = false;   // usuário pediu para editar categoria
+  let badgeCategoriaForcada = false;
   let undoState = null;
   let toastTimeout = null;
+  let ultimoLancamentoSessao = null;
 
   function acharCategoria(nome) { return categorias.find(c => c.nome === nome); }
   function acharCartao(nome) { return cartoes.find(c => c.nome === nome); }
@@ -3123,43 +3268,57 @@
     return melhor;
   }
 
+  /* ============================================================
+     NAVEGAÇÃO ENTRE ABAS
+     ============================================================ */
   function trocarAba(nome) {
     document.querySelectorAll('.bottom-nav button').forEach(b => b.classList.remove('ativa'));
     document.querySelectorAll('.painel').forEach(p => p.classList.remove('ativo'));
     document.querySelector(`.bottom-nav button[data-aba="${nome}"]`).classList.add('ativa');
     document.getElementById('painel-' + nome).classList.add('ativo');
 
-    const fab = document.getElementById('fabNovo');
-    if (fab) {
-      if (nome === 'lancar') fab.classList.remove('visivel');
-      else fab.classList.add('visivel');
-    }
+    atualizarFab(nome);
 
     if (nome === 'inicio') renderizarInicio();
-    if (nome === 'faturas') {
-      const inp = document.getElementById('mesFatura');
-      if (!inp.value || !inp.dataset.tocado) inp.value = mesFaturaPadrao();
-      renderizarFaturas();
-    }
     if (nome === 'agenda') renderizarAgenda();
     if (nome === 'lancamentos') renderizarLancamentos();
-    if (nome === 'analise') renderizar();
-    if (nome === 'comparativo') renderizarComparativo();
+    if (nome === 'analise') {
+      const subAtiva = document.querySelector('#analiseSubAbas .sub-aba.ativa');
+      const sub = subAtiva ? subAtiva.dataset.subAna : 'resumo';
+      if (sub === 'resumo') renderizar();
+      if (sub === 'comparativo') renderizarComparativo();
+      if (sub === 'faturas') {
+        const inp = document.getElementById('mesFatura');
+        if (!inp.value || !inp.dataset.tocado) inp.value = mesFaturaPadrao();
+        renderizarFaturas();
+      }
+    }
     if (nome === 'ajustes' && typeof atualizarStatusNotificacaoUI === 'function') {
       atualizarStatusNotificacaoUI();
     }
 
-    document.getElementById('tituloApp').textContent =
-      nome === 'agenda' ? '📅 Nossa Rotina'
-      : nome === 'inicio' ? '🏠 Nossa Rotina'
-      : '💰 Nossa Rotina';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function trocarSubAbaAnalise(sub) {
+    document.querySelectorAll('#analiseSubAbas .sub-aba').forEach(b => b.classList.toggle('ativa', b.dataset.subAna === sub));
+    document.querySelectorAll('#painel-analise .sub-painel').forEach(p => p.classList.remove('ativo'));
+    document.getElementById('sub-ana-' + sub).classList.add('ativo');
+
+    if (sub === 'resumo') renderizar();
+    if (sub === 'comparativo') renderizarComparativo();
+    if (sub === 'faturas') {
+      const inp = document.getElementById('mesFatura');
+      if (!inp.value || !inp.dataset.tocado) inp.value = mesFaturaPadrao();
+      renderizarFaturas();
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function trocarSubAba(nome) {
-    document.querySelectorAll('.sub-aba').forEach(b => b.classList.remove('ativa'));
-    document.querySelectorAll('.sub-painel').forEach(p => p.classList.remove('ativo'));
-    document.querySelector(`.sub-aba[data-sub="${nome}"]`).classList.add('ativa');
+    document.querySelectorAll('#ajustesSubAbas .sub-aba').forEach(b => b.classList.remove('ativa'));
+    document.querySelectorAll('#painel-ajustes > .sub-painel').forEach(p => p.classList.remove('ativo'));
+    document.querySelector(`#ajustesSubAbas .sub-aba[data-sub="${nome}"]`).classList.add('ativa');
     document.getElementById('sub-' + nome).classList.add('ativo');
     if (nome === 'pessoas') renderizarPessoas();
     if (nome === 'veiculos') renderizarVeiculos();
@@ -3167,7 +3326,52 @@
   }
 
   /* ============================================================
-     MÁSCARA DE VALOR (R$ 0,00)
+     FAB CONTEXTUAL
+     ============================================================ */
+  let abaAtual = 'inicio';
+  function atualizarFab(nome) {
+    abaAtual = nome;
+    const fab = document.getElementById('fabNovo');
+    if (!fab) return;
+
+    if (nome === 'inicio') {
+      fab.classList.remove('visivel', 'agenda');
+      return;
+    }
+
+    fab.classList.add('visivel');
+
+    if (nome === 'agenda') {
+      fab.classList.add('agenda');
+      fab.textContent = '📅';
+      fab.title = 'Novo compromisso';
+    } else {
+      fab.classList.remove('agenda');
+      fab.textContent = '+';
+      fab.title = 'Novo gasto';
+    }
+  }
+
+  function fabAcaoAtual() {
+    if (abaAtual === 'agenda') {
+      abrirFormEvento();
+    } else {
+      fabNovoGasto();
+    }
+  }
+
+  function fabNovoGasto() {
+    trocarAba('lancar');
+    setTimeout(() => document.getElementById('valor').focus(), 250);
+  }
+  function atalhoNovoGasto() { fabNovoGasto(); }
+  function atalhoNovoCompromisso() {
+    trocarAba('agenda');
+    setTimeout(() => abrirFormEvento(), 250);
+  }
+
+  /* ============================================================
+     MÁSCARA DE VALOR
      ============================================================ */
   function lerValorCentavos() {
     const el = document.getElementById('valor');
@@ -3185,24 +3389,11 @@
   function aplicarMascaraValor(e) {
     const input = e.target;
     let digitos = input.value.replace(/\D/g, '');
-
-    // Se o usuário colou algo com separador decimal, interpreta
-    if (/[,.]/.test(input.value)) {
-      const colado = input.value.replace(/[^\d,.]/g, '').replace(',', '.');
-      const num = parseFloat(colado);
-      if (!isNaN(num) && /[,.]/.test(input.value)) {
-        // Só interpreta como "reais" se tiver separador decimal próximo do final
-        // (evita conflito com "R$ 1.234" que tem ponto como milhar)
-      }
-    }
-
     digitos = digitos.replace(/^0+/, '') || '0';
     if (digitos.length > 11) digitos = digitos.slice(-11);
-
     const centavos = parseInt(digitos, 10) || 0;
     input.dataset.centavos = String(centavos);
     input.value = escreverValorCentavos(centavos);
-
     atualizarPreviewParcelas();
   }
 
@@ -3238,10 +3429,8 @@
     document.getElementById('blocoDataSimples').style.display = ehCredito ? 'none' : 'block';
     document.getElementById('tituloQuando').textContent = ehCredito ? 'Quando (data da compra)' : 'Quando';
 
-    // Link de reembolso só aparece no crédito
     document.getElementById('linkReembolso').style.display = ehCredito ? 'block' : 'none';
 
-    // Se saiu do crédito e estava em modo reembolso, desativa
     if (!ehCredito && document.getElementById('tipoLancamento').value === 'reembolso') {
       desativarModoReembolso();
     }
@@ -3291,7 +3480,7 @@
   }
 
   /* ============================================================
-     SUGESTÕES (só ao digitar)
+     SUGESTÕES
      ============================================================ */
   function matchTexto(termo, texto) {
     termo = termo.toLowerCase(); texto = texto.toLowerCase();
@@ -3363,7 +3552,6 @@
     document.getElementById('descricao').value = e.nome;
     fecharSugestoes();
 
-    // Detecta categoria e aplica como badge, sem forçar o select
     if (e.categoria && acharCategoria(e.categoria)) {
       document.getElementById('categoria').value = e.categoria;
       atualizarSubcategorias();
@@ -3430,6 +3618,9 @@
     }
   }
 
+  /* ============================================================
+     FIREBASE
+     ============================================================ */
   function iniciarFirebase() {
     try {
       firebase.initializeApp(firebaseConfig);
@@ -3561,7 +3752,7 @@
   }
 
   /* ============================================================
-     VEÍCULOS / PESSOAS (inalterado)
+     VEÍCULOS / PESSOAS
      ============================================================ */
   function renderizarVeiculos() {
     const wrap = document.getElementById('veiculosLista');
@@ -3702,7 +3893,7 @@
   }
 
   /* ============================================================
-     AGENDA (inalterado)
+     AGENDA
      ============================================================ */
   function horaAgora() {
     const h = new Date();
@@ -4124,25 +4315,16 @@
           batch.set(ref, { ...base, data: d, serieId: sid, recorrencia: rec, diasSemana: (rec === 'semanal' || rec === 'quinzenal') ? [...diasSemanaSelecionados] : null, dataFim: dataFim || null, criadoEm: firebase.firestore.FieldValue.serverTimestamp() });
         });
         await batch.commit();
-
         if (typeof reagendarNotificacoesPendentes === 'function') {
           setTimeout(() => reagendarNotificacoesPendentes(), 800);
         }
-
         fecharFormEvento();
         return;
       }
       const novoDoc = await colecaoEventos().add({ ...base, data, criadoEm: firebase.firestore.FieldValue.serverTimestamp() });
-
       if (typeof agendarNotificacaoEvento === 'function') {
-        agendarNotificacaoEvento({
-          id: novoDoc.id,
-          titulo, hora, pessoa, tipo,
-          local: local || '',
-          data
-        });
+        agendarNotificacaoEvento({ id: novoDoc.id, titulo, hora, pessoa, tipo, local: local || '', data });
       }
-
       fecharFormEvento();
     } catch (e) { alert('Erro ao salvar: ' + e.message); }
   }
@@ -4226,7 +4408,7 @@
   }
 
   /* ============================================================
-     ESTABELECIMENTOS / SUGESTÕES (sem chips fixos)
+     ESTABELECIMENTOS
      ============================================================ */
   function reconstruirEstabelecimentos() {
     const mapa = {};
@@ -4260,7 +4442,7 @@
   }
 
   /* ============================================================
-     CONFIG / CATEGORIAS / CARTÕES
+     CONFIG
      ============================================================ */
   async function salvarCategorias() {
     if (!firebaseOK) return;
@@ -4666,6 +4848,45 @@
   }
 
   /* ============================================================
+     ÚLTIMO LANÇAMENTO (rodapé)
+     ============================================================ */
+  function renderizarUltimoLancamentoRodape() {
+    const card = document.getElementById('cardUltimoLanc');
+    const wrap = document.getElementById('ultimoLancRodape');
+    if (!card || !wrap) return;
+
+    if (!ultimoLancamentoSessao) {
+      card.style.display = 'none';
+      return;
+    }
+
+    const g = ultimoLancamentoSessao;
+    const re = ehReembolso(g);
+    const parc = g.parcelaTotal && g.parcelaTotal > 1 ? `${g.parcelaTotal}x` : '';
+    const cor = corDa(g.categoria);
+
+    const partes = [];
+    partes.push(escaparHTML(g.usuario));
+    partes.push(`<span class="ul-valor">${re ? '-' : ''}${formatarMoeda(g.valor)}</span>`);
+    if (parc) partes.push(parc);
+    partes.push(`<span class="ul-tag" style="border-color:${cor}33; background:${cor}15; color:${cor};">${escaparHTML(g.categoria)}</span>`);
+
+    wrap.innerHTML = `
+      <span class="ul-icone">${re ? '↩️' : '🕐'}</span>
+      <span class="ul-desc">${escaparHTML(g.descricao)}</span>
+      <span class="ul-resto">${partes.join('<span class="sep">·</span>')}</span>
+    `;
+    card.style.display = 'block';
+  }
+
+  function abrirDetalhesGastoUltimo() {
+    if (!ultimoLancamentoSessao) return;
+    const g = gastos.find(x => x.id === ultimoLancamentoSessao.id);
+    if (g) abrirDetalhesGasto(g.id);
+    else abrirDetalhesGasto(ultimoLancamentoSessao.id);
+  }
+
+  /* ============================================================
      ADICIONAR GASTO
      ============================================================ */
   async function adicionarGasto() {
@@ -4711,8 +4932,14 @@
         lancamentos.push({ usuario, data, mesFatura: data.substring(0, 7), descricao, categoria, subcategoria, observacao, formaPagamento, cartao: null, valor, parcelaAtual: null, parcelaTotal: null, valorTotalCompra: null, grupoId, tipoLancamento: 'gasto', criadoEm: firebase.firestore.FieldValue.serverTimestamp() });
       }
       const batch = db.batch();
-      lancamentos.forEach(l => { const r = colecaoGastos().doc(); batch.set(r, l); });
+      const refs = [];
+      lancamentos.forEach(l => { const r = colecaoGastos().doc(); batch.set(r, l); refs.push(r); });
       await batch.commit();
+
+      // Atualiza o "último lançamento da sessão" para o rodapé
+      const primeiroLanc = { ...lancamentos[0], id: refs[0].id };
+      ultimoLancamentoSessao = primeiroLanc;
+      renderizarUltimoLancamentoRodape();
 
       const undoFn = async () => {
         try {
@@ -4724,7 +4951,6 @@
         } catch (e) { console.error('Erro ao desfazer:', e); }
       };
 
-      // Reset
       resetarValor();
       document.getElementById('descricao').value = '';
       document.getElementById('observacao').value = '';
@@ -5479,8 +5705,8 @@
     document.querySelectorAll('#compFiltroResponsavel button').forEach(b => b.classList.toggle('ativa', b.dataset.resp === r));
     renderizarComparativo();
   }
-  function toggleCompCatAberta(c) {
-    if (compCatAbertas.has(c)) compCatAbertas.delete(c); else compCatAbertas.add(c);
+  function toggleCompCatAberta(chave) {
+    if (compCatAbertas.has(chave)) compCatAbertas.delete(chave); else compCatAbertas.add(chave);
     renderizarComparativo();
   }
   function mesReferenciaComp() { return document.getElementById('compMesReferencia').value || mesAtualISO(); }
@@ -5560,6 +5786,38 @@
     if (a >= 1000) return (v/1000).toFixed(1).replace('.', ',') + 'k';
     return v.toFixed(0);
   }
+
+  /* ---- Barras duplas Diego/Eliane (reaproveitadas no detalhe expandido) ---- */
+  function htmlBarrasComp(titulo, a, b, rotA, rotB) {
+    const ti = escaparHTML(JSON.stringify({titulo, atual: a, anterior: b, rotuloAtual: rotA, rotuloAnterior: rotB, totalAtual: a.total, totalAnterior: b.total}));
+    const tiB = escaparHTML(JSON.stringify({titulo, atual: b, anterior: a, rotuloAtual: rotB, rotuloAnterior: rotA, totalAtual: b.total, totalAnterior: a.total, invertido: true}));
+    const pctA = (Math.abs(a.diego)/(Math.abs(a.diego)+Math.abs(a.eliane)||1))*100;
+    const pctAE = (Math.abs(a.eliane)/(Math.abs(a.diego)+Math.abs(a.eliane)||1))*100;
+    const pctB = (Math.abs(b.diego)/(Math.abs(b.diego)+Math.abs(b.eliane)||1))*100;
+    const pctBE = (Math.abs(b.eliane)/(Math.abs(b.diego)+Math.abs(b.eliane)||1))*100;
+    return `
+      <div class="comp-barra-total">
+        <div class="comp-barra-rotulo">${rotA}</div>
+        <div class="barra-total-bg">
+          <div class="comp-barra-dupla" data-tip='${ti}'>
+            ${a.diego !== 0 ? `<div class="seg-diego" style="width:${pctA}%;">${fmtCurta(a.diego)}</div>` : ''}
+            ${a.eliane !== 0 ? `<div class="seg-eliane" style="width:${pctAE}%;">${fmtCurta(a.eliane)}</div>` : ''}
+          </div>
+        </div>
+        <div class="comp-barra-valor">${formatarMoeda(a.total)}</div>
+      </div>
+      <div class="comp-barra-total">
+        <div class="comp-barra-rotulo">${rotB}</div>
+        <div class="barra-total-bg">
+          <div class="comp-barra-dupla" data-tip='${tiB}'>
+            ${b.diego !== 0 ? `<div class="seg-diego" style="width:${pctB}%;">${fmtCurta(b.diego)}</div>` : ''}
+            ${b.eliane !== 0 ? `<div class="seg-eliane" style="width:${pctBE}%;">${fmtCurta(b.eliane)}</div>` : ''}
+          </div>
+        </div>
+        <div class="comp-barra-valor">${formatarMoeda(b.total)}</div>
+      </div>`;
+  }
+
   function renderizarComparativo() {
     const wr = document.getElementById('compResumo');
     const wl = document.getElementById('compLista');
@@ -5606,130 +5864,115 @@
     }
     wr.innerHTML = rh;
 
+    /* ====== NÍVEL: CATEGORIA (colapsável) ====== */
     if (compNivel === 'categoria') {
       const mAtG = agruparPorCatComp(lAt);
       const mAnG = agruparPorCatComp(lAn);
       const chaves = new Set([...Object.keys(mAtG), ...Object.keys(mAnG)]);
       if (chaves.size === 0) { wl.innerHTML = '<div class="comp-vazio">Sem dados para exibir no período selecionado.</div>'; return; }
       const ord = [...chaves].sort((a, b) => ((mAtG[a]?.total||0)+(mAnG[a]?.total||0)) < ((mAtG[b]?.total||0)+(mAnG[b]?.total||0)) ? 1 : -1);
+
       wl.innerHTML = ord.map(c => {
         const a = mAtG[c] || {diego:0, eliane:0, total:0, subs:{}};
         const b = mAnG[c] || {diego:0, eliane:0, total:0, subs:{}};
         const d = a.total - b.total;
         const p = b.total !== 0 ? (d / Math.abs(b.total)) * 100 : null;
         const cl = d > 0 ? 'positivo' : (d < 0 ? 'negativo' : 'neutro');
-        const s = d > 0 ? '▲' : (d < 0 ? '▼' : '●');
+        const seta = d > 0 ? '▲' : (d < 0 ? '▼' : '●');
         const cor = corDa(c);
-        const tv = p === null ? (d !== 0 ? `${d > 0 ? '+' : ''}${formatarMoeda(d)}` : '—') : `${s} ${d > 0 ? '+' : ''}${p.toFixed(0)}%`;
-        const todasS = new Set([...Object.keys(a.subs || {}), ...Object.keys(b.subs || {})]);
+        const chAb = 'comp_cat_' + c;
+        const ab = compCatAbertas.has(chAb);
+
+        let pctTxt = '';
+        if (p === null) pctTxt = d !== 0 ? `${d > 0 ? '+' : ''}${formatarMoeda(d)}` : '—';
+        else pctTxt = `${seta} ${d > 0 ? '+' : ''}${p.toFixed(0)}%`;
+
+        // Subcategorias (só renderiza no detalhe expandido)
         let sh = '';
-        if (todasS.size > 0) {
-          const so = [...todasS].sort((x, y) => ((a.subs[x]?.total||0)+(b.subs[x]?.total||0)) < ((a.subs[y]?.total||0)+(b.subs[y]?.total||0)) ? 1 : -1);
-          const chAb = 'comp_' + c;
-          const ab = compCatAbertas.has(chAb);
-          const shi = so.map(sb => {
-            const sa = a.subs[sb] || {diego:0, eliane:0, total:0};
-            const ssb = b.subs[sb] || {diego:0, eliane:0, total:0};
-            const dd = sa.total - ssb.total;
-            const pp = ssb.total !== 0 ? (dd / Math.abs(ssb.total)) * 100 : null;
-            const cs = dd > 0 ? 'positivo' : (dd < 0 ? 'negativo' : 'neutro');
-            const st = dd > 0 ? '▲' : (dd < 0 ? '▼' : '●');
-            const ts = pp === null ? (dd !== 0 ? `${dd > 0 ? '+' : ''}${formatarMoeda(dd)}` : '—') : `${st} ${dd > 0 ? '+' : ''}${pp.toFixed(0)}%`;
-            return `<div class="comp-sub-item">
-              <div class="comp-sub-topo"><div class="comp-sub-nome">${escaparHTML(sb)}</div><span class="comp-sub-var ${cs}">${ts}</span></div>
-              <div class="comp-barra-total" style="margin-bottom:4px;">
-                <div class="comp-barra-rotulo">${nomeMesLongo(ma)}</div>
-                <div class="barra-total-bg">
-                  <div class="comp-barra-dupla" data-tip='${escaparHTML(JSON.stringify({titulo: c + ' → ' + sb, atual: sa, anterior: ssb, rotuloAtual: nomeMesLongo(ma), rotuloAnterior: per.rotulo, totalAtual: sa.total, totalAnterior: ssb.total}))}'>
-                    ${sa.diego !== 0 ? `<div class="seg-diego" style="width:${(Math.abs(sa.diego)/(Math.abs(sa.diego)+Math.abs(sa.eliane)||1))*100}%;">${fmtCurta(sa.diego)}</div>` : ''}
-                    ${sa.eliane !== 0 ? `<div class="seg-eliane" style="width:${(Math.abs(sa.eliane)/(Math.abs(sa.diego)+Math.abs(sa.eliane)||1))*100}%;">${fmtCurta(sa.eliane)}</div>` : ''}
-                  </div>
-                </div>
-                <div class="comp-barra-valor">${formatarMoeda(sa.total)}</div>
-              </div>
-              <div class="comp-barra-total">
-                <div class="comp-barra-rotulo">${per.rotulo.length > 12 ? 'Anterior' : per.rotulo}</div>
-                <div class="barra-total-bg">
-                  <div class="comp-barra-dupla" data-tip='${escaparHTML(JSON.stringify({titulo: c + ' → ' + sb, atual: ssb, anterior: sa, rotuloAtual: per.rotulo, rotuloAnterior: nomeMesLongo(ma), totalAtual: ssb.total, totalAnterior: sa.total, invertido: true}))}'>
-                    ${ssb.diego !== 0 ? `<div class="seg-diego" style="width:${(Math.abs(ssb.diego)/(Math.abs(ssb.diego)+Math.abs(ssb.eliane)||1))*100}%;">${fmtCurta(ssb.diego)}</div>` : ''}
-                    ${ssb.eliane !== 0 ? `<div class="seg-eliane" style="width:${(Math.abs(ssb.eliane)/(Math.abs(ssb.diego)+Math.abs(ssb.eliane)||1))*100}%;">${fmtCurta(ssb.eliane)}</div>` : ''}
-                  </div>
-                </div>
-                <div class="comp-barra-valor">${formatarMoeda(ssb.total)}</div>
-              </div>
-            </div>`;
-          }).join('');
-          sh = `<button class="comp-sub-toggle" onclick="toggleCompCatAberta('${chAb.replace(/'/g, "\\'")}')">${ab ? '▾' : '▸'} Subcategorias (${so.length})</button><div class="comp-sub-lista ${ab ? 'aberto' : ''}">${shi}</div>`;
+        if (ab) {
+          const todasS = new Set([...Object.keys(a.subs || {}), ...Object.keys(b.subs || {})]);
+          if (todasS.size > 0) {
+            const so = [...todasS].sort((x, y) => ((a.subs[x]?.total||0)+(b.subs[x]?.total||0)) < ((a.subs[y]?.total||0)+(b.subs[y]?.total||0)) ? 1 : -1);
+            const shi = so.map(sb => {
+              const sa = a.subs[sb] || {diego:0, eliane:0, total:0};
+              const ssb = b.subs[sb] || {diego:0, eliane:0, total:0};
+              const dd = sa.total - ssb.total;
+              const pp = ssb.total !== 0 ? (dd / Math.abs(ssb.total)) * 100 : null;
+              const cs = dd > 0 ? 'positivo' : (dd < 0 ? 'negativo' : 'neutro');
+              const st = dd > 0 ? '▲' : (dd < 0 ? '▼' : '●');
+              const ts = pp === null ? (dd !== 0 ? `${dd > 0 ? '+' : ''}${formatarMoeda(dd)}` : '—') : `${st} ${dd > 0 ? '+' : ''}${pp.toFixed(0)}%`;
+              return `<div class="comp-sub-item">
+                <div class="comp-sub-topo"><div class="comp-sub-nome">${escaparHTML(sb)}</div><span class="comp-sub-var ${cs}">${ts}</span></div>
+                ${htmlBarrasComp(c + ' → ' + sb, sa, ssb, nomeMesLongo(ma), per.rotulo)}
+              </div>`;
+            }).join('');
+            sh = `<div class="comp-sub-lista aberto" style="margin-top:12px; padding-left:0; border-left:none;">${shi}</div>`;
+          } else {
+            sh = `<div style="font-size:0.82em; color:var(--text-3); font-style:italic; padding:6px 0;">Sem subcategorias</div>`;
+          }
         }
-        return `<div class="comp-item">
-          <div class="comp-item-topo">
-            <div class="comp-item-nome"><span class="cor-bolinha" style="background:${cor};"></span>${escaparHTML(c)}</div>
-            <span class="comp-item-var ${cl}">${tv}</span>
-          </div>
-          <div class="comp-barra-total">
-            <div class="comp-barra-rotulo">${nomeMesLongo(ma)}</div>
-            <div class="barra-total-bg">
-              <div class="comp-barra-dupla" data-tip='${escaparHTML(JSON.stringify({titulo: c, atual: a, anterior: b, rotuloAtual: nomeMesLongo(ma), rotuloAnterior: per.rotulo, totalAtual: a.total, totalAnterior: b.total}))}'>
-                ${a.diego !== 0 ? `<div class="seg-diego" style="width:${(Math.abs(a.diego)/(Math.abs(a.diego)+Math.abs(a.eliane)||1))*100}%;">${fmtCurta(a.diego)}</div>` : ''}
-                ${a.eliane !== 0 ? `<div class="seg-eliane" style="width:${(Math.abs(a.eliane)/(Math.abs(a.diego)+Math.abs(a.eliane)||1))*100}%;">${fmtCurta(a.eliane)}</div>` : ''}
-              </div>
+
+        const detalheHTML = ab ? `
+          <div class="comp-item" style="margin:0; background:var(--surface); border:1px solid var(--border); border-radius:10px;">
+            ${htmlBarrasComp(c, a, b, nomeMesLongo(ma), per.rotulo)}
+            ${sh}
+          </div>` : '';
+
+        return `
+          <div class="comp-cat-colapsavel ${ab ? 'aberto' : ''}">
+            <button class="comp-cat-header" onclick="toggleCompCatAberta('${chAb.replace(/'/g, "\\'")}')">
+              <span class="cor-bolinha" style="background:${cor};"></span>
+              <span class="cat-nome">${escaparHTML(c)}</span>
+              <span class="cat-pct ${cl}">${pctTxt}</span>
+              <span class="cat-valor">${formatarMoeda(a.total)}</span>
+              <span class="cat-seta">▶</span>
+            </button>
+            <div class="comp-cat-corpo">
+              ${detalheHTML}
             </div>
-            <div class="comp-barra-valor">${formatarMoeda(a.total)}</div>
-          </div>
-          <div class="comp-barra-total">
-            <div class="comp-barra-rotulo">${per.rotulo.length > 12 ? 'Anterior' : per.rotulo}</div>
-            <div class="barra-total-bg">
-              <div class="comp-barra-dupla" data-tip='${escaparHTML(JSON.stringify({titulo: c, atual: b, anterior: a, rotuloAtual: per.rotulo, rotuloAnterior: nomeMesLongo(ma), totalAtual: b.total, totalAnterior: a.total, invertido: true}))}'>
-                ${b.diego !== 0 ? `<div class="seg-diego" style="width:${(Math.abs(b.diego)/(Math.abs(b.diego)+Math.abs(b.eliane)||1))*100}%;">${fmtCurta(b.diego)}</div>` : ''}
-                ${b.eliane !== 0 ? `<div class="seg-eliane" style="width:${(Math.abs(b.eliane)/(Math.abs(b.diego)+Math.abs(b.eliane)||1))*100}%;">${fmtCurta(b.eliane)}</div>` : ''}
-              </div>
-            </div>
-            <div class="comp-barra-valor">${formatarMoeda(b.total)}</div>
-          </div>
-          ${sh}
-        </div>`;
+          </div>`;
       }).join('');
     } else {
+      /* ====== NÍVEL: SUBCATEGORIA (colapsável também) ====== */
       const mAtG = agruparPorSubComp(lAt);
       const mAnG = agruparPorSubComp(lAn);
       const chaves = new Set([...Object.keys(mAtG), ...Object.keys(mAnG)]);
       if (chaves.size === 0) { wl.innerHTML = '<div class="comp-vazio">Sem dados para exibir no período selecionado.</div>'; return; }
       const ord = [...chaves].sort((a, b) => ((mAtG[a]?.total||0)+(mAnG[a]?.total||0)) < ((mAtG[b]?.total||0)+(mAnG[b]?.total||0)) ? 1 : -1);
+
       wl.innerHTML = ord.map(c => {
         const a = mAtG[c] || {diego:0, eliane:0, total:0, catOrigem:''};
         const b = mAnG[c] || {diego:0, eliane:0, total:0, catOrigem:''};
         const d = a.total - b.total;
         const p = b.total !== 0 ? (d / Math.abs(b.total)) * 100 : null;
         const cl = d > 0 ? 'positivo' : (d < 0 ? 'negativo' : 'neutro');
-        const s = d > 0 ? '▲' : (d < 0 ? '▼' : '●');
+        const seta = d > 0 ? '▲' : (d < 0 ? '▼' : '●');
         const cor = corDa(a.catOrigem || b.catOrigem);
-        const tv = p === null ? (d !== 0 ? `${d > 0 ? '+' : ''}${formatarMoeda(d)}` : '—') : `${s} ${d > 0 ? '+' : ''}${p.toFixed(0)}%`;
-        return `<div class="comp-item">
-          <div class="comp-item-topo">
-            <div class="comp-item-nome"><span class="cor-bolinha" style="background:${cor};"></span>${escaparHTML(c)}${a.catOrigem && a.catOrigem !== c ? `<span style="font-size:0.72em; color:var(--text-3); font-weight:500;">· ${escaparHTML(a.catOrigem)}</span>` : ''}</div>
-            <span class="comp-item-var ${cl}">${tv}</span>
-          </div>
-          <div class="comp-barra-total">
-            <div class="comp-barra-rotulo">${nomeMesLongo(ma)}</div>
-            <div class="barra-total-bg">
-              <div class="comp-barra-dupla" data-tip='${escaparHTML(JSON.stringify({titulo: c, atual: a, anterior: b, rotuloAtual: nomeMesLongo(ma), rotuloAnterior: per.rotulo, totalAtual: a.total, totalAnterior: b.total}))}'>
-                ${a.diego !== 0 ? `<div class="seg-diego" style="width:${(Math.abs(a.diego)/(Math.abs(a.diego)+Math.abs(a.eliane)||1))*100}%;">${fmtCurta(a.diego)}</div>` : ''}
-                ${a.eliane !== 0 ? `<div class="seg-eliane" style="width:${(Math.abs(a.eliane)/(Math.abs(a.diego)+Math.abs(a.eliane)||1))*100}%;">${fmtCurta(a.eliane)}</div>` : ''}
-              </div>
+        const chAb = 'comp_sub_' + c;
+        const ab = compCatAbertas.has(chAb);
+
+        let pctTxt = '';
+        if (p === null) pctTxt = d !== 0 ? `${d > 0 ? '+' : ''}${formatarMoeda(d)}` : '—';
+        else pctTxt = `${seta} ${d > 0 ? '+' : ''}${p.toFixed(0)}%`;
+
+        const detalheHTML = ab ? `
+          <div class="comp-item" style="margin:0; background:var(--surface); border:1px solid var(--border); border-radius:10px;">
+            ${htmlBarrasComp(c, a, b, nomeMesLongo(ma), per.rotulo)}
+          </div>` : '';
+
+        return `
+          <div class="comp-cat-colapsavel ${ab ? 'aberto' : ''}">
+            <button class="comp-cat-header" onclick="toggleCompCatAberta('${chAb.replace(/'/g, "\\'")}')">
+              <span class="cor-bolinha" style="background:${cor};"></span>
+              <span class="cat-nome">${escaparHTML(c)}${a.catOrigem && a.catOrigem !== c ? ` <span style="font-size:0.75em; color:var(--text-3); font-weight:500;">· ${escaparHTML(a.catOrigem)}</span>` : ''}</span>
+              <span class="cat-pct ${cl}">${pctTxt}</span>
+              <span class="cat-valor">${formatarMoeda(a.total)}</span>
+              <span class="cat-seta">▶</span>
+            </button>
+            <div class="comp-cat-corpo">
+              ${detalheHTML}
             </div>
-            <div class="comp-barra-valor">${formatarMoeda(a.total)}</div>
-          </div>
-          <div class="comp-barra-total">
-            <div class="comp-barra-rotulo">${per.rotulo.length > 12 ? 'Anterior' : per.rotulo}</div>
-            <div class="barra-total-bg">
-              <div class="comp-barra-dupla" data-tip='${escaparHTML(JSON.stringify({titulo: c, atual: b, anterior: a, rotuloAtual: per.rotulo, rotuloAnterior: nomeMesLongo(ma), totalAtual: b.total, totalAnterior: a.total, invertido: true}))}'>
-                ${b.diego !== 0 ? `<div class="seg-diego" style="width:${(Math.abs(b.diego)/(Math.abs(b.diego)+Math.abs(b.eliane)||1))*100}%;">${fmtCurta(b.diego)}</div>` : ''}
-                ${b.eliane !== 0 ? `<div class="seg-eliane" style="width:${(Math.abs(b.eliane)/(Math.abs(b.diego)+Math.abs(b.eliane)||1))*100}%;">${fmtCurta(b.eliane)}</div>` : ''}
-              </div>
-            </div>
-            <div class="comp-barra-valor">${formatarMoeda(b.total)}</div>
-          </div>
-        </div>`;
+          </div>`;
       }).join('');
     }
     ativarTooltipBarras();
@@ -5976,8 +6219,9 @@
   }
 
   function irParaFatura(mesISO) {
-    trocarAba('faturas');
+    trocarAba('analise');
     setTimeout(() => {
+      trocarSubAbaAnalise('faturas');
       document.getElementById('mesFatura').value = mesISO;
       document.getElementById('mesFatura').dataset.tocado = '1';
       renderizarFaturas();
@@ -6039,19 +6283,6 @@
         </div>
       `;
     }).join('');
-  }
-
-  /* ============================================================
-     ATALHOS
-     ============================================================ */
-  function fabNovoGasto() {
-    trocarAba('lancar');
-    setTimeout(() => document.getElementById('valor').focus(), 250);
-  }
-  function atalhoNovoGasto() { fabNovoGasto(); }
-  function atalhoNovoCompromisso() {
-    trocarAba('agenda');
-    setTimeout(() => abrirFormEvento(), 250);
   }
 
   /* ============================================================
@@ -6198,7 +6429,7 @@
 
   async function testarNotificacao() {
     const ok = await enviarNotificacao(
-      '🧪 Teste do Nossa Rotina',
+      '🧪 Teste do Mapa da Casa',
       {
         body: 'Se você está vendo isso, está tudo configurado!',
         tag: 'teste-' + Date.now(),
@@ -6500,15 +6731,12 @@
     document.getElementById('compMesReferencia').value = mesAtual;
     mesLancamentos = mesAtual;
 
-    // Valor inicial
     resetarValor();
     document.getElementById('valor').addEventListener('input', aplicarMascaraValor);
     document.getElementById('valor').addEventListener('paste', (e) => {
-      // deixa o input processar e depois aplica máscara
       setTimeout(() => aplicarMascaraValor({ target: e.target }), 0);
     });
 
-    // Detecta categoria automaticamente ao digitar
     document.getElementById('descricao').addEventListener('input', detectarCategoriaAuto);
 
     document.getElementById('mesFatura').addEventListener('change', function() { this.dataset.tocado = '1'; });
@@ -6520,6 +6748,10 @@
       }, 400);
     }
     window.addEventListener('scroll', esconderTooltip, { passive: true });
+
+    // Inicializa FAB
+    atualizarFab('inicio');
+
     iniciarFirebase();
 
     iniciarServiceWorker().then(() => {
