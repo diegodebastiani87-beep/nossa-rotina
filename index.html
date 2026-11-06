@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="mobile-web-app-capable" content="yes">
-<title>Mapa da Casa</title>
+<title>Finanças do Lar</title>
 <link rel="manifest" href="manifest.json">
 <style>
   /* ================================================================
@@ -783,6 +783,103 @@
   .seg-btn:hover { background: transparent; color: var(--text-2); }
   .seg-btn.ativa { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(16,24,40,0.10), 0 1px 1px rgba(16,24,40,0.04); }
 
+  /* Tela de lançar sempre completa: sem alternar Rápido/Completo nem "Mais detalhes" */
+  #modoToggle, #btnMaisDetalhes { display: none !important; }
+  /* Sem sugestões fixas abaixo do Local: elas só aparecem ao digitar */
+  #atalhosChips { display: none !important; }
+
+  /* ===== LANÇAR: pagamento compacto, parcelas e reembolso discretos ===== */
+  .pagamento-grid.compacto { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .pagamento-grid.compacto button { flex-direction: column; justify-content: center; text-align: center; gap: 4px; padding: 10px 4px; border-radius: 14px; font-size: 0.78em; }
+  .pagamento-grid.compacto button .emoji { width: auto; height: auto; background: transparent; box-shadow: none; font-size: 1.35em; }
+
+  .credito-linha { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+  .credito-linha input, .credito-linha select { padding: 12px; font-size: 15px; }
+  .credito-linha select { padding-right: 34px; background-position: right 10px center; }
+
+  .switch-linha { display: flex; align-items: center; gap: 10px; margin: 0; cursor: pointer; font-size: 0.9em; font-weight: 700; color: var(--text); letter-spacing: -0.01em; user-select: none; -webkit-user-select: none; }
+  .switch-linha input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+  .switch-linha .sw { position: relative; width: 42px; height: 26px; border-radius: 999px; background: var(--border-strong); flex-shrink: 0; transition: background 0.2s ease; }
+  .switch-linha .sw::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: white; box-shadow: 0 1px 3px rgba(16,24,40,0.25); transition: transform 0.22s var(--ease); }
+  .switch-linha input:checked + .sw { background: var(--primary); }
+  .switch-linha input:checked + .sw::after { transform: translateX(16px); }
+  .switch-linha input:focus-visible + .sw { box-shadow: 0 0 0 4px rgba(79,70,229,0.18); }
+
+  .linha-reembolso { margin-top: 14px; padding-top: 12px; border-top: 0.5px dashed var(--border-strong); }
+  .switch-linha.discreto { font-size: 0.78em; font-weight: 600; color: var(--text-3); gap: 8px; }
+  .switch-linha.discreto .sw { width: 32px; height: 20px; }
+  .switch-linha.discreto .sw::after { width: 14px; height: 14px; }
+  .switch-linha.discreto input:checked + .sw { background: var(--success); }
+  .switch-linha.discreto input:checked + .sw::after { transform: translateX(12px); }
+  .switch-linha.discreto input:checked ~ .sw-texto { color: var(--success); }
+  .linha-reembolso .dica-reembolso { margin-top: 10px; }
+
+  /* ===== NOVA TELA INICIAL ===== */
+  .ini-topo { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin: 2px 2px 12px; }
+  .ini-data { font-size: 0.86em; font-weight: 700; color: var(--text-2); letter-spacing: -0.01em; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ini-mes-nav { display: inline-flex; align-items: center; gap: 2px; background: var(--surface); border-radius: 999px; padding: 3px; box-shadow: var(--shadow-xs); flex-shrink: 0; }
+  .ini-mes-nav span { font-size: 0.8em; font-weight: 800; color: var(--text); padding: 0 6px; white-space: nowrap; letter-spacing: -0.01em; }
+  .ini-mes-nav button { width: 28px; height: 28px; padding: 0; border-radius: 50%; background: var(--surface-2); color: var(--text-2); font-size: 1.1em; font-weight: 700; line-height: 1; display: flex; align-items: center; justify-content: center; }
+  .ini-mes-nav button:hover { background: var(--surface-3); }
+  .ini-mes-nav button:disabled { background: transparent; color: var(--border-strong); }
+
+  #iniHeroRotulo { text-transform: none; }
+  .ini-hero .ih-split { display: flex; height: 8px; border-radius: 999px; overflow: hidden; margin-top: 18px; background: rgba(255,255,255,0.15); position: relative; z-index: 1; }
+  .ini-hero .ih-split-d { background: #7fb0ff; height: 100%; transition: width 0.6s var(--ease); }
+  .ini-hero .ih-split-e { background: #ff8fc4; height: 100%; transition: width 0.6s var(--ease); }
+  .ini-hero.sem-dados .ih-split-d, .ini-hero.sem-dados .ih-split-e { background: transparent; }
+  .ini-hero .ih-split-leg { display: flex; justify-content: space-between; gap: 10px; margin-top: 8px; font-size: 0.78em; opacity: 0.9; position: relative; z-index: 1; }
+  .ini-hero .ih-split-leg b { font-weight: 800; margin-left: 2px; }
+  .ini-hero .ih-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+  .ini-hero .ih-dot.d { background: #7fb0ff; }
+  .ini-hero .ih-dot.e { background: #ff8fc4; }
+
+  .ini-link { background: transparent; color: var(--primary); border: none; width: auto; padding: 4px 0; font-size: 0.78em; font-weight: 700; letter-spacing: 0; }
+  .ini-link:hover { background: transparent; color: var(--primary-2); }
+  .ini-h2-valor { font-size: 0.82em; font-weight: 800; color: var(--text-3); letter-spacing: -0.02em; }
+
+  .ini-cat { margin-bottom: 12px; }
+  .ini-cat:last-child { margin-bottom: 0; }
+  .ini-cat-topo { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+  .ini-cat-nome { display: inline-flex; align-items: center; gap: 8px; font-size: 0.86em; font-weight: 700; color: var(--text); min-width: 0; }
+  .ini-cat-nome i { width: 10px; height: 10px; border-radius: 4px; flex-shrink: 0; }
+  .ini-cat-valor { font-size: 0.86em; font-weight: 800; color: var(--text); white-space: nowrap; letter-spacing: -0.02em; }
+  .ini-cat-valor small { font-size: 0.82em; font-weight: 700; color: var(--text-muted); margin-left: 3px; }
+  .ini-cat-barra { height: 8px; background: var(--surface-3); border-radius: 999px; overflow: hidden; }
+  .ini-cat-barra div { height: 100%; border-radius: 999px; transition: width 0.6s var(--ease); }
+
+  .ini-semana { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; align-items: end; }
+  .ini-dia { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+  .ini-dia-valor { font-size: 11px; font-weight: 700; color: var(--text-3); height: 14px; white-space: nowrap; letter-spacing: -0.02em; }
+  .ini-dia-trilho { width: 100%; max-width: 34px; height: 86px; background: var(--surface-2); border-radius: 10px; display: flex; align-items: flex-end; overflow: hidden; }
+  .ini-dia-barra { width: 100%; background: #c7c3ff; border-radius: 10px; transition: height 0.6s var(--ease); }
+  .ini-dia.hoje .ini-dia-barra { background: var(--grad); }
+  .ini-dia.hoje .ini-dia-valor { color: var(--primary); }
+  .ini-dia-letra { font-size: 11px; font-weight: 700; color: var(--text-3); }
+  .ini-dia.hoje .ini-dia-letra { color: var(--primary); font-weight: 800; }
+  .ini-dia-num { font-size: 11px; color: var(--text-muted); margin-top: -4px; }
+
+  .ini-secao-titulo { display: flex; justify-content: space-between; align-items: center; margin: 4px 4px 10px; font-size: 1.02em; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
+  #painel-inicio .ini-faturas { display: flex; flex-direction: row; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 16px; margin: 0 -16px 14px; padding: 2px 16px 12px; scrollbar-width: none; }
+  #painel-inicio .ini-faturas::-webkit-scrollbar { display: none; }
+  .ini-fatura-card { flex: 0 0 72%; max-width: 260px; scroll-snap-align: start; border-radius: 20px; padding: 16px; color: white; background: linear-gradient(145deg, #1f2937, #374151); cursor: pointer; position: relative; overflow: hidden; box-shadow: 0 12px 24px -14px rgba(16,24,40,0.6); transition: transform 0.2s var(--ease); }
+  .ini-fatura-card.proxima { background: var(--grad-deep); box-shadow: 0 14px 28px -14px rgba(67,56,202,0.8); }
+  .ini-fatura-card::after { content: ''; position: absolute; top: -60px; right: -40px; width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%); pointer-events: none; }
+  .ini-fatura-card:active { transform: scale(0.97); }
+  .ifc-topo { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 18px; }
+  .ifc-cartao { font-size: 0.86em; font-weight: 800; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ifc-chip { font-size: 1em; opacity: 0.9; }
+  .ifc-valor { font-size: 1.45em; font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; }
+  .ifc-quando { font-size: 0.76em; opacity: 0.75; margin-top: 4px; font-weight: 600; text-transform: capitalize; }
+  .ini-fatura-vazio { flex: 1; padding: 20px !important; background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
+
+  .ini-ultimo-item { background: transparent; padding: 10px 2px; border-radius: 0; border-bottom: 0.5px solid var(--border); }
+  .ini-ultimo-item:last-child { border-bottom: none; }
+  .ini-ultimo-item:hover { background: transparent; }
+  .ini-ultimo-item.reembolso { background: transparent; }
+  .ini-u-cor { width: 4px; align-self: stretch; border-radius: 4px; flex-shrink: 0; }
+  #painel-inicio .ini-ultimos { gap: 0; }
+
   /* ===== TELAS GRANDES: mantém o "app" centralizado ===== */
   @media (min-width: 700px) {
     html, body {
@@ -830,7 +927,7 @@
     <div class="app-brand">
       <div class="app-icon">🏠</div>
       <div class="app-text">
-        <h1 id="tituloApp">Nossa Rotina</h1>
+        <h1 id="tituloApp">Finanças do Lar</h1>
         <p>Diego &amp; Eliane</p>
       </div>
     </div>
@@ -845,53 +942,42 @@
 
   <!-- INÍCIO -->
   <div class="painel ativo" id="painel-inicio">
-    <div class="ini-hero" id="iniHero">
-      <div class="ih-titulo" id="iniMesTitulo">—</div>
-      <div class="ih-valor" id="iniTotalMes">R$ 0,00</div>
-      <div class="ih-sub" id="iniSubMes">Carregando...</div>
-      <div id="iniComparacaoBox"></div>
-      <div class="ih-quebra">
-        <div class="item">
-          <span class="lbl">Diego</span>
-          <span class="vlr" id="iniDiego">R$ 0,00</span>
-        </div>
-        <div class="item">
-          <span class="lbl">Eliane</span>
-          <span class="vlr" id="iniEliane">R$ 0,00</span>
-        </div>
-        <div class="item">
-          <span class="lbl">Lançamentos</span>
-          <span class="vlr" id="iniQtd">0</span>
-        </div>
+    <div class="ini-topo">
+      <div class="ini-data" id="iniDataHoje">—</div>
+      <div class="ini-mes-nav">
+        <button type="button" onclick="mudarMesInicio(-1)" aria-label="Mês anterior">‹</button>
+        <span id="iniMesTitulo">—</span>
+        <button type="button" id="iniMesProx" onclick="mudarMesInicio(1)" aria-label="Próximo mês">›</button>
       </div>
     </div>
 
-    <div class="ini-atalhos">
-      <button onclick="atalhoNovoGasto()">
-        <span class="icone-at">➕</span>
-        <span>Gasto</span>
-      </button>
-      <button onclick="trocarAba('lancamentos')">
-        <span class="icone-at">📋</span>
-        <span>Lançamentos</span>
-      </button>
-      <button onclick="trocarAba('comparativo')">
-        <span class="icone-at">📈</span>
-        <span>Comparar</span>
-      </button>
-      <button onclick="trocarAba('faturas')">
-        <span class="icone-at">💳</span>
-        <span>Faturas</span>
-      </button>
+    <div class="ini-hero" id="iniHero">
+      <div class="ih-titulo" id="iniHeroRotulo">Gasto no mês</div>
+      <div class="ih-valor" id="iniTotalMes">R$ 0,00</div>
+      <div class="ih-sub" id="iniSubMes">Carregando...</div>
+      <div id="iniComparacaoBox"></div>
+      <div class="ih-split"><div class="ih-split-d" id="iniBarraDiego"></div><div class="ih-split-e" id="iniBarraEliane"></div></div>
+      <div class="ih-split-leg">
+        <span><i class="ih-dot d"></i>Diego <b id="iniDiego">R$ 0,00</b></span>
+        <span><i class="ih-dot e"></i>Eliane <b id="iniEliane">R$ 0,00</b></span>
+      </div>
     </div>
 
     <div class="card">
-      <h2>💳 Próximas faturas</h2>
-      <div id="iniFaturas" class="ini-faturas"></div>
+      <h2 class="com-filtro">💸 Onde foi o dinheiro <button type="button" class="ini-link" onclick="irParaAnaliseInicio()">Ver análise</button></h2>
+      <div id="iniCategorias"></div>
     </div>
 
     <div class="card">
-      <h2>🕐 Últimos lançamentos</h2>
+      <h2 class="com-filtro">📅 Últimos 7 dias <span class="ini-h2-valor" id="iniSemanaTotal"></span></h2>
+      <div class="ini-semana" id="iniSemana"></div>
+    </div>
+
+    <div class="ini-secao-titulo"><span>💳 Faturas</span><button type="button" class="ini-link" onclick="trocarAba('faturas')">Ver todas</button></div>
+    <div id="iniFaturas" class="ini-faturas"></div>
+
+    <div class="card">
+      <h2 class="com-filtro"><span id="iniUltimosTitulo">🕐 Hoje</span> <button type="button" class="ini-link" onclick="trocarAba('lancamentos')">Ver todos</button></h2>
       <div id="iniUltimos" class="ini-ultimos"></div>
     </div>
   </div>
@@ -922,7 +1008,7 @@
       <div class="secao">
         <div class="secao-titulo"><span class="num">2</span> Quanto</div>
         <div class="campo valor-destaque" id="valorDestaqueBox" style="margin-bottom:0;">
-          <input type="number" id="valor" step="0.01" min="0" inputmode="decimal" placeholder="R$ 0,00" oninput="atualizarPreviewParcelas()">
+          <input type="text" id="valor" inputmode="numeric" autocomplete="off" placeholder="R$ 0,00" data-centavos="0">
         </div>
       </div>
 
@@ -959,47 +1045,42 @@
 
       <div class="secao" id="secaoPagamento">
         <div class="secao-titulo"><span class="num">4</span> Como pagou</div>
-        <div class="pagamento-grid" id="grupoPagamento">
+        <div class="pagamento-grid compacto" id="grupoPagamento">
           <button type="button" class="ativo" data-pag="Dinheiro/PIX" onclick="selecionarPagamento('Dinheiro/PIX')">
-            <span class="emoji">💵</span> Dinheiro/PIX
+            <span class="emoji">💵</span> PIX
           </button>
           <button type="button" data-pag="Cartão Crédito" onclick="selecionarPagamento('Cartão Crédito')">
-            <span class="emoji">💳</span> Cartão Crédito
+            <span class="emoji">💳</span> Crédito
           </button>
           <button type="button" data-pag="Cartão Débito" onclick="selecionarPagamento('Cartão Débito')">
-            <span class="emoji">🏦</span> Cartão Débito
+            <span class="emoji">🏦</span> Débito
           </button>
           <button type="button" data-pag="Vale Alimentação" onclick="selecionarPagamento('Vale Alimentação')">
-            <span class="emoji">🍽️</span> Vale Alimentação
+            <span class="emoji">🍽️</span> Vale
           </button>
         </div>
         <input type="hidden" id="formaPagamento" value="Dinheiro/PIX">
       </div>
 
-      <div class="secao" id="secaoTipoLancamento" style="display:none;">
-        <div class="secao-titulo" id="tituloTipoLanc"><span class="num">5</span> Tipo de lançamento</div>
-        <div class="toggle-grupo" id="grupoTipoLancamento">
-          <button type="button" class="ativo" data-tipo="gasto" onclick="selecionarTipoLancamento('gasto')">
-            <span class="emoji">🛒</span> Gasto
-          </button>
-          <button type="button" data-tipo="reembolso" onclick="selecionarTipoLancamento('reembolso')">
-            <span class="emoji">↩️</span> Reembolso
-          </button>
-        </div>
-        <input type="hidden" id="tipoLancamento" value="gasto">
-        <div class="dica-reembolso" id="dicaReembolso" style="display:none;">
-          ↩️ <strong>Reembolso / estorno</strong> — o valor será <strong>descontado</strong> do total da fatura.
-        </div>
-      </div>
-
       <div class="parcelas-box" id="boxParcelas">
-        <label>Data da compra</label>
-        <input type="date" id="dataCompraCredito" onchange="atualizarPreviewParcelas()">
-        <div class="sub-campo">
-          <label>Cartão</label>
-          <select id="cartaoSelecionado" onchange="atualizarPreviewParcelas()"></select>
+        <div class="credito-linha">
+          <div>
+            <label>Cartão</label>
+            <select id="cartaoSelecionado" onchange="atualizarPreviewParcelas()"></select>
+          </div>
+          <div>
+            <label>Data da compra</label>
+            <input type="date" id="dataCompraCredito" onchange="atualizarPreviewParcelas()">
+          </div>
         </div>
-        <div class="sub-campo" id="subCampoParcelas">
+        <div class="sub-campo" id="linhaParcelado">
+          <label class="switch-linha">
+            <input type="checkbox" id="chkParcelado" onchange="alternarParcelado(this.checked)">
+            <span class="sw"></span>
+            <span class="sw-texto">🔁 Compra parcelada</span>
+          </label>
+        </div>
+        <div class="sub-campo" id="subCampoParcelas" style="display:none;">
           <label>Número de parcelas</label>
           <select id="parcelas" onchange="atualizarPreviewParcelas()">
             <option value="1">1x (à vista)</option>
@@ -1019,10 +1100,21 @@
           </select>
         </div>
         <div class="preview" id="previewParcelas"></div>
+        <div id="secaoTipoLancamento" class="linha-reembolso" style="display:none;">
+          <label class="switch-linha discreto">
+            <input type="checkbox" id="chkReembolso" onchange="selecionarTipoLancamento(this.checked ? 'reembolso' : 'gasto')">
+            <span class="sw"></span>
+            <span class="sw-texto">É um estorno / reembolso</span>
+          </label>
+          <input type="hidden" id="tipoLancamento" value="gasto">
+          <div class="dica-reembolso" id="dicaReembolso" style="display:none;">
+            ↩️ <strong>Reembolso / estorno</strong> — o valor será <strong>descontado</strong> do total da fatura.
+          </div>
+        </div>
       </div>
 
       <div class="secao" id="campoDataNormal">
-        <div class="secao-titulo"><span class="num">6</span> Quando</div>
+        <div class="secao-titulo"><span class="num">5</span> Quando</div>
         <div class="campo">
           <label>Data</label>
           <input type="date" id="data">
@@ -1752,6 +1844,8 @@
     document.querySelectorAll('.painel').forEach(p => p.classList.remove('ativo'));
     document.querySelector(`.bottom-nav button[data-aba="${nome}"]`).classList.add('ativa');
     document.getElementById('painel-' + nome).classList.add('ativo');
+    recolherFiltros();
+    if (nome === 'lancar') mudarModoLancamento('completo');
 
     const fab = document.getElementById('fabNovo');
     if (fab) {
@@ -1771,8 +1865,8 @@
     if (nome === 'comparativo') renderizarComparativo();
 
     document.getElementById('tituloApp').textContent =
-      nome === 'inicio' ? 'Nossa Rotina'
-      : 'Nossa Rotina';
+      nome === 'inicio' ? 'Finanças do Lar'
+      : 'Finanças do Lar';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -1781,6 +1875,43 @@
     document.querySelectorAll('.sub-painel').forEach(p => p.classList.remove('ativo'));
     document.querySelector(`.sub-aba[data-sub="${nome}"]`).classList.add('ativa');
     document.getElementById('sub-' + nome).classList.add('ativo');
+  }
+
+  /* ===== MÁSCARA DE VALOR: digita só números, as casas decimais entram sozinhas ===== */
+  function lerValorCentavos() {
+    const el = document.getElementById('valor');
+    if (!el) return 0;
+    return parseInt(el.dataset.centavos || '0', 10) || 0;
+  }
+  function escreverValorCentavos(centavos) {
+    if (!centavos) return '';
+    const s = String(centavos).padStart(3, '0');
+    const inteiro = s.slice(0, -2).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return `R$ ${inteiro},${s.slice(-2)}`;
+  }
+  function aplicarMascaraValor(e) {
+    const input = e.target;
+    let digitos = input.value.replace(/\D/g, '').replace(/^0+/, '') || '0';
+    if (digitos.length > 11) digitos = digitos.slice(-11);
+    const centavos = parseInt(digitos, 10) || 0;
+    input.dataset.centavos = String(centavos);
+    input.value = escreverValorCentavos(centavos);
+    atualizarPreviewParcelas();
+  }
+  function getValorNumerico() { return lerValorCentavos() / 100; }
+  function setValorNumerico(reais) {
+    const v = document.getElementById('valor'); if (!v) return;
+    const centavos = Math.max(0, Math.round((reais || 0) * 100));
+    v.dataset.centavos = String(centavos);
+    v.value = escreverValorCentavos(centavos);
+  }
+  function resetarValor() { setValorNumerico(0); }
+
+  /* ===== FILTROS: sempre recolhidos ao trocar de tela ===== */
+  function recolherFiltros() {
+    filtrosExpandidos = false; compFiltrosExpandidos = false; filtrosLancExpandidos = false;
+    ['filtrosCabecalho', 'filtrosConteudo', 'compFiltrosCabecalho', 'compFiltrosConteudo', 'lancFiltrosCabecalho', 'lancFiltrosConteudo']
+      .forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('aberto'); });
   }
 
   function mudarModoLancamento(modo) {
@@ -1868,13 +1999,44 @@
     undoState = null;
   }
 
+  /* ============================================================
+     TELA INICIAL
+     ============================================================ */
+  let mesInicio = null; // null = mês atual
+
+  function mudarMesInicio(delta) {
+    const [a, m] = (mesInicio || mesAtualISO()).split('-').map(Number);
+    const d = new Date(a, m - 1 + delta, 1);
+    const novo = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    if (novo > mesAtualISO()) return;
+    mesInicio = novo === mesAtualISO() ? null : novo;
+    renderizarInicio();
+  }
+
+  function irParaAnaliseInicio() {
+    const el = document.getElementById('mesReferencia');
+    if (el) el.value = mesInicio || mesAtualISO();
+    trocarAba('analise');
+  }
+
+  function valorCompacto(v) {
+    if (v >= 1000) return (v / 1000).toFixed(1).replace('.', ',').replace(',0', '') + 'k';
+    return String(Math.round(v));
+  }
+
   function renderizarInicio() {
-    const mesAtual = mesAtualISO();
+    const mesAtual = mesInicio || mesAtualISO();
+    const ehMesCorrente = mesAtual === mesAtualISO();
     const [ano, mes] = mesAtual.split('-').map(Number);
     const hoje = new Date();
-    const diaHoje = (hoje.getFullYear() === ano && hoje.getMonth() + 1 === mes)
-      ? hoje.getDate()
-      : new Date(ano, mes, 0).getDate();
+    const diaHoje = ehMesCorrente ? hoje.getDate() : new Date(ano, mes, 0).getDate();
+
+    // Cabeçalho: data de hoje + mês selecionado
+    const diaSemana = hoje.toLocaleDateString('pt-BR', { weekday: 'long' }).replace('-feira', '');
+    const dataTxt = `${diaSemana}, ${hoje.getDate()} de ${hoje.toLocaleDateString('pt-BR', { month: 'long' })}`;
+    document.getElementById('iniDataHoje').textContent = dataTxt.charAt(0).toUpperCase() + dataTxt.slice(1);
+    document.getElementById('iniMesTitulo').textContent = nomeMesLongo(mesAtual);
+    document.getElementById('iniMesProx').disabled = ehMesCorrente;
 
     const gastosMesAtual = colapsarParcelas(gastos.filter(g => {
       const ref = (g.mesFatura || (g.data || '').substring(0,7));
@@ -1895,14 +2057,21 @@
     const totalAnterior = gastosMesAnterior.reduce((s,g) => s + valorEfetivo(g), 0);
     const diego = gastosMesAtual.filter(g => g.usuario === 'Diego').reduce((s,g) => s + valorEfetivo(g), 0);
     const eliane = gastosMesAtual.filter(g => g.usuario === 'Eliane').reduce((s,g) => s + valorEfetivo(g), 0);
+    const qtd = gastosMesAtual.length;
 
-    const txt = new Date(ano, mes-1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-    document.getElementById('iniMesTitulo').textContent = txt.charAt(0).toUpperCase() + txt.slice(1);
+    document.getElementById('iniHeroRotulo').textContent = ehMesCorrente ? 'Gasto no mês até agora' : 'Gasto no mês';
     document.getElementById('iniTotalMes').textContent = formatarMoeda(totalAtual);
-    document.getElementById('iniSubMes').innerHTML = `Até hoje (dia ${diaHoje}) · ${gastosMesAtual.length} lançamento${gastosMesAtual.length !== 1 ? 's' : ''}`;
+    document.getElementById('iniSubMes').textContent = ehMesCorrente
+      ? `Até hoje (dia ${diaHoje}) · ${qtd} lançamento${qtd !== 1 ? 's' : ''}`
+      : `${qtd} lançamento${qtd !== 1 ? 's' : ''}`;
     document.getElementById('iniDiego').textContent = formatarMoeda(diego);
     document.getElementById('iniEliane').textContent = formatarMoeda(eliane);
-    document.getElementById('iniQtd').textContent = gastosMesAtual.length;
+
+    // Barra Diego x Eliane
+    const pD = Math.max(diego, 0), pE = Math.max(eliane, 0), soma = pD + pE;
+    document.getElementById('iniBarraDiego').style.width = soma > 0 ? (pD / soma * 100) + '%' : '50%';
+    document.getElementById('iniBarraEliane').style.width = soma > 0 ? (pE / soma * 100) + '%' : '50%';
+    document.getElementById('iniHero').classList.toggle('sem-dados', soma === 0);
 
     const boxComp = document.getElementById('iniComparacaoBox');
     if (totalAnterior > 0) {
@@ -1911,13 +2080,70 @@
       const seta = diff > 0 ? '▲' : (diff < 0 ? '▼' : '●');
       const classe = diff > 0 ? 'sobe' : (diff < 0 ? 'desce' : 'neutro');
       const sinal = diff > 0 ? '+' : '';
-      boxComp.innerHTML = `<div class="ih-comparacao ${classe}">${seta} ${sinal}${pct.toFixed(0)}% vs mesmo ponto do mês anterior</div>`;
+      const ref = ehMesCorrente ? 'vs mesmo ponto do mês anterior' : 'vs mês anterior';
+      boxComp.innerHTML = `<div class="ih-comparacao ${classe}">${seta} ${sinal}${pct.toFixed(0)}% ${ref}</div>`;
     } else {
       boxComp.innerHTML = `<div class="ih-comparacao neutro">Sem dados do mês anterior</div>`;
     }
 
+    renderizarInicioCategorias(gastosMesAtual, totalAtual);
+    renderizarInicioSemana();
     renderizarInicioFaturas();
     renderizarInicioUltimos();
+  }
+
+  function renderizarInicioCategorias(lista, total) {
+    const wrap = document.getElementById('iniCategorias');
+    const porCat = {};
+    lista.forEach(g => { const c = g.categoria || 'Outros'; porCat[c] = (porCat[c] || 0) + valorEfetivo(g); });
+    const ordem = Object.entries(porCat).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+    if (ordem.length === 0 || total <= 0) {
+      wrap.innerHTML = '<div class="vazio" style="padding:16px;">Nenhum gasto neste mês</div>';
+      return;
+    }
+    const top = ordem.slice(0, 4);
+    const resto = ordem.slice(4).reduce((s, [, v]) => s + v, 0);
+    if (resto > 0) top.push(['Outras categorias', resto]);
+    wrap.innerHTML = top.map(([cat, v]) => {
+      const cor = cat === 'Outras categorias' ? '#9aa1b2' : corDa(cat);
+      const pct = Math.round(v / total * 100);
+      return `
+        <div class="ini-cat">
+          <div class="ini-cat-topo">
+            <span class="ini-cat-nome"><i style="background:${cor}"></i>${escaparHTML(cat)}</span>
+            <span class="ini-cat-valor">${formatarMoeda(v)} <small>${pct}%</small></span>
+          </div>
+          <div class="ini-cat-barra"><div style="width:${Math.max(pct, 2)}%; background:${cor};"></div></div>
+        </div>`;
+    }).join('');
+  }
+
+  function renderizarInicioSemana() {
+    const wrap = document.getElementById('iniSemana');
+    const dias = [];
+    for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); dias.push(d); }
+    const isos = dias.map(d => dataLocalISO(d));
+    const lista = colapsarParcelas(gastos.filter(g => isos.includes(g.data)));
+    const porDia = {}; isos.forEach(iso => porDia[iso] = 0);
+    lista.forEach(g => { porDia[g.data] += valorEfetivo(g); });
+    const valores = isos.map(iso => Math.max(porDia[iso], 0));
+    const max = Math.max(...valores, 1);
+    const total = valores.reduce((s, v) => s + v, 0);
+    document.getElementById('iniSemanaTotal').textContent = formatarMoeda(total);
+    const letras = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+    const hojeISO = dataHojeISO();
+    wrap.innerHTML = dias.map((d, i) => {
+      const v = valores[i];
+      const h = v > 0 ? Math.max(v / max * 100, 6) : 0;
+      const ehHoje = isos[i] === hojeISO;
+      return `
+        <div class="ini-dia ${ehHoje ? 'hoje' : ''} ${v > 0 ? '' : 'zero'}" title="${formatarData(isos[i])}: ${formatarMoeda(v)}">
+          <span class="ini-dia-valor">${v > 0 ? valorCompacto(v) : ''}</span>
+          <div class="ini-dia-trilho"><div class="ini-dia-barra" style="height:${h}%"></div></div>
+          <span class="ini-dia-letra">${ehHoje ? 'Hoje' : letras[d.getDay()]}</span>
+          <span class="ini-dia-num">${d.getDate()}</span>
+        </div>`;
+    }).join('');
   }
 
   function renderizarInicioFaturas() {
@@ -1938,22 +2164,24 @@
       porCartaoMes[key].total += ehReembolso(g) ? -(g.valor || 0) : (g.valor || 0);
     });
     const faturas = Object.values(porCartaoMes).filter(f => f.total > 0)
-      .sort((a, b) => a.mes.localeCompare(b.mes)).slice(0, 3);
+      .sort((a, b) => a.mes.localeCompare(b.mes)).slice(0, 4);
 
     if (faturas.length === 0) {
-      wrap.innerHTML = '<div class="vazio" style="padding:20px;">Nenhuma fatura futura com valor</div>';
+      wrap.innerHTML = '<div class="vazio ini-fatura-vazio">Nenhuma fatura futura com valor</div>';
       return;
     }
-    wrap.innerHTML = faturas.map(f => `
-      <div class="ini-fatura-item" onclick="irParaFatura('${f.mes}')">
-        <div class="icone-f">💳</div>
-        <div class="info-f">
-          <div class="nome-f">${escaparHTML(f.cartao)}</div>
-          <div class="quando-f">Vence em ${nomeMesLongo(f.mes)}</div>
-        </div>
-        <div class="valor-f">${formatarMoeda(f.total)}</div>
-      </div>
-    `).join('');
+    wrap.innerHTML = faturas.map((f, i) => {
+      const c = acharCartao(f.cartao);
+      const [a, m] = f.mes.split('-').map(Number);
+      const mesCurto = new Date(a, m - 1, 1).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
+      const quando = c && c.vencimento ? `Vence ${String(c.vencimento).padStart(2, '0')}/${mesCurto}` : `Vence em ${nomeMesLongo(f.mes)}`;
+      return `
+        <div class="ini-fatura-card ${i === 0 ? 'proxima' : ''}" onclick="irParaFatura('${f.mes}')">
+          <div class="ifc-topo"><span class="ifc-cartao">${escaparHTML(f.cartao)}</span><span class="ifc-chip">💳</span></div>
+          <div class="ifc-valor">${formatarMoeda(f.total)}</div>
+          <div class="ifc-quando">${quando}</div>
+        </div>`;
+    }).join('');
   }
 
   function irParaFatura(mesISO) {
@@ -1967,30 +2195,40 @@
 
   function renderizarInicioUltimos() {
     const wrap = document.getElementById('iniUltimos');
-    const ordenados = [...gastos].sort((a, b) => {
+    const titulo = document.getElementById('iniUltimosTitulo');
+    const ordenar = lista => [...lista].sort((a, b) => {
       const ta = timestampDe(a), tb = timestampDe(b);
       if (tb !== ta) return tb - ta;
       return (b.data || '').localeCompare(a.data || '');
     });
-    const ultimos = colapsarParcelas(ordenados).slice(0, 5);
-    if (ultimos.length === 0) {
+    const hojeISO = dataHojeISO();
+    const deHoje = colapsarParcelas(ordenar(gastos.filter(g => g.data === hojeISO)));
+    let itens;
+    if (deHoje.length > 0) {
+      const totalHoje = deHoje.reduce((s, g) => s + valorEfetivo(g), 0);
+      titulo.innerHTML = `🕐 Hoje <span class="ini-h2-valor">${formatarMoeda(totalHoje)}</span>`;
+      itens = deHoje;
+    } else {
+      titulo.textContent = '🕐 Últimos lançamentos';
+      itens = colapsarParcelas(ordenar(gastos)).slice(0, 5);
+    }
+    if (itens.length === 0) {
       wrap.innerHTML = '<div class="vazio" style="padding:20px;">Nenhum lançamento ainda</div>';
       return;
     }
-    wrap.innerHTML = ultimos.map(g => {
+    wrap.innerHTML = itens.map(g => {
       const reemb = ehReembolso(g);
       const cor = corDa(g.categoria);
       let valorHTML;
       if (g._parcelado) valorHTML = formatarMoeda(g._valorTotal);
       else valorHTML = (reemb ? '-' : '') + formatarMoeda(g.valor);
+      const quando = deHoje.length > 0 ? '' : `${formatarData(g.data)} · `;
       return `
         <div class="ini-ultimo-item ${reemb ? 'reembolso' : ''}" onclick="abrirDetalhesGasto('${g.id}')">
+          <div class="ini-u-cor" style="background:${cor}"></div>
           <div class="info-u">
             <div class="desc-u">${reemb ? '↩️ ' : ''}${escaparHTML(g.descricao)}</div>
-            <div class="meta-u">
-              ${formatarData(g.data)} · ${escaparHTML(g.usuario)}
-              <span style="display:inline-block; margin-left:6px; padding:1px 7px; border-radius:8px; background:${cor}; color:white; font-size:0.9em; font-weight:700;">${g.categoria}</span>
-            </div>
+            <div class="meta-u">${quando}${escaparHTML(g.usuario)} · <span style="color:${cor}; font-weight:700;">${escaparHTML(g.categoria)}</span></div>
           </div>
           <div class="valor-u">${valorHTML}</div>
         </div>
@@ -2200,8 +2438,8 @@
         atualizarPreviewParcelas();
       }
     }
-    if (e.valorMedio && !document.getElementById('valor').value) {
-      document.getElementById('valor').value = e.valorMedio.toFixed(2);
+    if (e.valorMedio && !getValorNumerico()) {
+      setValorNumerico(e.valorMedio);
       atualizarPreviewParcelas();
     }
     const d = document.getElementById('descricao');
@@ -2548,6 +2786,13 @@
     document.getElementById('usuario').value = nome;
     document.querySelectorAll('#grupoUsuario button').forEach(b => b.classList.toggle('ativo', b.dataset.user === nome));
   }
+  function alternarParcelado(ligado) {
+    const sel = document.getElementById('parcelas');
+    if (ligado) { if (sel.value === '1') sel.value = '2'; }
+    else sel.value = '1';
+    document.getElementById('subCampoParcelas').style.display = ligado ? 'block' : 'none';
+    atualizarPreviewParcelas();
+  }
   function selecionarTipoLancamento(tipo) {
     document.getElementById('tipoLancamento').value = tipo;
     document.querySelectorAll('#grupoTipoLancamento button').forEach(b => {
@@ -2559,6 +2804,9 @@
     const btn = document.getElementById('btnAdicionar');
     const tit = document.getElementById('tituloNovoGasto');
     const scp = document.getElementById('subCampoParcelas');
+    const linhaParc = document.getElementById('linhaParcelado');
+    const chkParc = document.getElementById('chkParcelado');
+    document.getElementById('chkReembolso').checked = tipo === 'reembolso';
     if (tipo === 'reembolso') {
       dica.style.display = 'block';
       vb.classList.add('reembolso');
@@ -2566,6 +2814,8 @@
       btn.textContent = '↩️ Adicionar Reembolso';
       tit.textContent = '↩️ Novo Reembolso';
       scp.style.display = 'none';
+      linhaParc.style.display = 'none';
+      chkParc.checked = false;
       document.getElementById('parcelas').value = '1';
     } else {
       dica.style.display = 'none';
@@ -2573,7 +2823,11 @@
       btn.classList.remove('reembolso');
       btn.textContent = '✓ Adicionar Gasto';
       tit.textContent = '➕ Novo Gasto';
-      scp.style.display = 'block';
+      // Parcelas só aparecem quando "Compra parcelada" está ligado
+      const parcelado = document.getElementById('parcelas').value !== '1';
+      linhaParc.style.display = 'block';
+      chkParc.checked = parcelado;
+      scp.style.display = parcelado ? 'block' : 'none';
     }
     atualizarPreviewParcelas();
   }
@@ -2630,7 +2884,7 @@
     const fp = document.getElementById('formaPagamento').value;
     if (fp !== 'Cartão Crédito') return;
     const re = document.getElementById('tipoLancamento').value === 'reembolso';
-    const v = parseFloat(document.getElementById('valor').value) || 0;
+    const v = getValorNumerico();
     const n = re ? 1 : (parseInt(document.getElementById('parcelas').value) || 1);
     const dc = document.getElementById('dataCompraCredito').value;
     const cn = document.getElementById('cartaoSelecionado').value;
@@ -2764,7 +3018,7 @@
     const descricao = String(document.getElementById('descricao').value || '').trim();
     const categoria = String(document.getElementById('categoria').value || '');
     const subcategoria = String(document.getElementById('subcategoria').value || '');
-    const valor = parseFloat(String(document.getElementById('valor').value || '0'));
+    const valor = getValorNumerico();
     const formaPagamento = String(document.getElementById('formaPagamento').value || '');
     const ehCredito = formaPagamento === 'Cartão Crédito';
     const observacao = String(document.getElementById('observacao').value || '').trim();
@@ -2843,7 +3097,7 @@
         } catch (e) { console.error('Erro ao desfazer:', e); }
       };
 
-      document.getElementById('valor').value = '';
+      resetarValor();
       document.getElementById('descricao').value = '';
       document.getElementById('observacao').value = '';
       document.getElementById('parcelas').value = '1';
@@ -3989,7 +4243,12 @@
     document.getElementById('compMesReferencia').value = mesAtual;
     mesLancamentos = mesAtual;
     document.getElementById('mesFatura').addEventListener('change', function() { this.dataset.tocado = '1'; });
-    mudarModoLancamento('rapido');
+    mudarModoLancamento('completo');
+    resetarValor();
+    document.getElementById('valor').addEventListener('input', aplicarMascaraValor);
+    document.getElementById('valor').addEventListener('paste', (e) => {
+      setTimeout(() => aplicarMascaraValor({ target: e.target }), 0);
+    });
     if (window.location.hash === '#lancar') {
       setTimeout(() => {
         trocarAba('lancar');
