@@ -1,17 +1,43 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { onSnapshot } from 'firebase/firestore';
 import { salvarCartoes, salvarCategorias, useCasa } from '../data/store';
+import { refCasa } from '../data/firebase';
+import { useAuth } from '../data/auth';
 import { CORES_SUGERIDAS } from '../data/padroes';
 import type { Cartao, Categoria } from '../types';
 import { Seg, useToast } from '../ui/base';
-import { BANCOS, bancoDoNome, Icone, Rot } from '../ui/icones';
+import { BANCOS, bancoDoNome, Icone, PessoaRot, Rot } from '../ui/icones';
 import { CartaoMini, CartaoPrevia, EscolherBanco } from '../ui/cartao';
 
 export function Ajustes() {
-  const [sub, setSub] = useState<'cartoes' | 'categorias'>('cartoes');
+  const [sub, setSub] = useState<'cartoes' | 'categorias' | 'conta'>('cartoes');
   return <>
-    <Seg valor={sub} onChange={setSub} opcoes={[['cartoes', <Rot key="c" ic="cartao">Cartões</Rot>], ['categorias', <Rot key="g" ic="pasta">Categorias</Rot>]]} />
-    {sub === 'cartoes' ? <Cartoes /> : <Categorias />}
+    <Seg valor={sub} onChange={setSub} opcoes={[['cartoes', <Rot key="c" ic="cartao">Cartões</Rot>], ['categorias', <Rot key="g" ic="pasta">Categorias</Rot>], ['conta', <Rot key="u" ic="pessoa">Conta</Rot>]]} />
+    {sub === 'cartoes' ? <Cartoes /> : sub === 'categorias' ? <Categorias /> : <Conta />}
   </>;
+}
+
+function Conta() {
+  const { estado, sair } = useAuth();
+  const [membros, setMembros] = useState<Record<string, string>>({});
+  useEffect(() => onSnapshot(refCasa(), s => setMembros((s.data()?.membros as Record<string, string>) ?? {})), []);
+  if (estado.fase !== 'dentro') return null;
+  const { user, pessoa } = estado;
+  return (
+    <div className="grid2">
+      <div className="card conta">
+        <span className={'av-g grande ' + (pessoa === 'Diego' ? 'd' : 'e')}>{user.photoURL ? <img src={user.photoURL} alt="" referrerPolicy="no-referrer" /> : pessoa[0]}</span>
+        <div><b>{pessoa}</b><div className="note">{user.email}</div></div>
+        <button className="btn sec2" onClick={() => void sair()}><Rot ic="esq">Sair da conta</Rot></button>
+      </div>
+      <div className="card">
+        <h2>Quem tem acesso</h2>
+        {(['Diego', 'Eliane'] as const).map(p => { const email = Object.keys(membros).find(k => membros[k] === p);
+          return <div key={p} className="membro"><PessoaRot p={p} tam={26} /><span className="note">{email ?? 'ainda não entrou'}</span></div>; })}
+        <div className="note" style={{ marginTop: 10 }}>Cada um entra uma vez com a própria conta Google e diz quem é. Depois disso, outras contas não conseguem acessar.</div>
+      </div>
+    </div>
+  );
 }
 
 const dia = (s: string) => { const n = parseInt(s); return n >= 1 && n <= 31 ? n : null; };

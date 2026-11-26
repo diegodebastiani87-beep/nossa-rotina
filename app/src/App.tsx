@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useCasa, type Status } from './data/store';
 import { saudacao, usePrefs } from './data/preferencias';
+import { useAuth } from './data/auth';
 import { DIAS_SEMANA, idxLongo, MESES_LONGOS } from './lib/datas';
 import { Logo } from './ui/base';
 import { Icone } from './ui/icones';
@@ -32,13 +33,15 @@ function StatusDot() {
   );
 }
 
-/** Avatar de quem está usando; toque troca entre Diego e Eliane (vira a conta Google quando o login entrar). */
-function Perfil({ compacto }: { compacto?: boolean }) {
-  const { quem, setQuem } = usePrefs();
+/** Avatar da conta logada (foto do Google quando houver); toque abre Ajustes → Conta. */
+function Perfil({ compacto, onClick }: { compacto?: boolean; onClick: () => void }) {
+  const { quem } = usePrefs();
   const { hoje } = useCasa();
+  const { estado } = useAuth();
+  const foto = estado.fase === 'dentro' ? estado.user.photoURL : null;
   return (
-    <button className="perfil" onClick={() => setQuem(quem === 'Diego' ? 'Eliane' : 'Diego')} title="Trocar quem está usando">
-      <span className={'av-g ' + (quem === 'Diego' ? 'd' : 'e')}>{quem[0]}</span>
+    <button className="perfil" onClick={onClick} title="Minha conta">
+      <span className={'av-g ' + (quem === 'Diego' ? 'd' : 'e')}>{foto ? <img src={foto} alt="" referrerPolicy="no-referrer" /> : quem[0]}</span>
       {!compacto && <span className="pf-t"><small>{saudacao(hoje)},</small><b>{quem}</b></span>}
     </button>
   );
@@ -76,11 +79,11 @@ export function App() {
         <button className="btn novo" onClick={() => novo(null)}><Icone nome="mais" tam={18} traco={2.4} /> Novo gasto</button>
         <nav>{(['inicio', 'lancamentos', 'analise', 'faturas', 'ajustes'] as Tela[]).map(t =>
           <button key={t} className={tela === t ? 'on' : ''} onClick={() => ir(t)}><Icone nome={TELAS[t].ic} tam={20} />{TELAS[t].t}</button>)}</nav>
-        <div className="foot"><Perfil /><span className="side-st"><StatusDot />{TXT_STATUS[status]}</span></div>
+        <div className="foot"><Perfil onClick={() => ir('ajustes')} /><span className="side-st"><StatusDot />{TXT_STATUS[status]}</span></div>
       </aside>
 
       <header className="topbar">
-<Perfil />
+<Perfil onClick={() => ir('ajustes')} />
         <div className="top-r">
           {olho}
           <StatusDot />

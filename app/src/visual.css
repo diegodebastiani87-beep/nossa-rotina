@@ -264,5 +264,28 @@ h1, h2, h3, b, strong { letter-spacing: -0.02em; }
 .banco-op.sel { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); }
 .bo-sw { width: 22px; height: 16px; border-radius: 4px; flex: none; background: linear-gradient(135deg, var(--a), var(--b)); }
 
+/* ===== login ===== */
+.av-g { overflow: hidden; }
+.av-g img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.av-g.grande { width: 64px; height: 64px; font-size: 1.6em; }
+.entrar { min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; padding-block: 32px; }
+.entrar-box { width: 100%; max-width: 380px; text-align: center; display: grid; gap: 14px; justify-items: center; }
+.entrar-logo svg { width: 84px; height: 84px; border-radius: 24px; box-shadow: 0 18px 36px -14px rgba(79,70,229,.7); }
+.entrar h1 { margin: 6px 0 0; font-size: 1.9em; font-weight: 750; }
+.entrar-sub { margin: -6px 0 10px; color: var(--text-3); }
+.entrar-msg { margin: 0; color: var(--text-2); }
+.btn-google { display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px; border-radius: 14px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); font-weight: 650; font-size: 1em; box-shadow: var(--shadow-sm); }
+.btn-google:disabled { opacity: .6; }
+.entrar-quem { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+.entrar-quem button { display: grid; justify-items: center; gap: 8px; padding: 16px 10px; border-radius: 18px; border: 1.5px solid var(--border); background: var(--surface); font-weight: 700; color: var(--text); }
+.entrar-quem button .av-g { width: 52px; height: 52px; }
+.entrar-quem button:disabled { opacity: .45; }
+.entrar-quem small { font-size: .72em; color: var(--text-3); font-weight: 500; }
+.entrar .aviso { display: flex; gap: 8px; align-items: center; text-align: left; width: 100%; }
+.conta { display: grid; justify-items: center; gap: 12px; text-align: center; }
+.conta b { font-size: 1.15em; }
+.membro { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.membro:last-of-type { border-bottom: 0; }
+
 /* ocultar valores */
 html.oculto .num:not(input) { filter: blur(7px); transition: filter .2s; }
