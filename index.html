@@ -4259,5 +4259,32 @@
     iniciarFirebase();
   };
 </script>
+<!-- Aviso da nova versão (Lar em Dia). Para remover, apague este bloco inteiro. -->
+<div id="avisoNova" style="display:none;position:fixed;inset:0;z-index:5000;background:rgba(10,14,30,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:flex-end;justify-content:center;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif">
+  <div style="background:#141826;color:#eef0f7;width:100%;max-width:420px;border-radius:22px 22px 0 0;padding:26px 22px calc(22px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px rgba(0,0,0,.4);text-align:center">
+    <img src="v2/icon-192.png" alt="" width="68" height="68" style="border-radius:18px;box-shadow:0 8px 24px rgba(79,70,229,.45)">
+    <h2 style="margin:14px 0 6px;font-size:21px">Chegou a versão nova!</h2>
+    <p style="margin:0 0 18px;color:#a3a9bf;font-size:14.5px;line-height:1.45">O <b style="color:#fff">Lar em Dia</b> tem visual novo, parcelas em qualquer número de vezes e cartões com a cara do banco. Os lançamentos são os mesmos: nada se perde.</p>
+    <a id="avisoApk" href="apk/lar-em-dia.apk" style="display:none;background:linear-gradient(135deg,#4f46e5,#8b3cf0);color:#fff;text-decoration:none;font-weight:700;padding:14px;border-radius:14px;margin-bottom:10px">Baixar o app para Android</a>
+    <a href="v2/" style="display:block;background:#232838;color:#fff;text-decoration:none;font-weight:700;padding:14px;border-radius:14px;margin-bottom:10px" id="avisoAbrir">Abrir a versão nova</a>
+    <button type="button" id="avisoDepois" style="background:none;border:0;color:#8b91a8;font-size:14px;padding:10px;cursor:pointer">Agora não</button>
+  </div>
+</div>
+<script>
+(function () {
+  var CHAVE = 'aviso-nova-versao-ate';
+  try { if (Date.now() < Number(localStorage.getItem(CHAVE) || 0)) return; } catch (e) {}
+  var el = document.getElementById('avisoNova');
+  if (/Android/i.test(navigator.userAgent)) {
+    document.getElementById('avisoApk').style.display = 'block';
+    document.getElementById('avisoAbrir').textContent = 'Usar no navegador';
+  }
+  el.style.display = 'flex';
+  document.getElementById('avisoDepois').onclick = function () {
+    try { localStorage.setItem(CHAVE, String(Date.now() + 24 * 3600 * 1000)); } catch (e) {} // volta a aparecer amanhã
+    el.style.display = 'none';
+  };
+})();
+</script>
 </body>
 </html>
