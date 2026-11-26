@@ -1,6 +1,6 @@
 # Gera o APK do Lar em Dia (Android) e publica em https://diegodebastiani87-beep.github.io/nossa-rotina/apk/lar-em-dia.apk
 # O APK só abre o app publicado; mudanças no app NÃO exigem APK novo. Rode de novo só se mudar algo em android/.
-# Precisa dos segredos CHAVE_APK_BASE64 e CHAVE_APK_SENHA (chave guardada fora do repositório).
+# Precisa dos segredos CHAVE_APK_BASE64 e CHAVE_APK_SENHA (chave guardada fora do repositório). Sem eles, só confere se compila.
 name: Gerar APK (Android)
 
 on:
