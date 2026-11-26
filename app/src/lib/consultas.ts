@@ -30,7 +30,7 @@ export function itensDoMes(gastos: Gasto[], mes: number, modo: ModoMes, ateDia?:
   }
   for (const ps of grupos.values()) {
     ps.sort((a, b) => (a.parcelaAtual ?? 1) - (b.parcelaAtual ?? 1));
-    const total = ps.reduce((s, x) => s + x.valor, 0);
+    const total = Math.round(ps.reduce((s, x) => s + x.valor, 0) * 100) / 100;
     out.push({ ...ps[0], v: total, colapsado: true, numParcelas: ps[0].parcelaTotal ?? ps.length });
   }
   return out;
@@ -132,3 +132,14 @@ export function buscarDuplicata(gastos: Gasto[], data: string, valor: number, de
   return gastos.find(g => g.data === data && normalizarChave(g.descricao) === k && ehReembolso(g) === reembolso &&
     !(cartao && g.cartao && g.cartao !== cartao) && Math.abs(((ehParcelado(g) ? g.valorTotalCompra : g.valor) ?? g.valor) - valor) < 0.01);
 }
+
+/** Quando o lançamento foi feito (criadoEm pode vir como Timestamp do Firebase ou texto ISO); sem isso, usa a data da compra. */
+export function momento(g: Gasto): number {
+  const c = g.criadoEm as unknown as { toMillis?: () => number; seconds?: number } | string | undefined;
+  if (typeof c === 'string') { const t = Date.parse(c); if (!isNaN(t)) return t; }
+  else if (c?.toMillis) return c.toMillis();
+  else if (typeof c?.seconds === 'number') return c.seconds * 1000;
+  return new Date(g.data + 'T00:00:00').getTime();
+}
+/** Lançado há menos de 30 minutos (ganha a etiqueta "novo" nas listas). */
+export const ehNovo = (g: Gasto, agora = Date.now()) => { const m = momento(g); return agora - m >= 0 && agora - m < 30 * 60 * 1000 && typeof g.criadoEm !== 'undefined'; };

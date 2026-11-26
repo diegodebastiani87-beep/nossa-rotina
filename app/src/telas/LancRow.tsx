@@ -1,6 +1,6 @@
 import { useCasa } from '../data/store';
 import { brl } from '../lib/datas';
-import type { Item } from '../lib/consultas';
+import { ehNovo, type Item } from '../lib/consultas';
 import { ehCredito, ehReembolso } from '../types';
 import { SwipeItem } from '../ui/base';
 import { IconeCategoria } from '../ui/icones';
@@ -23,6 +23,7 @@ export function LancRow({ g, modo = 'compra' }: { g: Item; modo?: 'compra' | 'fa
           {g.descricao}
           {g.parcelaTotal ? <span className="pp">{inteiro || modo === 'compra' ? `${g.parcelaTotal}x` : `${g.parcelaAtual}/${g.parcelaTotal}`}</span> : null}
           {reemb && <span className="tag ok">estorno</span>}
+          {ehNovo(g) && <span className="tag novo">novo</span>}
         </span>
         <span className="s"><span className={'who ' + (g.usuario === 'Diego' ? 'd' : 'e')} /> {sub}{g.observacao ? ` · ${g.observacao}` : ''}</span>
       </span>

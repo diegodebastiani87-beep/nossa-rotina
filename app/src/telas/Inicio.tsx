@@ -1,18 +1,12 @@
 import { useMemo, type ReactNode } from 'react';
 import { useCasa } from '../data/store';
 import { brl, DIAS_SEMANA, diasNoMes, hojeISO, idxCurto, idxLongo, idxYm, isoLocal, mesDe, MESES, nomeMes, ymIdx } from '../lib/datas';
-import { comprasParceladas, itensDoMes, soma, somaDe, type Item } from '../lib/consultas';
-import { ehCredito, ehReembolso, type Gasto } from '../types';
+import { comprasParceladas, itensDoMes, momento, soma, somaDe, type Item } from '../lib/consultas';
+import { ehCredito, ehReembolso } from '../types';
 import { varsCartao, Icone, IconeCategoria } from '../ui/icones';
 import { corDa, LancSwipe } from './LancRow';
 import type { PresetLancar } from './Lancar';
 
-const momento = (g: Gasto) => {
-  const c = g.criadoEm as { toMillis?: () => number; seconds?: number } | undefined;
-  if (c?.toMillis) return c.toMillis();
-  if (typeof c?.seconds === 'number') return c.seconds * 1000;
-  return new Date(g.data + 'T00:00:00').getTime();
-};
 
 function Secao({ titulo, acao, onAcao, children }: { titulo: string; acao?: string; onAcao?: () => void; children: ReactNode }) {
   return (
@@ -74,16 +68,21 @@ export function Inicio({ mes, setMes, ir, novo, abrirFatura }: {
   const R = 46, C = 2 * Math.PI * R;
   const arcos = top.map(([c, v]) => { const frac = v / totPos, a = { c, v, ini: ang, frac }; ang += frac; return a; });
 
-  // faturas: próximas 4 com valor, a partir do mês corrente (regra original)
+  // faturas: próximas 4 em aberto (com valor e vencimento de hoje em diante); as já vencidas não aparecem
+  const venceEm = (cartao: string, m: number) => {
+    const c = cartoes.find(x => x.nome === cartao);
+    const dia = c ? Math.min(c.vencimento, diasNoMes(m)) : diasNoMes(m);
+    return `${idxYm(m)}-${String(dia).padStart(2, '0')}`;
+  };
   const fats = new Map<string, { mes: number; cartao: string; total: number; n: number }>();
   for (const g of gastos) {
     if (!ehCredito(g) || !g.mesFatura) continue;
-    const m = ymIdx(g.mesFatura); if (m < mesHoje || m > mesHoje + 3) continue;
+    const m = ymIdx(g.mesFatura); if (m < mesHoje - 1 || m > mesHoje + 4) continue;
     const k = m + '|' + (g.cartao || '(sem cartão)');
     const f = fats.get(k) ?? { mes: m, cartao: g.cartao || '(sem cartão)', total: 0, n: 0 };
     f.total += ehReembolso(g) ? -g.valor : g.valor; f.n++; fats.set(k, f);
   }
-  const proxFaturas = [...fats.values()].filter(f => f.total > 0).sort((a, b) => a.mes - b.mes || a.cartao.localeCompare(b.cartao)).slice(0, 4);
+  const proxFaturas = [...fats.values()].filter(f => f.total > 0 && venceEm(f.cartao, f.mes) >= hojeIso).sort((a, b) => a.mes - b.mes || a.cartao.localeCompare(b.cartao)).slice(0, 4);
 
   // parcelas
   const ativas = comprasParceladas(gastos, faturaAtual).filter(c => c.ativa);
@@ -96,11 +95,11 @@ export function Inicio({ mes, setMes, ir, novo, abrirFatura }: {
   const maxDia = Math.max(1, ...porDia);
 
   // últimos lançamentos
-  const deHoje = gastos.filter(g => g.data === hojeIso && !(g.parcelaAtual && g.parcelaAtual > 1));
+  // pela hora em que foi lançado (não pela data da compra), para uma compra de ontem lançada agora aparecer no topo
   const vistos = new Set<string>();
-  const recentes = (deHoje.length ? deHoje : [...gastos].sort((a, b) => momento(b) - momento(a)))
+  const recentes = [...gastos].sort((a, b) => momento(b) - momento(a))
     .filter(g => { if (!g.grupoId || !g.parcelaTotal) return true; if (vistos.has(g.grupoId)) return false; vistos.add(g.grupoId); return true; })
-    .slice(0, deHoje.length ? 20 : 6)
+    .slice(0, 8)
     .map<Item>(g => ({ ...g, v: g.parcelaTotal ? (g.valorTotalCompra ?? g.valor) : ehReembolso(g) ? -g.valor : g.valor, colapsado: !!g.parcelaTotal }));
 
   return (
@@ -162,7 +161,6 @@ export function Inicio({ mes, setMes, ir, novo, abrirFatura }: {
 
         <Secao titulo="Últimos lançamentos" acao="Ver todos" onAcao={() => ir('lancamentos')}>
           <div className="lista-card">
-            {deHoje.length > 0 && <div className="mini-k">Hoje</div>}
             {recentes.length ? recentes.map(g => <LancSwipe key={g.id} g={g} />) : <div className="vazio">Nenhum lançamento ainda.</div>}
           </div>
         </Secao>

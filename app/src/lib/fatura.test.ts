@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { calcularMesFatura, dividirEmParcelas, gerarParcelas, mesFaturaPadrao } from './fatura';
-import { buscarDuplicata, comprasParceladas, itensDoMes, soma } from './consultas';
+import { buscarDuplicata, comprasParceladas, itensDoMes, momento, soma } from './consultas';
 import { lerValor, ymIdx } from './datas';
 import type { Gasto } from '../types';
 
@@ -102,5 +102,23 @@ describe('lerValor', () => {
     expect(lerValor('1.234,56')).toBe(1234.56);
     expect(lerValor('R$ 4.590,00')).toBe(4590);
     expect(lerValor('12.5')).toBe(12.5);
+  });
+});
+
+describe('momento do lançamento', () => {
+  const base = { data: '2026-11-25' } as Gasto;
+  it('lê criadoEm em texto ISO (como o app grava)', () => {
+    expect(momento({ ...base, criadoEm: '2026-11-26T18:06:05.916Z' } as unknown as Gasto)).toBe(Date.parse('2026-11-26T18:06:05.916Z'));
+  });
+  it('compra de ontem lançada agora fica à frente de compra de hoje lançada antes', () => {
+    const ontemAgora = { ...base, criadoEm: '2026-11-26T18:06:00Z' } as unknown as Gasto;
+    const hojeCedo = { data: '2026-11-26', criadoEm: '2026-11-26T12:00:00Z' } as unknown as Gasto;
+    expect(momento(ontemAgora)).toBeGreaterThan(momento(hojeCedo));
+  });
+  it('soma das parcelas recolhidas sem resto de arredondamento', () => {
+    const ps = Array.from({ length: 17 }, (_, i) => ({ id: 'p' + i, data: '2026-11-25', valor: i < 16 ? 153.9 : 153.85, grupoId: 'g', parcelaAtual: i + 1, parcelaTotal: 17, formaPagamento: 'Cartão Crédito', tipoLancamento: 'gasto' }) as unknown as Gasto);
+    const it2 = itensDoMes(ps, 2026 * 12 + 10, 'compra');
+    expect(it2).toHaveLength(1);
+    expect(it2[0].v).toBe(2616.25);
   });
 });

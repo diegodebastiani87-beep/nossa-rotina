@@ -295,3 +295,6 @@ html, body { overflow-x: clip; }
 
 /* ocultar valores */
 html.oculto .num:not(input) { filter: blur(7px); transition: filter .2s; }
+
+/* etiqueta de lançamento recém-feito */
+.tag.novo { background: color-mix(in srgb, var(--primary) 18%, transparent); color: var(--primary); }
