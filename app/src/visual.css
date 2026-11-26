@@ -246,7 +246,13 @@ h1, h2, h3, b, strong { letter-spacing: -0.02em; }
 .cc-mini .cc-chip { width: 20px; height: 15px; border-radius: 4px; }
 .ccm-ok { width: 20px; height: 20px; border-radius: 50%; background: #fff; color: var(--b); display: grid; place-items: center; flex: none; }
 .cc-mini small { font-size: .66em; opacity: .85; position: relative; }
-.cc-pick { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(132px, 1fr); gap: 10px; overflow-x: auto; padding: 4px 4px 6px; margin: -4px; scrollbar-width: none; }
+.cc-pick { display: grid; grid-auto-flow: column; grid-auto-columns: 148px; gap: 10px; overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity; padding: 4px 4px 6px; margin: 0 -4px; contain: inline-size; min-width: 0; max-width: calc(100% + 8px); scrollbar-width: none; }
+.cc-pick > * { scroll-snap-align: start; }
+/* a faixa de cartões rola sozinha; nada pode alargar a página no celular */
+.credito, .credito > div, .sec, .card { min-width: 0; }
+html, body { overflow-x: clip; }
+@media (min-width: 900px) { .cc-pick { grid-auto-columns: minmax(148px, 1fr); } }
 .cc-pick::-webkit-scrollbar { display: none; }
 
 /* Ajustes: lista e cadastro de cartões */
