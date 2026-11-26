@@ -30,6 +30,8 @@
             <meta-data android:name="android.support.customtabs.trusted.SPLASH_SCREEN_FADE_OUT_DURATION" android:value="300" />
             <meta-data android:name="android.support.customtabs.trusted.FILE_PROVIDER_AUTHORITY" android:value="br.laremdia.app.fileprovider" />
 
+            <meta-data android:name="android.app.shortcuts" android:resource="@xml/atalhos" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -41,6 +43,13 @@
                 <data android:scheme="https" android:host="diegodebastiani87-beep.github.io" android:pathPrefix="/nossa-rotina" />
             </intent-filter>
         </activity>
+
+        <receiver android:name=".WidgetGasto" android:exported="true" android:label="@string/widget_rotulo">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_gasto_info" />
+        </receiver>
 
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutId="novo_gasto"
+        android:shortcutLongLabel="@string/widget_rotulo"
+        android:shortcutShortLabel="@string/widget_rotulo">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="https://diegodebastiani87-beep.github.io/nossa-rotina/v2/#lancar"
+            android:targetClass="com.google.androidbrowserhelper.trusted.LauncherActivity"
+            android:targetPackage="br.laremdia.app" />
+    </shortcut>
+</shortcuts>

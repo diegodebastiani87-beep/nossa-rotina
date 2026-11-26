@@ -25,7 +25,9 @@ export default defineConfig({
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png' },
           { src: 'icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
-        ]
+        ],
+        // segurar o ícone do app instalado mostra este atalho (dá para arrastar para a tela inicial)
+        shortcuts: [{ name: 'Novo gasto', short_name: 'Novo gasto', url: './#lancar', icons: [{ src: 'icon-192.png', sizes: '192x192', type: 'image/png' }] }]
       },
       workbox: {
         // o Firestore tem cache offline próprio; aqui só o "casco" do app fica guardado

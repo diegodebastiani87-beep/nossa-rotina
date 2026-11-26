@@ -3,6 +3,9 @@
     <string name="nome_app">Lar em Dia</string>
     <!-- endereço que o app abre; na troca final pode passar a ser a raiz /nossa-rotina/ -->
     <string name="endereco">https://diegodebastiani87-beep.github.io/nossa-rotina/v2/</string>
+    <string name="endereco_lancar">https://diegodebastiani87-beep.github.io/nossa-rotina/v2/#lancar</string>
+    <string name="widget_rotulo">Novo gasto</string>
+    <string name="widget_descricao">Abre o Lar em Dia direto no lançamento</string>
     <!-- liga o APK ao site; o site confirma com /.well-known/assetlinks.json (repositório diegodebastiani87-beep.github.io) -->
     <string name="asset_statements" translatable="false">[{\"relation\": [\"delegate_permission/common.handle_all_urls\"], \"target\": {\"namespace\": \"web\", \"site\": \"https://diegodebastiani87-beep.github.io\"}}]</string>
     <color name="cor_barra">#4f46e5</color>
