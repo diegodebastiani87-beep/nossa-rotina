@@ -3,7 +3,7 @@ import { useCasa } from '../data/store';
 import { brl, DIAS_SEMANA, diasNoMes, hojeISO, idxCurto, idxLongo, idxYm, isoLocal, mesDe, MESES, nomeMes, ymIdx } from '../lib/datas';
 import { comprasParceladas, itensDoMes, soma, somaDe, type Item } from '../lib/consultas';
 import { ehCredito, ehReembolso, type Gasto } from '../types';
-import { estiloCartao, Icone, IconeCategoria } from '../ui/icones';
+import { varsCartao, Icone, IconeCategoria } from '../ui/icones';
 import { corDa, LancSwipe } from './LancRow';
 import type { PresetLancar } from './Lancar';
 
@@ -146,10 +146,10 @@ export function Inicio({ mes, setMes, ir, novo, abrirFatura }: {
         <Secao titulo="Faturas" acao="Ver todas" onAcao={() => ir('faturas')}>
           <div className="cards-h">
             {proxFaturas.length ? proxFaturas.map(f => {
-              const c = cartoes.find(x => x.nome === f.cartao), s = estiloCartao(f.cartao);
+              const c = cartoes.find(x => x.nome === f.cartao), s = varsCartao(f.cartao, cartoes.find(x => x.nome === f.cartao)?.banco);
               const aberta = f.mes >= faturaAtual;
               return (
-                <button key={f.mes + f.cartao} className="cc" style={{ ['--a' as string]: s.a, ['--b' as string]: s.b }} onClick={() => abrirFatura(f.cartao, f.mes)}>
+                <button key={f.mes + f.cartao} className="cc" style={s} onClick={() => abrirFatura(f.cartao, f.mes)}>
                   <div className="cc-top"><b>{f.cartao}</b><span className="cc-chip" /></div>
                   <div className="cc-k">Fatura de {MESES[f.mes % 12]}{aberta ? '' : ' · fechada'}</div>
                   <div className="cc-v num">{brl(f.total)}</div>

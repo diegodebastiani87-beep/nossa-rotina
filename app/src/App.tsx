@@ -46,7 +46,7 @@ function Perfil({ compacto }: { compacto?: boolean }) {
 
 export function App() {
   const { carregado, status, erro, hoje, faturaAtual } = useCasa();
-  const { oculto, alternarOculto } = usePrefs();
+  const { oculto, alternarOculto, quem } = usePrefs();
   const mesHoje = hoje.getFullYear() * 12 + hoje.getMonth();
   const [tela, setTela] = useState<Tela>(lerHash);
   const [mes, setMes] = useState(mesHoje);
@@ -92,7 +92,7 @@ export function App() {
         <div className={'pagehead' + (tela === 'inicio' ? ' ph-inicio' : '')}>
           <div>
             <div className="eyebrow">{tela === 'inicio' ? dataHoje : 'Lar em Dia'}</div>
-            <h1>{tela === 'inicio' ? `${saudacao(hoje)} 👋` : info.t}</h1>
+            <h1>{tela === 'inicio' ? `${saudacao(hoje)}, ${quem}` : info.t}</h1>
           </div>
           <div className="ph-r">
             <span className="ph-olho">{olho}</span>

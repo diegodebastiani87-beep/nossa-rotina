@@ -3,6 +3,7 @@ import { useCasa } from '../data/store';
 import { brl, idxCurto, MESES } from '../lib/datas';
 import { comprasParceladas, parcelasPorMes } from '../lib/consultas';
 import { Chips } from '../ui/base';
+import { Icone, PessoaRot } from '../ui/icones';
 import { useAcoes } from './Acoes';
 
 /** Barras das parcelas nos próximos 12 meses; "extra" = parcelas da compra que está sendo lançada. */
@@ -46,13 +47,13 @@ export function Parcelas() {
           <div><div className="k">Compras em andamento</div><div className="v num">{ativas.length}</div></div>
         </div>
         <div className="drop">{acabam.length
-          ? <>🎉 {acabam.length > 2 ? `${acabam.length} compras terminam` : `${acabam.map(c => c.descricao).join(' e ')} termina${acabam.length > 1 ? 'm' : ''}`} nesta fatura. Em {idxCurto(faturaAtual + 1)} as parcelas caem para <b>{brl(porMes.get(faturaAtual + 1) ?? 0)}</b>.</>
+          ? <><Icone nome="brilho" tam={15} /> {acabam.length > 2 ? `${acabam.length} compras terminam` : `${acabam.map(c => c.descricao).join(' e ')} termina${acabam.length > 1 ? 'm' : ''}`} nesta fatura. Em {idxCurto(faturaAtual + 1)} as parcelas caem para <b>{brl(porMes.get(faturaAtual + 1) ?? 0)}</b>.</>
           : <>Em {idxCurto(faturaAtual + 1)}: {brl(porMes.get(faturaAtual + 1) ?? 0)} em parcelas.</>}</div>
       </div>
       <div className="card"><h2>Parcelas nos próximos 12 meses</h2><GraficoParcelas inicio={faturaAtual} /></div>
       <div className="card">
         <h2>Compras parceladas</h2>
-        <div style={{ marginBottom: 8 }}><Chips valor={filtro} onChange={setFiltro} opcoes={[['todos', 'Todas'], ['Diego', '👨 Diego'], ['Eliane', '👩 Eliane'], ...cartoes.map(c => [c.nome, c.nome] as [string, string])]} /></div>
+        <div style={{ marginBottom: 8 }}><Chips valor={filtro} onChange={setFiltro} opcoes={[['todos', 'Todas'], ['Diego', <PessoaRot key="d" p="Diego" />], ['Eliane', <PessoaRot key="e" p="Eliane" />], ...cartoes.map(c => [c.nome, c.nome] as [string, string])]} /></div>
         {lista.length ? lista.map(c => { const an = c.atual?.parcelaAtual ?? c.pagas + 1;
           return <button key={c.grupoId} className="compra" onClick={() => acoes.compra(c.grupoId)}>
             <span className={'dot ' + (c.usuario === 'Diego' ? 'd' : 'e')}>{c.usuario[0]}</span>

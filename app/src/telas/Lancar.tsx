@@ -5,8 +5,10 @@ import { calcularMesFatura, dividirEmParcelas, gerarParcelas } from '../lib/fatu
 import { buscarDuplicata, buscarSugestoes, normalizarChave, parcelasPorMes, type Estabelecimento } from '../lib/consultas';
 import { FORMAS_PAGAMENTO, PESSOAS, type FormaPagamento, type Gasto, type Pessoa } from '../types';
 import { Seg, useToast } from '../ui/base';
+import { Icone, PessoaRot, Rot } from '../ui/icones';
 import { GraficoParcelas } from './Parcelas';
 import { usePrefs } from '../data/preferencias';
+import { CartaoMini } from '../ui/cartao';
 
 export type PresetLancar = 'parcelado' | 'estorno' | null;
 
@@ -38,6 +40,9 @@ export function Lancar({ aoSalvar, preset = null }: { aoSalvar: () => void; pres
   const [sugAberta, setSugAberta] = useState(false);
   const nRef = useRef<HTMLInputElement>(null);
 
+  // "Quem gastou" vem marcado com quem está usando o app (com o login Google, será o dono da conta).
+  // Dá para trocar no lançamento; depois de salvar volta para quem está usando.
+  useEffect(() => { setQuem(prefs.quem); }, [prefs.quem]);
   useEffect(() => { if (!categoria && categorias.length) setCategoria(categorias[0].nome); }, [categorias, categoria]);
   useEffect(() => { if (!cartoes.some(c => c.nome === cartao) && cartoes.length) setCartao(cartoes[0].nome); }, [cartoes, cartao]);
 
@@ -67,7 +72,7 @@ export function Lancar({ aoSalvar, preset = null }: { aoSalvar: () => void; pres
 
   const limpar = () => {
     setCentavos(0); setDesc(''); setObs(''); setVerObs(false); setSub(''); setParcelado(false); setNTxt(''); setModoValor('total');
-    setAndamento(false); setReemb(false); setMesManual(null); setDup(null);
+    setAndamento(false); setReemb(false); setMesManual(null); setDup(null); setQuem(prefs.quem);
   };
 
   const salvar = async (forcar = false) => {
@@ -87,7 +92,7 @@ export function Lancar({ aoSalvar, preset = null }: { aoSalvar: () => void; pres
     try {
       const desfazer = await adicionarGastos(novos);
       const outro = quem === 'Diego' ? 'Eliane' : 'Diego';
-      toast(reemb ? '✓ Estorno lançado' : novos.length > 1 ? `✓ ${novos.length} parcelas criadas. ${outro} já vê.` : `✓ Gasto lançado. ${outro} já vê.`, desfazer);
+      toast(reemb ? 'Estorno lançado' : novos.length > 1 ? `${novos.length} parcelas criadas. ${outro} já vê.` : `Gasto lançado. ${outro} já vê.`, desfazer);
       limpar(); aoSalvar();
     } catch (e) { toast('Não foi possível salvar: ' + (e as Error).message); }
     finally { setSalvando(false); }
@@ -101,7 +106,7 @@ export function Lancar({ aoSalvar, preset = null }: { aoSalvar: () => void; pres
     <div className="card">
       <div className="sec">
         <div className="sec-t"><span className="n">1</span>Quem gastou</div>
-        <Seg className="tog" valor={quem} opcoes={PESSOAS.map(p => [p, <span key={p} className={p === 'Diego' ? 'd' : 'e'}>{p === 'Diego' ? '👨 Diego' : '👩 Eliane'}</span>])} onChange={setQuem} />
+        <Seg className="tog" valor={quem} opcoes={PESSOAS.map(p => [p, <PessoaRot key={p} p={p} tam={22} />])} onChange={setQuem} />
       </div>
       <div className="sec">
         <div className="sec-t"><span className="n">2</span>Quanto</div>
@@ -142,7 +147,7 @@ export function Lancar({ aoSalvar, preset = null }: { aoSalvar: () => void; pres
       </div>
       <div className="sec">
         <div className="sec-t"><span className="n">4</span>Como pagou</div>
-        <Seg className="tog" valor={pag} opcoes={FORMAS_PAGAMENTO.map(f => [f.valor, `${f.emoji} ${f.curto}`])} onChange={setPag} />
+        <Seg className="tog" valor={pag} opcoes={FORMAS_PAGAMENTO.map(f => [f.valor, <Rot key={f.valor} ic={f.icone}>{f.curto}</Rot>])} onChange={setPag} />
       </div>
       {!cred && (
         <div className="sec"><div className="sec-t"><span className="n">5</span>Quando</div>
@@ -151,18 +156,18 @@ export function Lancar({ aoSalvar, preset = null }: { aoSalvar: () => void; pres
       {cred && (
         <div className="credito">
           <div><label className="l">Cartão</label>
-            {cartoes.length ? <Seg className="tog" valor={cartao} opcoes={cartoes.map(x => [x.nome, <span key={x.nome}>{x.nome}<span className="sub">fecha {x.fechamento} · vence {x.vencimento}</span></span>])} onChange={v => { setCartao(v); setMesManual(null); }} />
+            {cartoes.length ? <div className="cc-pick">{cartoes.map(x => <CartaoMini key={x.nome} nome={x.nome} banco={x.banco} linha={`fecha ${x.fechamento} · vence ${x.vencimento}`} selecionado={x.nome === cartao} onClick={() => { setCartao(x.nome); setMesManual(null); }} />)}</div>
               : <div className="note">Cadastre um cartão em Ajustes → Cartões.</div>}</div>
           <div className="row2 st">
             <div><label className="l" htmlFor="dc">Data da compra</label><input type="date" className="inp" id="dc" value={dataCompra} onChange={e => { setDataCompra(e.target.value); setMesManual(null); }} /></div>
             <div><label className="l">{reemb ? 'Desconta na fatura de' : '1ª parcela cai na fatura de'}</label>
-              <div className="mesadj"><button type="button" onClick={() => setMesManual(prim - 1)} aria-label="Mês anterior">‹</button>
+              <div className="mesadj"><button type="button" onClick={() => setMesManual(prim - 1)} aria-label="Mês anterior"><Icone nome="esq" tam={18} /></button>
                 <div className="m">{idxCurto(prim)}<small>{mesManual != null && mesManual !== mesAuto ? <span className="tag warn">ajustado</span> : 'pelo fechamento do cartão'}</small></div>
-                <button type="button" onClick={() => setMesManual(prim + 1)} aria-label="Próximo mês">›</button></div></div>
+                <button type="button" onClick={() => setMesManual(prim + 1)} aria-label="Próximo mês"><Icone nome="dir" tam={18} /></button></div></div>
           </div>
           {!reemb && <div>
             <label className="l">Forma</label>
-            <Seg className="tog" valor={parcelado ? 'p' : 'v'} opcoes={[['v', 'À vista'], ['p', '🔁 Parcelado']]} onChange={x => { setParcelado(x === 'p'); if (x !== 'p' && modoValor === 'parcela') { setCentavos(centavos * n); setModoValor('total'); } }} />
+            <Seg className="tog" valor={parcelado ? 'p' : 'v'} opcoes={[['v', 'À vista'], ['p', <Rot key="p" ic="parcelas">Parcelado</Rot>]]} onChange={x => { setParcelado(x === 'p'); if (x !== 'p' && modoValor === 'parcela') { setCentavos(centavos * n); setModoValor('total'); } }} />
             {parcelado && <div className="parc-in">
               <label className="l" htmlFor="nParc" style={{ margin: 0 }}>Número de parcelas</label>
               <input ref={nRef} id="nParc" autoFocus className={'inp num' + (nInvalido ? ' erro' : '')} type="number" min={2} max={99} inputMode="numeric" placeholder="Ex: 17" value={nTxt} onChange={e => setNTxt(e.target.value)} />
@@ -180,7 +185,7 @@ export function Lancar({ aoSalvar, preset = null }: { aoSalvar: () => void; pres
           <div><label className="switch"><input type="checkbox" checked={reemb} onChange={e => setReemb(e.target.checked)} /><span className="sw" />É um estorno / reembolso</label></div>
           {c && total > 0 && (
             <div className="prev" aria-live="polite">
-              {reemb ? <div className="prev-h"><div className="big num" style={{ color: 'var(--success)' }}>↩︎ {brl(total)}</div><div className="side2">Descontado da fatura de <b>{idxCurto(prim)}</b></div></div>
+              {reemb ? <div className="prev-h"><div className="big num" style={{ color: 'var(--success)' }}>{brl(total)}</div><div className="side2">Descontado da fatura de <b>{idxCurto(prim)}</b></div></div>
                 : n === 1 ? <div className="prev-h"><div className="big num">{brl(total)} <span>à vista</span></div><div className="side2">Cai na fatura de <b>{idxCurto(prim)}</b></div></div>
                 : <>
                   <div className="prev-h"><div className="big num">{n}x {brl(vps[0])}</div><div className="side2">Total <b className="num">{brl(total)}</b><br />{idxCurto(prim)} → <b>{idxCurto(ultimo)}</b></div></div>
@@ -188,7 +193,7 @@ export function Lancar({ aoSalvar, preset = null }: { aoSalvar: () => void; pres
                   <div className="note">
                     {modoValor === 'parcela' && <>Total: <b>{n} × {brl(vps[0])} = {brl(total)}</b>.<br /></>}
                     {vps[n - 1] !== vps[0] && <>A última parcela fica em <b>{brl(vps[n - 1])}</b> para fechar o total exato.<br /></>}
-                    💳 {c.nome} fecha dia {c.fechamento} e vence dia {c.vencimento}.
+                    {c.nome} fecha dia {c.fechamento} e vence dia {c.vencimento}.
                   </div>
                   <div className="impacto">
                     <div className="note" style={{ marginBottom: 10 }}>Parcelas de todos os cartões na fatura de {idxCurto(faturaAtual)}: <b className="num">{brl(hojeV)}</b> → <b className="num">{brl(hojeV + (extra.get(faturaAtual) ?? 0))}</b></div>
@@ -201,12 +206,12 @@ export function Lancar({ aoSalvar, preset = null }: { aoSalvar: () => void; pres
       )}
       {dup && (
         <div className="aviso warn" style={{ marginBottom: 12 }}>
-          ⚠️ Já existe <b>{dup.descricao}</b> de <b>{brl(dup.valorTotalCompra ?? dup.valor)}</b> nesta data, lançado por {dup.usuario}. Confira antes de lançar de novo.
+          <span className="ic-in warn"><Icone nome="alerta" tam={16} /></span> Já existe <b>{dup.descricao}</b> de <b>{brl(dup.valorTotalCompra ?? dup.valor)}</b> nesta data, lançado por {dup.usuario}. Confira antes de lançar de novo.
           <div className="acts2" style={{ marginTop: 10 }}><button className="btn sec2 sm" onClick={() => setDup(null)}>Cancelar</button><button className="btn sm" onClick={() => { setDup(null); void salvar(true); }}>Lançar mesmo assim</button></div>
         </div>
       )}
       <button className="btn" disabled={salvando} onClick={() => salvar()}>
-        {salvando ? 'Salvando…' : !cred ? '✓ Adicionar gasto' : reemb ? '✓ Lançar estorno' : n > 1 ? `✓ Lançar ${n - kEf + 1} parcelas` : '✓ Adicionar gasto'}
+        {salvando ? 'Salvando…' : !cred ? 'Adicionar gasto' : reemb ? 'Lançar estorno' : n > 1 ? `Lançar ${n - kEf + 1} parcelas` : 'Adicionar gasto'}
       </button>
     </div>
   );

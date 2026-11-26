@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { Icone } from './icones';
 
 // ===== Logo (cada cópia com seu próprio id de gradiente) =====
 export function Logo() {
@@ -118,8 +119,8 @@ export function SwipeItem({ children, onAbrir, onEditar, onExcluir }: { children
   };
   return (
     <div className={'sw-c' + (x !== 0 || arrastando ? ' mov' : '')}>
-      <div className="sw-a del"><button type="button" onClick={() => { setX(0); onExcluir(); }}><span>🗑️</span>Excluir</button></div>
-      <div className="sw-a edt"><button type="button" onClick={() => { setX(0); onEditar(); }}><span>✏️</span>Editar</button></div>
+      <div className="sw-a del"><button type="button" onClick={() => { setX(0); onExcluir(); }}><span><Icone nome="lixeira" tam={22} /></span>Excluir</button></div>
+      <div className="sw-a edt"><button type="button" onClick={() => { setX(0); onEditar(); }}><span><Icone nome="lapis" tam={22} /></span>Editar</button></div>
       <div className={'sw-i' + (arrastando ? ' arrastando' : '')} style={{ transform: x ? `translateX(${x}px)` : undefined }}
         role="button" tabIndex={0} onKeyDown={e => { if (e.key === 'Enter') onAbrir(); }}
         onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onClick={click}>

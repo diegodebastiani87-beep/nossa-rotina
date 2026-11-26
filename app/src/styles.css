@@ -235,7 +235,7 @@ select.inp { appearance: auto; }
 .sec-h button { border: 0; background: none; color: var(--primary); font-weight: 700; font-size: .82em; }
 .novid summary { cursor: pointer; font-weight: 800; list-style: none; display: flex; justify-content: space-between; }
 .novid summary::-webkit-details-marker { display: none; }
-.novid summary::after { content: "＋"; color: var(--primary); }
+.novid summary::after { content: "+"; color: var(--primary); }
 .novid[open] summary::after { content: "－"; }
 .novid ul { margin: 14px 0 0; padding: 0; list-style: none; display: grid; gap: 11px; }
 .novid li { font-size: .87em; color: var(--text-2); padding-left: 16px; position: relative; }

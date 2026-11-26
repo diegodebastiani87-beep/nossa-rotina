@@ -5,6 +5,8 @@ import { calcularMesFatura, gerarParcelas, novoGrupoId } from '../lib/fatura';
 import { comprasParceladas, type Item } from '../lib/consultas';
 import { ehCredito, ehParcelado, ehReembolso, FORMAS_PAGAMENTO, PESSOAS, type FormaPagamento, type Gasto, type Pessoa } from '../types';
 import { Seg, Sheet, useToast } from '../ui/base';
+import { Icone, PessoaRot, Rot } from '../ui/icones';
+import { CartaoMini } from '../ui/cartao';
 import { corDa, LancSwipe } from './LancRow';
 
 interface Acoes {
@@ -64,7 +66,7 @@ function Detalhe({ id, fechar, ir }: { id: string; fechar: () => void; ir: (a: A
   const total = grupo ? grupo.reduce((s, x) => s + x.valor, 0) : g.valor;
   return (
     <Sheet onClose={fechar} titulo={g.descricao}>
-      <h3>{reemb ? '↩️ ' : ''}{g.descricao}</h3>
+      <h3>{reemb && <span className="ic-in ok"><Icone nome="estorno" tam={18} /></span>}{g.descricao}</h3>
       <div className="note">{g.usuario} · compra em {fmtData(g.data)}</div>
       <div className="det">
         <div className="full"><div className="k">{grupo ? 'Valor total da compra' : reemb ? 'Estorno' : 'Valor'}</div>
@@ -72,17 +74,17 @@ function Detalhe({ id, fechar, ir }: { id: string; fechar: () => void; ir: (a: A
           {grupo && <div className="note">{g.parcelaTotal}x de {brl(grupo[0].valor)} · {grupo.length < (g.parcelaTotal ?? 0) ? `cadastrada a partir da ${grupo[0].parcelaAtual}ª` : `${idxCurto(ymIdx(grupo[0].mesFatura))} → ${idxCurto(ymIdx(grupo[grupo.length - 1].mesFatura))}`}</div>}
         </div>
         <div><div className="k">Categoria</div><div className="v"><span className="who cat-c" style={{ background: corDa(categorias, g.categoria) }} /> {g.categoria}</div><div className="note">{g.subcategoria || '—'}</div></div>
-        <div><div className="k">Pagamento</div><div className="v">{FORMAS_PAGAMENTO.find(f => f.valor === g.formaPagamento)?.emoji} {ehCredito(g) ? g.cartao : g.formaPagamento}</div>
+        <div><div className="k">Pagamento</div><div className="v"><Rot ic={FORMAS_PAGAMENTO.find(f => f.valor === g.formaPagamento)?.icone ?? 'cartao'}>{ehCredito(g) ? g.cartao : g.formaPagamento}</Rot></div>
           {ehCredito(g) && !grupo && <div className="note">fatura de {idxCurto(ymIdx(g.mesFatura))}{g.ajusteFatura ? ' (ajustada)' : ''}</div>}</div>
         {g.observacao && <div className="full"><div className="k">Detalhes</div><div className="v">{g.observacao}</div></div>}
       </div>
       <div className="acts" style={{ marginBottom: 8 }}>
-        {grupo && <button className="btn sec2" onClick={() => ir({ tipo: 'compra', grupoId: g.grupoId! })}>🔁 Ver as parcelas</button>}
-        {ehCredito(g) && !grupo && <button className="btn sec2" onClick={() => ir({ tipo: 'trocar', id })}>📅 Mudar de fatura</button>}
+        {grupo && <button className="btn sec2" onClick={() => ir({ tipo: 'compra', grupoId: g.grupoId! })}><Rot ic="parcelas">Ver as parcelas</Rot></button>}
+        {ehCredito(g) && !grupo && <button className="btn sec2" onClick={() => ir({ tipo: 'trocar', id })}><Rot ic="calendario">Mudar de fatura</Rot></button>}
       </div>
       <div className="acts2">
-        <button className="btn sec2" onClick={() => ir({ tipo: 'editar', id })}>✏️ Editar</button>
-        <button className="btn dan" onClick={() => ir({ tipo: 'excluir', id })}>🗑️ Excluir</button>
+        <button className="btn sec2" onClick={() => ir({ tipo: 'editar', id })}><Rot ic="lapis">Editar</Rot></button>
+        <button className="btn dan" onClick={() => ir({ tipo: 'excluir', id })}><Rot ic="lixeira">Excluir</Rot></button>
       </div>
     </Sheet>
   );
@@ -105,15 +107,15 @@ function Exclusao({ id, fechar }: { id: string; fechar: () => void }) {
         <>
           <div className="note" style={{ margin: '6px 0 14px' }}>É a parcela {g.parcelaAtual}/{g.parcelaTotal} de uma compra de {brl(grupo.reduce((s, x) => s + x.valor, 0))}.</div>
           <div className="acts">
-            <button className="btn dan" onClick={() => apagar(grupo, `🗑️ ${grupo.length} parcelas excluídas`)}>Excluir a compra inteira ({grupo.length} parcelas)</button>
-            <button className="btn sec2" onClick={() => apagar([g], '🗑️ Parcela excluída')}>Excluir só esta parcela</button>
+            <button className="btn dan" onClick={() => apagar(grupo, `${grupo.length} parcelas excluídas`)}>Excluir a compra inteira ({grupo.length} parcelas)</button>
+            <button className="btn sec2" onClick={() => apagar([g], 'Parcela excluída')}>Excluir só esta parcela</button>
             <button className="btn sec2" onClick={fechar}>Cancelar</button>
           </div>
         </>
       ) : (
         <div className="acts2" style={{ marginTop: 14 }}>
           <button className="btn sec2" onClick={fechar}>Cancelar</button>
-          <button className="btn dan" onClick={() => apagar([g], '🗑️ Lançamento excluído')}>Excluir</button>
+          <button className="btn dan" onClick={() => apagar([g], 'Lançamento excluído')}>Excluir</button>
         </div>
       )}
     </Sheet>
@@ -133,11 +135,11 @@ function TrocarFatura({ id, fechar }: { id: string; fechar: () => void }) {
       <div className="note">{g.descricao} · {brl(g.valor)} · {g.cartao}. Use quando o banco lançou em outro mês.</div>
       <div className="form-ed">
         <div><label className="l" htmlFor="tfMes">Fatura</label>
-          <div className="mesadj"><button onClick={() => setMes(mes - 1)} aria-label="Mês anterior">‹</button><div className="m" id="tfMes">{idxLongo(mes)}<small>atual: {idxCurto(ymIdx(g.mesFatura))}</small></div><button onClick={() => setMes(mes + 1)} aria-label="Próximo mês">›</button></div></div>
+          <div className="mesadj"><button onClick={() => setMes(mes - 1)} aria-label="Mês anterior"><Icone nome="esq" tam={18} /></button><div className="m" id="tfMes">{idxLongo(mes)}<small>atual: {idxCurto(ymIdx(g.mesFatura))}</small></div><button onClick={() => setMes(mes + 1)} aria-label="Próximo mês"><Icone nome="dir" tam={18} /></button></div></div>
         <div><label className="l" htmlFor="tfMot">Motivo (opcional)</label><input className="inp" id="tfMot" value={motivo} onChange={e => setMotivo(e.target.value)} placeholder="Ex: banco lançou depois do fechamento" /></div>
       </div>
       <div className="acts2"><button className="btn sec2" onClick={fechar}>Cancelar</button>
-        <button className="btn" onClick={async () => { fechar(); if (idxYm(mes) === g.mesFatura) return; try { await trocarFatura(g, idxYm(mes), motivo.trim()); toast(`✓ Movido para a fatura de ${idxCurto(mes)}`); } catch (e) { toast('Erro: ' + (e as Error).message); } }}>Salvar</button></div>
+        <button className="btn" onClick={async () => { fechar(); if (idxYm(mes) === g.mesFatura) return; try { await trocarFatura(g, idxYm(mes), motivo.trim()); toast(`Movido para a fatura de ${idxCurto(mes)}`); } catch (e) { toast('Erro: ' + (e as Error).message); } }}>Salvar</button></div>
     </Sheet>
   );
 }
@@ -185,7 +187,7 @@ function Edicao({ id, fechar }: { id: string; fechar: () => void }) {
       } else {
         await atualizarGastos([g], { ...base, valor, cartao: cred ? f.cartao : null, mesFatura: cred ? idxYm(f.mesFatura) : f.data.slice(0, 7), tipoLancamento: cred && f.reembolso ? 'reembolso' : 'gasto' });
       }
-      fechar(); toast(`✓ Alterações salvas. ${f.usuario === 'Diego' ? 'Eliane' : 'Diego'} já vê.`);
+      fechar(); toast(`Alterações salvas. ${f.usuario === 'Diego' ? 'Eliane' : 'Diego'} já vê.`);
     } catch (e) { toast('Erro ao salvar: ' + (e as Error).message); }
   };
 
@@ -199,13 +201,13 @@ function Edicao({ id, fechar }: { id: string; fechar: () => void }) {
         <div className="row2"><div><label className="l" htmlFor="eCat">Categoria</label><select className="inp" id="eCat" value={f.categoria} onChange={e => set({ categoria: e.target.value, subcategoria: '' })}>{categorias.map(c => <option key={c.nome}>{c.nome}</option>)}</select></div>
           <div><label className="l" htmlFor="eSub">Subcategoria</label><select className="inp" id="eSub" value={f.subcategoria} onChange={e => set({ subcategoria: e.target.value })}><option value="">—</option>{subs.map(s => <option key={s}>{s}</option>)}</select></div></div>
         <div><label className="l" htmlFor="eObs">Detalhes (opcional)</label><input className="inp" id="eObs" value={f.observacao} onChange={e => set({ observacao: e.target.value })} /></div>
-        <div><label className="l">Quem</label><Seg className="tog" valor={f.usuario} opcoes={PESSOAS.map(p => [p, p === 'Diego' ? '👨 Diego' : '👩 Eliane'])} onChange={v => set({ usuario: v })} /></div>
-        <div><label className="l">Pagamento</label><Seg className="tog" valor={f.formaPagamento} opcoes={FORMAS_PAGAMENTO.map(p => [p.valor, `${p.emoji} ${p.curto}`])} onChange={v => set({ formaPagamento: v, data: f.data })} /></div>
+        <div><label className="l">Quem</label><Seg className="tog" valor={f.usuario} opcoes={PESSOAS.map(p => [p, <PessoaRot key={p} p={p} />])} onChange={v => set({ usuario: v })} /></div>
+        <div><label className="l">Pagamento</label><Seg className="tog" valor={f.formaPagamento} opcoes={FORMAS_PAGAMENTO.map(p => [p.valor, <Rot key={p.valor} ic={p.icone}>{p.curto}</Rot>])} onChange={v => set({ formaPagamento: v, data: f.data })} /></div>
         {cred && <>
-          <div><label className="l">Cartão</label><Seg className="tog" valor={f.cartao} opcoes={cartoes.map(c => [c.nome, c.nome])} onChange={v => set({ cartao: v })} /></div>
+          <div><label className="l">Cartão</label><div className="cc-pick">{cartoes.map(c => <CartaoMini key={c.nome} nome={c.nome} banco={c.banco} selecionado={c.nome === f.cartao} onClick={() => set({ cartao: c.nome })} />)}</div></div>
           <div className="row2">
             <div><label className="l">{f.parcelado && !f.reembolso ? '1ª parcela na fatura de' : 'Fatura'}</label>
-              <div className="mesadj"><button onClick={() => set({ mesFatura: f.mesFatura - 1, mesManual: true })} aria-label="Mês anterior">‹</button><div className="m">{idxCurto(f.mesFatura)}<small>{f.mesManual ? 'ajustado' : 'pelo fechamento'}</small></div><button onClick={() => set({ mesFatura: f.mesFatura + 1, mesManual: true })} aria-label="Próximo mês">›</button></div></div>
+              <div className="mesadj"><button onClick={() => set({ mesFatura: f.mesFatura - 1, mesManual: true })} aria-label="Mês anterior"><Icone nome="esq" tam={18} /></button><div className="m">{idxCurto(f.mesFatura)}<small>{f.mesManual ? 'ajustado' : 'pelo fechamento'}</small></div><button onClick={() => set({ mesFatura: f.mesFatura + 1, mesManual: true })} aria-label="Próximo mês"><Icone nome="dir" tam={18} /></button></div></div>
             <div><label className="l">Forma</label><Seg className="tog" valor={f.reembolso ? 'reemb' : f.parcelado ? 'parc' : 'vista'} opcoes={[['vista', 'À vista'], ['parc', 'Parcelado'], ['reemb', 'Estorno']]} onChange={v => set({ parcelado: v === 'parc', reembolso: v === 'reemb' })} /></div>
           </div>
           {f.parcelado && !f.reembolso && <div className="parc-in" style={{ marginTop: 0 }}><label className="l" htmlFor="eN" style={{ margin: 0 }}>Número de parcelas</label><input className="inp num" id="eN" type="number" min={2} max={99} value={f.n} onChange={e => set({ n: e.target.value })} /><span className="hint">recalcula todas as parcelas</span></div>}
@@ -237,7 +239,7 @@ function CompraSheet({ grupoId, fechar, ir }: { grupoId: string; fechar: () => v
         const valor = i === alvo.length - 1 ? Number((v - ac).toFixed(2)) : Number((alvo[i].valor * fator).toFixed(2)); ac += valor;
         await atualizarGastos([alvo[i]], { mesFatura: idxYm(faturaAtual), valor, antecipada: true } as Partial<Gasto>);
       }
-      fechar(); toast(`✓ ${qtd} parcela${qtd > 1 ? 's' : ''} antecipada${qtd > 1 ? 's' : ''} para ${idxCurto(faturaAtual)}`);
+      fechar(); toast(`${qtd} parcela${qtd > 1 ? 's' : ''} antecipada${qtd > 1 ? 's' : ''} para ${idxCurto(faturaAtual)}`);
     } catch (e) { toast('Erro: ' + (e as Error).message); }
   };
   return (
@@ -259,8 +261,8 @@ function CompraSheet({ grupoId, fechar, ir }: { grupoId: string; fechar: () => v
       )}
       <div className="acts">
         {futuras.length > 0 && !antec && <button className="btn sec2" onClick={() => setAntec(true)}>⏩ Antecipar parcelas</button>}
-        <button className="btn sec2" onClick={() => ir({ tipo: 'editar', id: c.parcelas[0].id })}>✏️ Editar compra</button>
-        <button className="btn dan" onClick={() => ir({ tipo: 'excluir', id: c.parcelas[0].id })}>🗑️ Excluir</button>
+        <button className="btn sec2" onClick={() => ir({ tipo: 'editar', id: c.parcelas[0].id })}><Rot ic="lapis">Editar compra</Rot></button>
+        <button className="btn dan" onClick={() => ir({ tipo: 'excluir', id: c.parcelas[0].id })}><Rot ic="lixeira">Excluir</Rot></button>
       </div>
     </Sheet>
   );

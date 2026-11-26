@@ -5,15 +5,16 @@ export type Pessoa = 'Diego' | 'Eliane';
 export const PESSOAS: Pessoa[] = ['Diego', 'Eliane'];
 
 export type FormaPagamento = 'Dinheiro/PIX' | 'Cartão Crédito' | 'Cartão Débito' | 'Vale Alimentação';
-export const FORMAS_PAGAMENTO: { valor: FormaPagamento; emoji: string; curto: string }[] = [
-  { valor: 'Dinheiro/PIX', emoji: '💵', curto: 'PIX' },
-  { valor: 'Cartão Crédito', emoji: '💳', curto: 'Crédito' },
-  { valor: 'Cartão Débito', emoji: '🏦', curto: 'Débito' },
-  { valor: 'Vale Alimentação', emoji: '🍽️', curto: 'Vale' }
+export const FORMAS_PAGAMENTO: { valor: FormaPagamento; icone: string; curto: string }[] = [
+  { valor: 'Dinheiro/PIX', icone: 'pix', curto: 'PIX' },
+  { valor: 'Cartão Crédito', icone: 'cartao', curto: 'Crédito' },
+  { valor: 'Cartão Débito', icone: 'banco', curto: 'Débito' },
+  { valor: 'Vale Alimentação', icone: 'talher', curto: 'Vale' }
 ];
 
 export interface Categoria { nome: string; cor: string; subs: string[] }
-export interface Cartao { nome: string; fechamento: number; vencimento: number }
+/** banco: opcional (v2), só para o visual do cartão; o app antigo ignora o campo. */
+export interface Cartao { nome: string; fechamento: number; vencimento: number; banco?: string }
 
 export interface Gasto {
   id: string;

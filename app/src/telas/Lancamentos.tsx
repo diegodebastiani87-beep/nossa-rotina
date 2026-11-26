@@ -4,6 +4,7 @@ import { brl, DIAS_SEMANA, MESES, nomeMes } from '../lib/datas';
 import { aplicarFiltros, itensDoMes, soma, somaDe, type Item, type ModoMes } from '../lib/consultas';
 import { FORMAS_PAGAMENTO, type FormaPagamento, type Pessoa } from '../types';
 import { Chips, Seg } from '../ui/base';
+import { PessoaRot, Rot } from '../ui/icones';
 import { LancSwipe } from './LancRow';
 
 export function Lancamentos({ mes }: { mes: number }) {
@@ -26,11 +27,11 @@ export function Lancamentos({ mes }: { mes: number }) {
         </div>
       </div>
       <div className="filtrobar">
-        <Chips valor={pessoa} onChange={setPessoa} opcoes={[['', '👥 Todos'], ['Diego', '👨 Diego'], ['Eliane', '👩 Eliane']]} />
-        <Seg className="minitog" valor={modo} onChange={setModo} opcoes={[['compra', '🛒 Mês da compra'], ['fatura', '📅 Mês da fatura']]} />
+        <Chips valor={pessoa} onChange={setPessoa} opcoes={[['', <Rot key="t" ic="usuarios">Todos</Rot>], ['Diego', <PessoaRot key="d" p="Diego" />], ['Eliane', <PessoaRot key="e" p="Eliane" />]]} />
+        <Seg className="minitog" valor={modo} onChange={setModo} opcoes={[['compra', <Rot key="c" ic="sacola">Mês da compra</Rot>], ['fatura', <Rot key="f" ic="calendario">Mês da fatura</Rot>]]} />
       </div>
       <div className="filtros" style={{ marginBottom: 12 }}>
-        <div><label className="l" htmlFor="lcPag">Pagamento</label><select className="inp" id="lcPag" value={pag} onChange={e => setPag(e.target.value as FormaPagamento | '')}><option value="">Todos</option>{FORMAS_PAGAMENTO.map(f => <option key={f.valor} value={f.valor}>{f.emoji} {f.valor}</option>)}</select></div>
+        <div><label className="l" htmlFor="lcPag">Pagamento</label><select className="inp" id="lcPag" value={pag} onChange={e => setPag(e.target.value as FormaPagamento | '')}><option value="">Todos</option>{FORMAS_PAGAMENTO.map(f => <option key={f.valor} value={f.valor}>{f.valor}</option>)}</select></div>
         {pag === 'Cartão Crédito' && <div><label className="l" htmlFor="lcCar">Cartão</label><select className="inp" id="lcCar" value={cartao} onChange={e => setCartao(e.target.value)}><option value="">Todos</option>{cartoes.map(c => <option key={c.nome}>{c.nome}</option>)}</select></div>}
       </div>
       <div className="card">

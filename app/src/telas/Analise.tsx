@@ -4,6 +4,7 @@ import { brl, diasNoMes, idxCurto, idxLongo, idxYm, MESES, nomeMes } from '../li
 import { agrupar, aplicarFiltros, itensDoMes, soma, somaDe, type Filtros, type Item, type ModoMes } from '../lib/consultas';
 import { FORMAS_PAGAMENTO, type FormaPagamento, type Pessoa } from '../types';
 import { Chips, Seg } from '../ui/base';
+import { Icone, PessoaRot, Rot } from '../ui/icones';
 import { useAcoes } from './Acoes';
 import { corDa } from './LancRow';
 
@@ -37,18 +38,18 @@ export function Analise({ mes, setMes }: { mes: number; setMes: (m: number) => v
 
   return (
     <>
-      <Seg valor={sub} onChange={setSub} opcoes={[['resumo', '📊 Resumo'], ['comparar', '📈 Comparar']]} />
+      <Seg valor={sub} onChange={setSub} opcoes={[['resumo', <Rot key="r" ic="grafico">Resumo</Rot>], ['comparar', <Rot key="c" ic="sobe">Comparar</Rot>]]} />
       <div className="card">
         <div className="filtros">
-          <div><label className="l" htmlFor="fModo">Filtrar mês por</label><select className="inp" id="fModo" value={modo} onChange={e => setModo(e.target.value as ModoMes)}><option value="compra">🛒 Mês da compra</option><option value="fatura">📅 Mês da fatura</option></select></div>
+          <div><label className="l" htmlFor="fModo">Filtrar mês por</label><select className="inp" id="fModo" value={modo} onChange={e => setModo(e.target.value as ModoMes)}><option value="compra">Mês da compra</option><option value="fatura">Mês da fatura</option></select></div>
           <div><label className="l" htmlFor="fCat">Categoria</label><select className="inp" id="fCat" value={f.categoria ?? ''} onChange={e => setF({ ...f, categoria: e.target.value })}><option value="">Todas</option>{categorias.map(c => <option key={c.nome}>{c.nome}</option>)}</select></div>
           <div><label className="l" htmlFor="fPes">Pessoa</label><select className="inp" id="fPes" value={f.pessoa ?? ''} onChange={e => setF({ ...f, pessoa: e.target.value as Pessoa | '' })}><option value="">Todos</option><option>Diego</option><option>Eliane</option></select></div>
           <div><label className="l" htmlFor="fPag">Pagamento</label><select className="inp" id="fPag" value={f.pagamento ?? ''} onChange={e => setF({ ...f, pagamento: e.target.value as FormaPagamento | '', cartao: '' })}><option value="">Todos</option>{FORMAS_PAGAMENTO.map(p => <option key={p.valor}>{p.valor}</option>)}</select></div>
           {f.pagamento === 'Cartão Crédito' && <div><label className="l" htmlFor="fCar">Cartão</label><select className="inp" id="fCar" value={f.cartao ?? ''} onChange={e => setF({ ...f, cartao: e.target.value })}><option value="">Todos</option>{cartoes.map(c => <option key={c.nome}>{c.nome}</option>)}</select></div>}
         </div>
         <div className="linkline" style={{ marginTop: 10 }}>
-          {(f.categoria || f.pessoa || f.pagamento) && <button className="linkbtn" style={{ padding: 0 }} onClick={() => setF({})}>🧹 Limpar filtros</button>}
-          {sub === 'resumo' && <button className="linkbtn" style={{ padding: 0 }} onClick={exportarCSV}>⬇️ Exportar CSV</button>}
+          {(f.categoria || f.pessoa || f.pagamento) && <button className="linkbtn" style={{ padding: 0 }} onClick={() => setF({})}><Rot ic="limpar" tam={15}>Limpar filtros</Rot></button>}
+          {sub === 'resumo' && <button className="linkbtn" style={{ padding: 0 }} onClick={exportarCSV}><Rot ic="baixar" tam={15}>Exportar CSV</Rot></button>}
         </div>
       </div>
 
@@ -56,8 +57,8 @@ export function Analise({ mes, setMes }: { mes: number; setMes: (m: number) => v
         <Evolucao meses={Array.from({ length: 6 }, (_, i) => mes - 5 + i)} doMes={doMes} atual={mes} emAndamento={mes === mesHoje} setMes={setMes} />
         <div className="grid2">
           <div className="card"><h2>Resumo</h2><div className="resumo">
-            <div><div className="k">👨 Diego</div><div className="v num">{brl(somaDe(it, 'Diego'))}</div></div>
-            <div><div className="k">👩 Eliane</div><div className="v num">{brl(somaDe(it, 'Eliane'))}</div></div>
+            <div><div className="k"><PessoaRot p="Diego" tam={18} /></div><div className="v num">{brl(somaDe(it, 'Diego'))}</div></div>
+            <div><div className="k"><PessoaRot p="Eliane" tam={18} /></div><div className="v num">{brl(somaDe(it, 'Eliane'))}</div></div>
             <div><div className="k">Média diária</div><div className="v num">{brl(tot / (mes === mesHoje ? hoje.getDate() : diasNoMes(mes)))}</div></div>
             <div><div className="k">Lançamentos</div><div className="v num">{it.length}</div></div>
             <div className="tot"><div className="k">Total de {nomeMes(mes)}</div><div className="v num">{brl(tot)}</div></div>
@@ -71,7 +72,7 @@ export function Analise({ mes, setMes }: { mes: number; setMes: (m: number) => v
             const daCat = it.filter(x => (x.categoria || 'Outros') === o.chave);
             return <div key={o.chave} className={'catx' + (aberta ? ' open' : '')}>
               <button onClick={() => { const s = new Set(abertas); if (aberta) s.delete(o.chave); else s.add(o.chave); setAbertas(s); }}>
-                <span className="nm"><em>›</em><i className="cat-c" style={{ background: cor }} />{o.chave}</span>
+                <span className="nm"><em><Icone nome="dir" tam={15} traco={2.2} /></em><i className="cat-c" style={{ background: cor }} />{o.chave}</span>
                 <span className="vl num">{brl(o.t)}<small>{tot ? Math.round(o.t / tot * 100) : 0}%</small></span>
                 <span className="tr"><i className="cat-c" style={{ width: `${tot ? Math.max(0, o.t / tot * 100) : 0}%`, background: cor }} /></span>
               </button>
@@ -103,16 +104,16 @@ export function Analise({ mes, setMes }: { mes: number; setMes: (m: number) => v
           <label className="l">Comparar com</label>
           <Chips valor={periodo} onChange={setPeriodo} opcoes={[['anterior', 'Mês anterior'], ['3meses', 'Média 3 meses'], ['6meses', 'Média 6 meses'], ['ano', 'Média do ano']]} />
           <label className="l" style={{ marginTop: 12 }}>Detalhar por</label>
-          <Seg className="minitog" valor={nivel} onChange={setNivel} opcoes={[['cat', '📂 Categoria'], ['sub', '📁 Subcategoria']]} />
+          <Seg className="minitog" valor={nivel} onChange={setNivel} opcoes={[['cat', <Rot key="c" ic="pasta">Categoria</Rot>], ['sub', <Rot key="s" ic="camadas">Subcategoria</Rot>]]} />
           {podeDia && <label className="switch" style={{ marginTop: 14 }}><input type="checkbox" checked={mesmoDia} onChange={e => setMesmoDia(e.target.checked)} /><span className="sw" />Comparar só até o dia {hoje.getDate()} de cada mês (o mês atual ainda não acabou)</label>}
           <div className="cmpbox">
-            <div className="cur"><div className="k">{idxLongo(mes)}</div><div className="v num">{brl(tot)}</div><div className="q"><span>👨 {brl(somaDe(it, 'Diego'))}</span><span>👩 {brl(somaDe(it, 'Eliane'))}</span></div></div>
-            <div><div className="k">{rot}</div><div className="v num">{brl(tA)}</div><div className="q"><span>👨 {brl(somaDe(ant, 'Diego'))}</span><span>👩 {brl(somaDe(ant, 'Eliane'))}</span></div></div>
-            <div className="var"><span className="k">Variação</span><span className={'v num ' + (dif > 0 ? 'up' : 'down')}>{dif > 0 ? '▲ +' : '▼ '}{brl(dif)} <small>({dif > 0 ? '+' : ''}{pct.toFixed(1)}%)</small></span></div>
+            <div className="cur"><div className="k">{idxLongo(mes)}</div><div className="v num">{brl(tot)}</div><div className="q"><span className="rot"><span className="pes-av d">D</span>{brl(somaDe(it, 'Diego'))}</span><span className="rot"><span className="pes-av e">E</span>{brl(somaDe(it, 'Eliane'))}</span></div></div>
+            <div><div className="k">{rot}</div><div className="v num">{brl(tA)}</div><div className="q"><span className="rot"><span className="pes-av d">D</span>{brl(somaDe(ant, 'Diego'))}</span><span className="rot"><span className="pes-av e">E</span>{brl(somaDe(ant, 'Eliane'))}</span></div></div>
+            <div className="var"><span className="k">Variação</span><span className={'v num ' + (dif > 0 ? 'up' : 'down')}><Icone nome={dif > 0 ? 'sobe' : 'desce'} tam={15} traco={2.4} />{dif > 0 ? '+' : ''}{brl(dif)} <small>({dif > 0 ? '+' : ''}{pct.toFixed(1)}%)</small></span></div>
           </div>
           <div className="legend"><span><i style={{ background: 'var(--diego)' }} />Diego</span><span><i style={{ background: 'var(--eliane)' }} />Eliane</span><span>Barra clara = período comparado</span></div>
           {ks.map(k => { const a = pega(gA, k), b = pega(gB, k), d = a.t - b.t, p = b.t ? d / b.t * 100 : null;
-            return <div key={k} className="cmprow"><div className="h"><span><i className="cat-c" style={{ background: corDa(categorias, a.categoria) }} />{k}</span><span className={(d > 0 ? 'up' : 'down') + ' num'}>{p === null ? 'novo' : `${d > 0 ? '▲ +' : '▼ '}${p.toFixed(0)}%`}</span></div>
+            return <div key={k} className="cmprow"><div className="h"><span><i className="cat-c" style={{ background: corDa(categorias, a.categoria) }} />{k}</span><span className={(d > 0 ? 'up' : 'down') + ' num'}>{p === null ? 'novo' : <span className="rot" style={{ gap: 2 }}><Icone nome={d > 0 ? 'sobe' : 'desce'} tam={13} traco={2.4} />{d > 0 ? '+' : ''}{p.toFixed(0)}%</span>}</span></div>
               <div className="bars"><span>{MESES[mes % 12]}</span>{barra(a)}<b className="num">{brl(a.t)}</b><span>{periodo === 'anterior' ? MESES[(mes - 1) % 12] : 'média'}</span>{barra(b, true)}<span className="num">{brl(b.t)}</span></div></div>; })}
           {!ks.length && <div className="vazio">Sem dados para comparar.</div>}
         </div>;
@@ -126,7 +127,7 @@ function PorPagamento({ it, tot }: { it: Item[]; tot: number }) {
   if (!pg.length) return <div className="vazio">Sem dados.</div>;
   return <>
     <div className="paybar">{pg.map(([p, v]) => <i key={p.valor} title={p.valor} style={{ width: `${v / tot * 100}%`, background: CORES_PAG[p.valor] }} />)}</div>
-    <div className="paylist">{pg.map(([p, v]) => <div key={p.valor}><i style={{ background: CORES_PAG[p.valor] }} /><span>{p.emoji} {p.valor}</span><b className="num">{brl(v)}</b><span className="p num">{Math.round(v / tot * 100)}%</span></div>)}</div>
+    <div className="paylist">{pg.map(([p, v]) => <div key={p.valor}><i style={{ background: CORES_PAG[p.valor] }} /><Rot ic={p.icone}>{p.valor}</Rot><b className="num">{brl(v)}</b><span className="p num">{Math.round(v / tot * 100)}%</span></div>)}</div>
   </>;
 }
 
@@ -137,7 +138,7 @@ function Evolucao({ meses, doMes, atual, emAndamento, setMes }: { meses: number[
   const tot = vals[5].d + vals[5].e, vs = media ? (tot - media) / media * 100 : 0;
   return (
     <div className="card">
-      <h2>Últimos 6 meses <span className="note">{emAndamento ? 'mês em andamento' : <span className={vs > 0 ? 'up' : 'down'}>{vs > 0 ? '▲ +' : '▼ '}{vs.toFixed(0)}% vs média</span>}</span></h2>
+      <h2>Últimos 6 meses <span className="note">{emAndamento ? 'mês em andamento' : <span className={vs > 0 ? 'up' : 'down'}><Icone nome={vs > 0 ? 'sobe' : 'desce'} tam={13} traco={2.4} />{vs > 0 ? '+' : ''}{vs.toFixed(0)}% vs média</span>}</span></h2>
       <div className="evo">
         {vals.map(v => { const t = v.d + v.e, h = Math.max(0, t) / max * 100;
           return <button key={v.m} className={'c' + (v.m === atual ? ' cur' : '')} title={`${idxLongo(v.m)}: ${brl(t)}`} style={{ height: '100%' }} onClick={() => setMes(v.m)}>
