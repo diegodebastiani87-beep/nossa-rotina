@@ -1,0 +1,72 @@
+# Gera o APK do Lar em Dia (Android) e publica em https://diegodebastiani87-beep.github.io/nossa-rotina/apk/lar-em-dia.apk
+# O APK só abre o app publicado; mudanças no app NÃO exigem APK novo. Rode de novo só se mudar algo em android/.
+# Precisa dos segredos CHAVE_APK_BASE64 e CHAVE_APK_SENHA (chave guardada fora do repositório).
+name: Gerar APK (Android)
+
+on:
+  push:
+    branches: [v2]
+    paths: ['android/**', '.github/workflows/gerar-apk.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gerar-apk
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar a branch v2
+        uses: actions/checkout@v4
+
+      - name: Conferir a chave
+        env:
+          CHAVE: ${{ secrets.CHAVE_APK_BASE64 }}
+          SENHA: ${{ secrets.CHAVE_APK_SENHA }}
+        run: |
+          if [ -z "$CHAVE" ] || [ -z "$SENHA" ]; then
+            echo "::error::Faltam os segredos CHAVE_APK_BASE64 e CHAVE_APK_SENHA (Settings > Secrets and variables > Actions)."
+            exit 1
+          fi
+          echo "$CHAVE" | base64 -d > "$RUNNER_TEMP/laremdia.jks"
+
+      - name: Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Gerar o APK assinado
+        env:
+          CHAVE_APK_ARQUIVO: ${{ runner.temp }}/laremdia.jks
+          CHAVE_APK_SENHA: ${{ secrets.CHAVE_APK_SENHA }}
+          VERSAO_APK: ${{ github.run_number }}
+        run: gradle -p android assembleRelease --no-daemon
+
+      - name: Guardar o APK nesta execução
+        uses: actions/upload-artifact@v4
+        with:
+          name: lar-em-dia-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
+
+      - name: Publicar para download
+        run: |
+          git clone --depth 1 --branch main "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" site
+          mkdir -p site/apk
+          cp android/app/build/outputs/apk/release/app-release.apk site/apk/lar-em-dia.apk
+          cd site
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apk
+          if git diff --cached --quiet; then echo "Nada mudou"; exit 0; fi
+          git commit -m "Publica APK do Lar em Dia (versão ${{ github.run_number }})"
+          git push

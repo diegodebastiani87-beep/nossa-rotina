@@ -1,0 +1,46 @@
+// APK do Lar em Dia: um "Trusted Web Activity" que abre o app publicado no GitHub Pages pelo Chrome,
+// em tela cheia. O conteúdo vem sempre do site, então o APK não precisa ser reinstalado a cada mudança.
+plugins {
+    id 'com.android.application'
+}
+
+def versao = (System.getenv('VERSAO_APK') ?: '1') as int
+
+android {
+    namespace 'br.laremdia.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'br.laremdia.app'
+        minSdk 21
+        targetSdk 34
+        versionCode versao
+        versionName "1.0.${versao}"
+    }
+
+    signingConfigs {
+        release {
+            // a chave fica fora do repositório (segredos do GitHub); veja .github/workflows/gerar-apk.yml
+            storeFile file(System.getenv('CHAVE_APK_ARQUIVO') ?: 'sem-chave.jks')
+            storePassword System.getenv('CHAVE_APK_SENHA')
+            keyAlias 'laremdia'
+            keyPassword System.getenv('CHAVE_APK_SENHA')
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.5.0'
+}

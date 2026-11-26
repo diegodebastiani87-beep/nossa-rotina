@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nome_app">Lar em Dia</string>
+    <!-- endereço que o app abre; na troca final pode passar a ser a raiz /nossa-rotina/ -->
+    <string name="endereco">https://diegodebastiani87-beep.github.io/nossa-rotina/v2/</string>
+    <!-- liga o APK ao site; o site confirma com /.well-known/assetlinks.json (repositório diegodebastiani87-beep.github.io) -->
+    <string name="asset_statements" translatable="false">[{\"relation\": [\"delegate_permission/common.handle_all_urls\"], \"target\": {\"namespace\": \"web\", \"site\": \"https://diegodebastiani87-beep.github.io\"}}]</string>
+    <color name="cor_barra">#4f46e5</color>
+    <color name="cor_fundo">#f2f3f7</color>
+    <color name="cor_icone">#4f46e5</color>
+</resources>
