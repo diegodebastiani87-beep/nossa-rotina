@@ -3,6 +3,7 @@ import { brl } from '../lib/datas';
 import type { Item } from '../lib/consultas';
 import { ehCredito, ehReembolso } from '../types';
 import { SwipeItem } from '../ui/base';
+import { IconeCategoria } from '../ui/icones';
 import { useAcoes } from './Acoes';
 
 export const corDa = (cats: { nome: string; cor: string }[], nome: string) => cats.find(c => c.nome === nome)?.cor ?? '#6b7280';
@@ -16,7 +17,7 @@ export function LancRow({ g, modo = 'compra' }: { g: Item; modo?: 'compra' | 'fa
   const sub = [g.subcategoria || g.categoria, ehCredito(g) ? g.cartao : g.formaPagamento].filter(Boolean).join(' · ');
   return (
     <div className="lanc">
-      <span className="ico cat-c" style={{ background: corDa(categorias, g.categoria) }}>{(g.categoria || '?')[0]}</span>
+      <IconeCategoria nome={g.categoria} cor={corDa(categorias, g.categoria)} />
       <span style={{ minWidth: 0 }}>
         <span className="t">
           {g.descricao}

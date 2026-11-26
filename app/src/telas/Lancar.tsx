@@ -6,14 +6,15 @@ import { buscarDuplicata, buscarSugestoes, normalizarChave, parcelasPorMes, type
 import { FORMAS_PAGAMENTO, PESSOAS, type FormaPagamento, type Gasto, type Pessoa } from '../types';
 import { Seg, useToast } from '../ui/base';
 import { GraficoParcelas } from './Parcelas';
+import { usePrefs } from '../data/preferencias';
 
-const LS_QUEM = 'lar-em-dia:quem';
-const lerQuem = (): Pessoa => { try { return (localStorage.getItem(LS_QUEM) as Pessoa) || 'Diego'; } catch { return 'Diego'; } };
+export type PresetLancar = 'parcelado' | 'estorno' | null;
 
-export function Lancar({ aoSalvar }: { aoSalvar: () => void }) {
+export function Lancar({ aoSalvar, preset = null }: { aoSalvar: () => void; preset?: PresetLancar }) {
   const { categorias, cartoes, gastos, estabelecimentos, faturaAtual } = useCasa();
   const toast = useToast();
-  const [quem, setQuem] = useState<Pessoa>(lerQuem);
+  const prefs = usePrefs();
+  const [quem, setQuem] = useState<Pessoa>(prefs.quem);
   const [centavos, setCentavos] = useState(0);
   const [desc, setDesc] = useState('');
   const [categoria, setCategoria] = useState('');
@@ -25,19 +26,18 @@ export function Lancar({ aoSalvar }: { aoSalvar: () => void }) {
   const [dataSimples, setDataSimples] = useState(hojeISO());
   const [dataCompra, setDataCompra] = useState(hojeISO());
   const [mesManual, setMesManual] = useState<number | null>(null);
-  const [parcelado, setParcelado] = useState(false);
+  const [parcelado, setParcelado] = useState(preset === 'parcelado');
   const [nTxt, setNTxt] = useState('');
   const [modoValor, setModoValor] = useState<'total' | 'parcela'>('total');
   const [andamento, setAndamento] = useState(false);
   const [k, setK] = useState(2);
-  const [reemb, setReemb] = useState(false);
+  const [reemb, setReemb] = useState(preset === 'estorno');
   const [dup, setDup] = useState<Gasto | null>(null);
   const [salvando, setSalvando] = useState(false);
   const [sugIdx, setSugIdx] = useState(-1);
   const [sugAberta, setSugAberta] = useState(false);
   const nRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => { try { localStorage.setItem(LS_QUEM, quem); } catch { /* sem armazenamento */ } }, [quem]);
   useEffect(() => { if (!categoria && categorias.length) setCategoria(categorias[0].nome); }, [categorias, categoria]);
   useEffect(() => { if (!cartoes.some(c => c.nome === cartao) && cartoes.length) setCartao(cartoes[0].nome); }, [cartoes, cartao]);
 
