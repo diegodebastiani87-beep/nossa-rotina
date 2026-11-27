@@ -32,8 +32,9 @@ function Conta() {
       </div>
       {/Android/i.test(navigator.userAgent) && <div className="card">
         <h2>Lançar a partir do banco</h2>
-        <p className="note">No app Android, quando o banco ou a carteira do Google avisarem uma compra, aparece "Lançar R$ X?" e o lançamento já abre preenchido. Precisa do app instalado pelo APK.</p>
-        <a className="btn sec2" href="intent://avisos#Intent;scheme=laremdia;package=br.laremdia.app;end"><Rot ic="sino">Configurar avisos do banco</Rot></a>
+        <p className="note">No app Android, quando o banco ou a carteira do Google avisarem uma compra, aparece "Lançar R$ X?" e o lançamento já abre preenchido.</p>
+        <p className="note"><b>Para ativar:</b> segure o dedo no ícone do Lar em Dia na tela do celular e toque em <b>Avisos do banco</b>.</p>
+        <a className="btn sec2" href={'intent://avisos#Intent;scheme=laremdia;package=br.laremdia.app;S.browser_fallback_url=' + encodeURIComponent(location.href.split('#')[0] + '#ajustes') + ';end'}><Rot ic="sino">Tentar abrir os avisos do banco</Rot></a>
       </div>}
       <div className="card">
         <h2>Quem tem acesso</h2>
