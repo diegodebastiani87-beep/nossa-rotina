@@ -11,6 +11,7 @@ import { Lancar, type PresetLancar } from './telas/Lancar';
 import { Analise } from './telas/Analise';
 import { Faturas, type SubFatura } from './telas/Faturas';
 import { Ajustes } from './telas/Ajustes';
+import { lerDadosBanco, type DadosBanco } from './lib/aviso-banco';
 
 type Tela = 'inicio' | 'lancamentos' | 'lancar' | 'analise' | 'faturas' | 'ajustes';
 const TELAS: Record<Tela, { t: string; ic: string; mes: boolean }> = {
@@ -21,7 +22,7 @@ const TELAS: Record<Tela, { t: string; ic: string; mes: boolean }> = {
   faturas: { t: 'Faturas', ic: 'cartao', mes: false },
   ajustes: { t: 'Ajustes', ic: 'ajustes', mes: false }
 };
-const lerHash = (): Tela => { const h = location.hash.slice(1); return h in TELAS ? (h as Tela) : 'inicio'; };
+const lerHash = (): Tela => { const h = location.hash.slice(1).split('?')[0]; return h in TELAS ? (h as Tela) : 'inicio'; };
 const TXT_STATUS: Record<Status, string> = { online: 'Sincronizado', conectando: 'Conectando…', offline: 'Sem internet', erro: 'Erro de conexão' };
 
 function StatusDot() {
@@ -56,9 +57,18 @@ export function App() {
   const [subFat, setSubFat] = useState<SubFatura>('faturas');
   const [mesFat, setMesFat] = useState<number | null>(null);
   const [fatAbertas, setFatAbertas] = useState<Set<string>>(new Set());
-  const [preset, setPreset] = useState<{ p: PresetLancar; k: number }>({ p: null, k: 0 });
+  const [preset, setPreset] = useState<{ p: PresetLancar; k: number; aviso?: DadosBanco | null }>({ p: null, k: 0 });
 
-  useEffect(() => { const f = () => setTela(lerHash()); window.addEventListener('hashchange', f); return () => window.removeEventListener('hashchange', f); }, []);
+  useEffect(() => {
+    const f = () => {
+      // toque no aviso "Lançar R$ X?" do APK: abre o lançamento já preenchido e limpa o endereço
+      const aviso = lerDadosBanco(location.hash);
+      if (aviso) { setPreset(x => ({ p: null, k: x.k + 1, aviso })); history.replaceState(null, '', '#lancar'); }
+      setTela(lerHash());
+    };
+    f();
+    window.addEventListener('hashchange', f); return () => window.removeEventListener('hashchange', f);
+  }, []);
   const ir = useCallback((v: string) => {
     if (v === 'parcelas') { setSubFat('parcelas'); v = 'faturas'; } else if (v === 'faturas') setSubFat('faturas');
     if (v === 'lancar') setPreset(p => ({ p: null, k: p.k + 1 }));
@@ -113,7 +123,7 @@ export function App() {
         ) : <>
           {tela === 'inicio' && <Inicio mes={mes} setMes={setMes} ir={ir} novo={novo} abrirFatura={abrirFatura} />}
           {tela === 'lancamentos' && <Lancamentos mes={mes} />}
-          {tela === 'lancar' && <Lancar key={preset.k} preset={preset.p} aoSalvar={() => { /* fica na tela para lançar o próximo */ }} />}
+          {tela === 'lancar' && <Lancar key={preset.k} preset={preset.p} aviso={preset.aviso} aoSalvar={() => { /* fica na tela para lançar o próximo */ }} />}
           {tela === 'analise' && <Analise mes={mes} setMes={setMes} />}
           {tela === 'faturas' && <Faturas sub={subFat} setSub={setSubFat} mes={mesFat ?? faturaAtual} setMes={setMesFat} abertas={fatAbertas}
             alternar={k => setFatAbertas(s => { const n = new Set(s); if (n.has(k)) n.delete(k); else n.add(k); return n; })} />}

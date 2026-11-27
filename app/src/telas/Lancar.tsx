@@ -9,24 +9,25 @@ import { Icone, PessoaRot, Rot } from '../ui/icones';
 import { GraficoParcelas } from './Parcelas';
 import { usePrefs } from '../data/preferencias';
 import { CartaoMini } from '../ui/cartao';
+import { cartaoDoAviso, nomeBonito, type DadosBanco } from '../lib/aviso-banco';
 
 export type PresetLancar = 'parcelado' | 'estorno' | null;
 
-export function Lancar({ aoSalvar, preset = null }: { aoSalvar: () => void; preset?: PresetLancar }) {
+export function Lancar({ aoSalvar, preset = null, aviso = null }: { aoSalvar: () => void; preset?: PresetLancar; aviso?: DadosBanco | null }) {
   const { categorias, cartoes, gastos, estabelecimentos, faturaAtual } = useCasa();
   const toast = useToast();
   const prefs = usePrefs();
   const [quem, setQuem] = useState<Pessoa>(prefs.quem);
-  const [centavos, setCentavos] = useState(0);
-  const [desc, setDesc] = useState('');
+  const [centavos, setCentavos] = useState(aviso ? Math.round(aviso.valor * 100) : 0);
+  const [desc, setDesc] = useState(aviso ? nomeBonito(aviso.local) : '');
   const [categoria, setCategoria] = useState('');
   const [sub, setSub] = useState('');
   const [obs, setObs] = useState('');
   const [verObs, setVerObs] = useState(false);
-  const [pag, setPag] = useState<FormaPagamento>('Cartão Crédito');
+  const [pag, setPag] = useState<FormaPagamento>(aviso?.debito ? 'Cartão Débito' : 'Cartão Crédito');
   const [cartao, setCartao] = useState('');
-  const [dataSimples, setDataSimples] = useState(hojeISO());
-  const [dataCompra, setDataCompra] = useState(hojeISO());
+  const [dataSimples, setDataSimples] = useState(aviso?.data || hojeISO());
+  const [dataCompra, setDataCompra] = useState(aviso?.data || hojeISO());
   const [mesManual, setMesManual] = useState<number | null>(null);
   const [parcelado, setParcelado] = useState(preset === 'parcelado');
   const [nTxt, setNTxt] = useState('');
@@ -39,6 +40,8 @@ export function Lancar({ aoSalvar, preset = null }: { aoSalvar: () => void; pres
   const [sugIdx, setSugIdx] = useState(-1);
   const [sugAberta, setSugAberta] = useState(false);
   const nRef = useRef<HTMLInputElement>(null);
+  const [doAviso, setDoAviso] = useState(!!aviso);
+  const avisoAplicado = useRef(false);
 
   // "Quem gastou" vem marcado com quem está usando o app (com o login Google, será o dono da conta).
   // Dá para trocar no lançamento; depois de salvar volta para quem está usando.
@@ -63,6 +66,16 @@ export function Lancar({ aoSalvar, preset = null }: { aoSalvar: () => void; pres
   const atalhos = useMemo(() => [...estabelecimentos.values()].filter(e => e.categoria && e.count >= 2).sort((a, b) => b.count - a.count).slice(0, 6), [estabelecimentos]);
   const compromisso = useMemo(() => parcelasPorMes(gastos), [gastos]);
 
+  // aviso do banco: escolhe o cartão e, se o local já foi usado antes, traz a categoria de sempre
+  useEffect(() => {
+    if (!aviso || avisoAplicado.current || !cartoes.length) return;
+    avisoAplicado.current = true;
+    const cc = cartaoDoAviso(cartoes, aviso, prefs.quem);
+    if (cc && !aviso.debito) setCartao(cc.nome);
+    const e = buscarSugestoes(estabelecimentos, aviso.local)[0];
+    if (e) { setDesc(e.nome); if (e.categoria && categorias.some(x => x.nome === e.categoria)) { setCategoria(e.categoria); setSub(e.subcategoria ?? ''); } }
+  }, [aviso, cartoes, estabelecimentos, categorias, prefs.quem]);
+
   const aplicar = (e: Estabelecimento) => {
     setDesc(e.nome); setSugAberta(false);
     if (e.categoria && categorias.some(x => x.nome === e.categoria)) { setCategoria(e.categoria); setSub(e.subcategoria ?? ''); }
@@ -72,7 +85,7 @@ export function Lancar({ aoSalvar, preset = null }: { aoSalvar: () => void; pres
 
   const limpar = () => {
     setCentavos(0); setDesc(''); setObs(''); setVerObs(false); setSub(''); setParcelado(false); setNTxt(''); setModoValor('total');
-    setAndamento(false); setReemb(false); setMesManual(null); setDup(null); setQuem(prefs.quem);
+    setAndamento(false); setReemb(false); setMesManual(null); setDup(null); setQuem(prefs.quem); setDoAviso(false);
   };
 
   const salvar = async (forcar = false) => {
@@ -104,6 +117,7 @@ export function Lancar({ aoSalvar, preset = null }: { aoSalvar: () => void; pres
 
   return (
     <div className="card">
+      {doAviso && <div className="aviso-banco"><Icone nome="sino" tam={18} /><span>Preenchido pelo aviso do banco. Confira a categoria e salve.</span></div>}
       <div className="sec">
         <div className="sec-t"><span className="n">1</span>Quem gastou</div>
         <Seg className="tog" valor={quem} opcoes={PESSOAS.map(p => [p, <PessoaRot key={p} p={p} tam={22} />])} onChange={setQuem} />

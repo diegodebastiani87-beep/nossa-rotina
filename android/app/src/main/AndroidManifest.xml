@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <queries>
         <intent>
@@ -41,6 +42,30 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="https" android:host="diegodebastiani87-beep.github.io" android:pathPrefix="/nossa-rotina" />
+            </intent-filter>
+        </activity>
+
+        <!-- lê as notificações dos bancos para sugerir o lançamento (a pessoa precisa liberar em Configurações) -->
+        <service
+            android:name=".LeitorNotificacoes"
+            android:exported="true"
+            android:label="@string/leitor_nome"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name=".AvisosActivity"
+            android:exported="true"
+            android:label="@string/avisos_titulo"
+            android:theme="@android:style/Theme.Material.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="laremdia" android:host="avisos" />
             </intent-filter>
         </activity>
 

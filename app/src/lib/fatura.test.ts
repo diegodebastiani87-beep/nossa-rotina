@@ -3,6 +3,7 @@ import { calcularMesFatura, dividirEmParcelas, gerarParcelas, mesFaturaPadrao } 
 import { buscarDuplicata, comprasParceladas, itensDoMes, momento, soma } from './consultas';
 import { lerValor, ymIdx } from './datas';
 import type { Gasto } from '../types';
+import { cartaoDoAviso, lerDadosBanco, nomeBonito } from './aviso-banco';
 
 const nubank = { nome: 'Nubank Diego', fechamento: 5, vencimento: 12 };
 const inter = { nome: 'Inter', fechamento: 15, vencimento: 22 };
@@ -120,5 +121,31 @@ describe('momento do lançamento', () => {
     const it2 = itensDoMes(ps, 2026 * 12 + 10, 'compra');
     expect(it2).toHaveLength(1);
     expect(it2[0].v).toBe(2616.25);
+  });
+});
+
+describe('aviso do banco', () => {
+  const cartoes = [
+    { nome: 'Nubank', fechamento: 1, vencimento: 8 },
+    { nome: 'Banco Inter', fechamento: 5, vencimento: 12 },
+    { nome: 'Mercado Pago - Diego', fechamento: 11, vencimento: 16 },
+    { nome: 'Mercado Pago - Eliane', fechamento: 11, vencimento: 16 }
+  ];
+  it('lê o endereço do aviso', () => {
+    const d = lerDadosBanco('#lancar?v=58.38&l=RESTAURANTE+NO+PONTO&b=inter&c=Inter&f=4159&t=credito&d=2026-11-27')!;
+    expect(d).toMatchObject({ valor: 58.38, local: 'RESTAURANTE NO PONTO', banco: 'inter', final: '4159', debito: false, data: '2026-11-27' });
+    expect(lerDadosBanco('#lancar')).toBeNull();
+    expect(lerDadosBanco('#inicio?v=1')).toBeNull();
+  });
+  it('acha o cartão pelo banco e, no empate, pela pessoa', () => {
+    const base = { valor: 1, local: '', dica: '', final: '', debito: false, data: '' };
+    expect(cartaoDoAviso(cartoes, { ...base, banco: 'inter' }, 'Diego')?.nome).toBe('Banco Inter');
+    expect(cartaoDoAviso(cartoes, { ...base, banco: '', dica: 'Inter' }, 'Diego')?.nome).toBe('Banco Inter');
+    expect(cartaoDoAviso(cartoes, { ...base, banco: 'mercadopago' }, 'Eliane')?.nome).toBe('Mercado Pago - Eliane');
+    expect(cartaoDoAviso(cartoes, { ...base, banco: 'itau' }, 'Diego')).toBeUndefined();
+  });
+  it('deixa o nome do local apresentável', () => {
+    expect(nomeBonito('RESTAURANTE NO PONTO')).toBe('Restaurante No Ponto');
+    expect(nomeBonito('Padaria do Zé')).toBe('Padaria do Zé');
   });
 });

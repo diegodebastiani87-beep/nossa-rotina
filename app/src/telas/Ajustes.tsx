@@ -30,6 +30,11 @@ function Conta() {
         <div><b>{pessoa}</b><div className="note">{user.email}</div></div>
         <button className="btn sec2" onClick={() => void sair()}><Rot ic="esq">Sair da conta</Rot></button>
       </div>
+      {/Android/i.test(navigator.userAgent) && <div className="card">
+        <h2>Lançar a partir do banco</h2>
+        <p className="note">No app Android, quando o banco ou a carteira do Google avisarem uma compra, aparece "Lançar R$ X?" e o lançamento já abre preenchido. Precisa do app instalado pelo APK.</p>
+        <a className="btn sec2" href="intent://avisos#Intent;scheme=laremdia;package=br.laremdia.app;end"><Rot ic="sino">Configurar avisos do banco</Rot></a>
+      </div>}
       <div className="card">
         <h2>Quem tem acesso</h2>
         {(['Diego', 'Eliane'] as const).map(p => { const email = Object.keys(membros).find(k => membros[k] === p);

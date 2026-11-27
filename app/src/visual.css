@@ -298,3 +298,7 @@ html.oculto .num:not(input) { filter: blur(7px); transition: filter .2s; }
 
 /* etiqueta de lançamento recém-feito */
 .tag.novo { background: color-mix(in srgb, var(--primary) 18%, transparent); color: var(--primary); }
+
+/* faixa "preenchido pelo aviso do banco" no Novo gasto */
+.aviso-banco { display: flex; gap: 10px; align-items: center; padding: 10px 12px; margin-bottom: 14px; border-radius: 12px; font-size: .9em; font-weight: 600;
+  background: color-mix(in srgb, var(--primary) 14%, transparent); color: var(--primary); }

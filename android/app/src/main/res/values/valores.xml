@@ -6,6 +6,8 @@
     <string name="endereco_lancar">https://diegodebastiani87-beep.github.io/nossa-rotina/v2/#lancar</string>
     <string name="widget_rotulo">Novo gasto</string>
     <string name="widget_descricao">Abre o Lar em Dia direto no lançamento</string>
+    <string name="leitor_nome">Lar em Dia: compras do banco</string>
+    <string name="avisos_titulo">Avisos do banco</string>
     <!-- liga o APK ao site; o site confirma com /.well-known/assetlinks.json (repositório diegodebastiani87-beep.github.io) -->
     <string name="asset_statements" translatable="false">[{\"relation\": [\"delegate_permission/common.handle_all_urls\"], \"target\": {\"namespace\": \"web\", \"site\": \"https://diegodebastiani87-beep.github.io\"}}]</string>
     <color name="cor_barra">#4f46e5</color>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ícone da barra de notificações (casa com check), só branco -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="512" android:viewportHeight="512">
+    <path android:fillColor="#FFFFFFFF" android:pathData="M256,60 L460,226 H414 V400 Q414,452 362,452 H150 Q98,452 98,400 V226 H52 Z M190,312 L238,358 L328,262 L300,236 L238,302 L218,282 Z" android:fillType="evenOdd" />
+</vector>
