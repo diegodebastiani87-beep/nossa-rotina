@@ -4,6 +4,7 @@
     <!-- endereço que o app abre; na troca final pode passar a ser a raiz /nossa-rotina/ -->
     <string name="endereco">https://diegodebastiani87-beep.github.io/nossa-rotina/v2/</string>
     <string name="endereco_lancar">https://diegodebastiani87-beep.github.io/nossa-rotina/v2/#lancar</string>
+    <string name="endereco_rapido">https://diegodebastiani87-beep.github.io/nossa-rotina/v2/#lancar?fechar=1</string>
     <string name="widget_rotulo">Novo gasto</string>
     <string name="widget_descricao">Abre o Lar em Dia direto no lançamento</string>
     <string name="leitor_nome">Lar em Dia: compras do banco</string>

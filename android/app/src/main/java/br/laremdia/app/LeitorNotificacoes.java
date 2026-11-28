@@ -7,13 +7,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
-
-import com.google.androidbrowserhelper.trusted.LauncherActivity;
 
 import java.net.URLEncoder;
 import java.text.NumberFormat;
@@ -88,9 +85,11 @@ public class LeitorNotificacoes extends NotificationListenerService {
         if (!c.finalCartao.isEmpty()) cartao = (cartao + " ••" + c.finalCartao).trim();
         String linha = cartao.isEmpty() ? local : local + " · " + cartao;
 
-        Intent abrir = new Intent(Intent.ACTION_VIEW, Uri.parse(endereco(ctx, c, quando)));
-        abrir.setClass(ctx, LauncherActivity.class);
-        abrir.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        // passa por AbrirLancamento para o aviso sumir também quando tocam no botão "Lançar"
+        Intent abrir = new Intent(ctx, AbrirLancamento.class);
+        abrir.putExtra(AbrirLancamento.EXTRA_URL, endereco(ctx, c, quando));
+        abrir.putExtra(AbrirLancamento.EXTRA_AVISO, id);
+        abrir.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
         int flags = PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0);
         PendingIntent toque = PendingIntent.getActivity(ctx, id, abrir, flags);
 

@@ -69,6 +69,30 @@
             </intent-filter>
         </activity>
 
+        <!-- toque no aviso: apaga o aviso e abre o lançamento (invisível) -->
+        <activity
+            android:name=".AbrirLancamento"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <!-- o app pede para fechar depois de salvar um lançamento vindo do aviso ou do widget -->
+        <activity
+            android:name=".FecharApp"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="laremdia" android:host="fechar" />
+            </intent-filter>
+        </activity>
+
         <receiver android:name=".WidgetGasto" android:exported="true" android:label="@string/widget_rotulo">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

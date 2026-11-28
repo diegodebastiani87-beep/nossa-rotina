@@ -11,7 +11,7 @@ import { Lancar, type PresetLancar } from './telas/Lancar';
 import { Analise } from './telas/Analise';
 import { Faturas, type SubFatura } from './telas/Faturas';
 import { Ajustes } from './telas/Ajustes';
-import { lerDadosBanco, type DadosBanco } from './lib/aviso-banco';
+import { lerDadosBanco, pedeFechar, type DadosBanco } from './lib/aviso-banco';
 
 type Tela = 'inicio' | 'lancamentos' | 'lancar' | 'analise' | 'faturas' | 'ajustes';
 const TELAS: Record<Tela, { t: string; ic: string; mes: boolean }> = {
@@ -57,13 +57,13 @@ export function App() {
   const [subFat, setSubFat] = useState<SubFatura>('faturas');
   const [mesFat, setMesFat] = useState<number | null>(null);
   const [fatAbertas, setFatAbertas] = useState<Set<string>>(new Set());
-  const [preset, setPreset] = useState<{ p: PresetLancar; k: number; aviso?: DadosBanco | null }>({ p: null, k: 0 });
+  const [preset, setPreset] = useState<{ p: PresetLancar; k: number; aviso?: DadosBanco | null; fechar?: boolean }>({ p: null, k: 0 });
 
   useEffect(() => {
     const f = () => {
       // toque no aviso "Lançar R$ X?" do APK: abre o lançamento já preenchido e limpa o endereço
-      const aviso = lerDadosBanco(location.hash);
-      if (aviso) { setPreset(x => ({ p: null, k: x.k + 1, aviso })); history.replaceState(null, '', '#lancar'); }
+      const aviso = lerDadosBanco(location.hash), fechar = pedeFechar(location.hash);
+      if (aviso || fechar) { setPreset(x => ({ p: null, k: x.k + 1, aviso, fechar })); history.replaceState(null, '', '#lancar'); }
       setTela(lerHash());
     };
     f();
@@ -123,7 +123,7 @@ export function App() {
         ) : <>
           {tela === 'inicio' && <Inicio mes={mes} setMes={setMes} ir={ir} novo={novo} abrirFatura={abrirFatura} />}
           {tela === 'lancamentos' && <Lancamentos mes={mes} />}
-          {tela === 'lancar' && <Lancar key={preset.k} preset={preset.p} aviso={preset.aviso} aoSalvar={() => { /* fica na tela para lançar o próximo */ }} />}
+          {tela === 'lancar' && <Lancar key={preset.k} preset={preset.p} aviso={preset.aviso} fecharAoSalvar={preset.fechar} aoSalvar={() => { /* fica na tela para lançar o próximo */ }} />}
           {tela === 'analise' && <Analise mes={mes} setMes={setMes} />}
           {tela === 'faturas' && <Faturas sub={subFat} setSub={setSubFat} mes={mesFat ?? faturaAtual} setMes={setMesFat} abertas={fatAbertas}
             alternar={k => setFatAbertas(s => { const n = new Set(s); if (n.has(k)) n.delete(k); else n.add(k); return n; })} />}

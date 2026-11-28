@@ -15,7 +15,7 @@ import com.google.androidbrowserhelper.trusted.LauncherActivity;
 public class WidgetGasto extends AppWidgetProvider {
     @Override
     public void onUpdate(Context ctx, AppWidgetManager gerente, int[] ids) {
-        Intent abrir = new Intent(Intent.ACTION_VIEW, Uri.parse(ctx.getString(R.string.endereco_lancar)));
+        Intent abrir = new Intent(Intent.ACTION_VIEW, Uri.parse(ctx.getString(R.string.endereco_rapido)));
         abrir.setClass(ctx, LauncherActivity.class);
         abrir.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         int flags = PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0);

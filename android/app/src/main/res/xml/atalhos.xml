@@ -8,7 +8,7 @@
         android:shortcutShortLabel="@string/widget_rotulo">
         <intent
             android:action="android.intent.action.VIEW"
-            android:data="https://diegodebastiani87-beep.github.io/nossa-rotina/v2/#lancar"
+            android:data="https://diegodebastiani87-beep.github.io/nossa-rotina/v2/#lancar?fechar=1"
             android:targetClass="com.google.androidbrowserhelper.trusted.LauncherActivity"
             android:targetPackage="br.laremdia.app" />
     </shortcut>

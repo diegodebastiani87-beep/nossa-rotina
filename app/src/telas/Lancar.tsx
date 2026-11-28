@@ -9,11 +9,11 @@ import { Icone, PessoaRot, Rot } from '../ui/icones';
 import { GraficoParcelas } from './Parcelas';
 import { usePrefs } from '../data/preferencias';
 import { CartaoMini } from '../ui/cartao';
-import { cartaoDoAviso, nomeBonito, type DadosBanco } from '../lib/aviso-banco';
+import { cartaoDoAviso, enderecoFechar, nomeBonito, type DadosBanco } from '../lib/aviso-banco';
 
 export type PresetLancar = 'parcelado' | 'estorno' | null;
 
-export function Lancar({ aoSalvar, preset = null, aviso = null }: { aoSalvar: () => void; preset?: PresetLancar; aviso?: DadosBanco | null }) {
+export function Lancar({ aoSalvar, preset = null, aviso = null, fecharAoSalvar = false }: { aoSalvar: () => void; preset?: PresetLancar; aviso?: DadosBanco | null; fecharAoSalvar?: boolean }) {
   const { categorias, cartoes, gastos, estabelecimentos, faturaAtual } = useCasa();
   const toast = useToast();
   const prefs = usePrefs();
@@ -105,8 +105,16 @@ export function Lancar({ aoSalvar, preset = null, aviso = null }: { aoSalvar: ()
     try {
       const desfazer = await adicionarGastos(novos);
       const outro = quem === 'Diego' ? 'Eliane' : 'Diego';
-      toast(reemb ? 'Estorno lançado' : novos.length > 1 ? `${novos.length} parcelas criadas. ${outro} já vê.` : `Gasto lançado. ${outro} já vê.`, desfazer);
+      const msg = reemb ? 'Estorno lançado' : novos.length > 1 ? `${novos.length} parcelas criadas. ${outro} já vê.` : `Gasto lançado. ${outro} já vê.`;
       limpar(); aoSalvar();
+      toast(msg, desfazer);
+      if (fecharAoSalvar) {
+        // veio do aviso do banco ou do widget: o app vai para o fundo e volta para onde a pessoa estava
+        // (se o Android não deixar, fica no Início com a confirmação na tela)
+        const voltar = location.href.split('#')[0] + '#inicio';
+        location.hash = 'inicio';
+        setTimeout(() => { location.href = enderecoFechar(msg, voltar); }, 60);
+      }
     } catch (e) { toast('Não foi possível salvar: ' + (e as Error).message); }
     finally { setSalvando(false); }
   };

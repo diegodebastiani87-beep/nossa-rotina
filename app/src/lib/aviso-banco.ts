@@ -33,3 +33,16 @@ export function cartaoDoAviso(cartoes: Cartao[], d: DadosBanco, quem: string): C
   if (!lista.length) return undefined;
   return lista.find(c => c.nome.toLowerCase().includes(quem.toLowerCase())) ?? lista[0];
 }
+
+/** Aberto pelo aviso do banco ou pelo widget: depois de salvar, o app fecha e volta para onde a pessoa estava. */
+export function pedeFechar(hash: string): boolean {
+  const i = hash.indexOf('?');
+  if (!hash.replace(/^#/, '').startsWith('lancar') || i < 0) return false;
+  const q = new URLSearchParams(hash.slice(i + 1));
+  return q.get('fechar') === '1' || q.has('v');
+}
+
+/** Pede ao app Android para ir para o fundo (FecharApp.java); se não houver app, volta ao Início. */
+export function enderecoFechar(msg: string, voltar: string): string {
+  return 'intent://fechar?m=' + encodeURIComponent(msg) + '#Intent;scheme=laremdia;package=br.laremdia.app;S.browser_fallback_url=' + encodeURIComponent(voltar) + ';end';
+}
